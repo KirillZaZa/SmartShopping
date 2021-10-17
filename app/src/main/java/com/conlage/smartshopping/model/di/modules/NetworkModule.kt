@@ -1,0 +1,37 @@
+package com.conlage.smartshopping.model.di.modules
+
+import android.content.Context
+import com.conlage.smartshopping.R
+import com.conlage.smartshopping.model.data.network.service.SmartShoppingService
+import dagger.Module
+import dagger.Provides
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
+
+
+@Module
+class NetworkModule {
+
+
+    @Provides
+    fun provideSmartShoppingService(context: Context): SmartShoppingService{
+        val okHttpClient = OkHttpClient.Builder()
+            .readTimeout(5, TimeUnit.SECONDS)
+            .callTimeout(10, TimeUnit.SECONDS)
+            .addInterceptor(HttpLoggingInterceptor())
+            .build()
+
+        val retrofit = Retrofit.Builder()
+            .client(okHttpClient)
+            .baseUrl(context.getString(R.string.base_url))
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        return retrofit.create(SmartShoppingService::class.java)
+    }
+
+
+}
