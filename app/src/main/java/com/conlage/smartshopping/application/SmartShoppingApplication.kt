@@ -10,6 +10,7 @@ class SmartShoppingApplication : Application() {
 
     lateinit var appShoppingComponent: AppShoppingComponent
 
+
     override fun onCreate() {
         super.onCreate()
 

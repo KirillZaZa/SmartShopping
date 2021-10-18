@@ -7,8 +7,9 @@ import dagger.Module
 import javax.inject.Singleton
 
 
-@Module(includes = [NetworkModule::class, CoroutineModule::class])
+@Module(includes = [NetworkModule::class, CoroutineModule::class, RoomModule::class])
 abstract class MainModule {
+
     @Singleton
     @Binds
     abstract fun context(application: Application): Context
