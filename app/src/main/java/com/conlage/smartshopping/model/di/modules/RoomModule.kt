@@ -31,7 +31,7 @@ object RoomModule {
     }
 
     @Provides
-    fun provideProductDao(database: ShoppingDatabase): ProductDao{
+    fun provideProductDao(database: ShoppingDatabase): ProductDao {
         return database.getProductDao()
     }
 

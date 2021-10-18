@@ -1,4 +1,4 @@
-package com.conlage.smartshopping.model.data.local.db.entity
+package com.conlage.smartshopping.model.data.local
 
 import android.graphics.Bitmap
 
