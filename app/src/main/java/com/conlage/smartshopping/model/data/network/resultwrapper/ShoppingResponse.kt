@@ -1,4 +1,4 @@
-package com.conlage.smartshopping.model.data.network.wrapper
+package com.conlage.smartshopping.model.data.network.resultwrapper
 
 import com.conlage.smartshopping.model.data.network.dto.ResponseError
 

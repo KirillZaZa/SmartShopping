@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.conlage.smartshopping.R
 import com.conlage.smartshopping.model.data.local.db.ShoppingDatabase
+import com.conlage.smartshopping.model.data.local.db.dao.ProductDao
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -27,6 +28,11 @@ object RoomModule {
             INSTANCE = instance
             instance
         }
+    }
+
+    @Provides
+    fun provideProductDao(database: ShoppingDatabase): ProductDao{
+        return database.getProductDao()
     }
 
 }

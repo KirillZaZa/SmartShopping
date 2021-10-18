@@ -1,9 +1,6 @@
 package com.conlage.smartshopping.viewModel
 
-import android.graphics.Color
-import androidx.compose.material.CheckboxDefaults
 import androidx.lifecycle.ViewModel
-import com.conlage.smartshopping.model.Product
 
 class MainViewModel : ViewModel() {
 

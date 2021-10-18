@@ -2,17 +2,17 @@ package com.conlage.smartshopping.model.data.local.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.conlage.smartshopping.model.data.local.db.dao.DBProductDao
-import com.conlage.smartshopping.model.data.local.db.entity.DBProduct
+import com.conlage.smartshopping.model.data.local.db.dao.ProductDao
+import com.conlage.smartshopping.model.data.local.db.entity.Product
 
 
 @Database(
-    entities = [DBProduct::class],
+    entities = [Product::class],
     version = 1,
     exportSchema = true
 )
 abstract class ShoppingDatabase : RoomDatabase() {
 
-    abstract fun getProductDao(): DBProductDao
+    abstract fun getProductDao(): ProductDao
 
 }

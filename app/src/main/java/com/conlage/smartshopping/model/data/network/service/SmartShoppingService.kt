@@ -11,19 +11,19 @@ interface SmartShoppingService {
 
 
     @GET("api/products/search/{name}")
-    fun getProductListByName(
+    suspend fun getProductListByName(
         @Path("name") productName: String,
         @Query("page") page: Int
     ): NetworkProductList
 
     @GET("api/products/id/{id}")
-    fun getProductDetailsById(
+    suspend fun getProductDetailsById(
         @Path("id") id: Int
     ): NetworkProduct
 
 
     @GET("api/products/barcode/{barcode}")
-    fun getProductDetailsByBarcode(
+    suspend fun getProductDetailsByBarcode(
         @Path("barcode") barcode: String
     ): NetworkProduct
 
