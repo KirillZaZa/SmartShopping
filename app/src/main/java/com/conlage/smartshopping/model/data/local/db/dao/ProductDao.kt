@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 
 
 @Dao
-abstract class ProductDao : BaseDao<ProductDao> {
+abstract class ProductDao : BaseDao<Product> {
 
     @Query("SELECT * FROM product_table")
     abstract fun getProductList(): Flow<List<Product>>

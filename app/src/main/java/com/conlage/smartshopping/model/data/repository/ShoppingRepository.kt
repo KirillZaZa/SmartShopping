@@ -1,20 +1,22 @@
 package com.conlage.smartshopping.model.data.repository
 
 import com.conlage.smartshopping.model.data.local.db.entity.Product
-import com.conlage.smartshopping.model.data.network.resultwrapper.ShoppingResponse
+import com.conlage.smartshopping.model.data.repository.resultwrapper.RepositoryResponse
 
 interface ShoppingRepository {
 
 
-    fun getProductList(query: String, page: Int, callback: (ShoppingResponse) -> Unit)
+    suspend fun getProductList(query: String, page: Int, ): RepositoryResponse
 
-    fun getProductById(id: Int, callback: (ShoppingResponse) -> Unit)
+    suspend fun getProductById(id: Int): RepositoryResponse
 
-    fun getProductByBarcode(barcode: String, callback: (ShoppingResponse) -> Unit)
+    suspend fun getProductByBarcode(barcode: String): RepositoryResponse
 
-    fun saveProductInDb(product: Product, callback: (ShoppingResponse) -> Unit)
+    suspend fun saveProductInDb(product: Product): RepositoryResponse
 
-    fun deleteProductFromDb(product: Product, callback: (ShoppingResponse) -> Unit)
+    suspend fun deleteProductFromDb(product: Product): RepositoryResponse
+
+    suspend fun getProductListFromDb(): RepositoryResponse
 
 
 }

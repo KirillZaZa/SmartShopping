@@ -1,35 +1,22 @@
 package com.conlage.smartshopping.model.data.local
 
 import android.graphics.Bitmap
+import com.conlage.smartshopping.model.data.network.dto.NetworkProduct
 
 data class ProductDetails(
     val advantages: List<String>,
     val barcode: String,
     val description: String,
-    val details: Details,
+    val details: NetworkProduct.Response.Details,
     val disadvantages: List<Any>,
     val id: Int,
     val image: String,
     val price: String,
     val rate: Double,
-    val rate_details: RateDetails,
+    val rate_details: NetworkProduct.Response.RateDetails,
     val research_document: String,
     val title: String,
-    val barcodeImg: Bitmap? = null
+    var barcodeImg: Bitmap? = null
 ){
 
-    data class Details(
-        val yearOfManufacture: String,
-        val yearOfResearch: String,
-        val manufacturer: String,
-        val producer: String,
-        val composition: String,
-        val barcode: String
-    )
-
-    data class RateDetails(
-        val quality: Double,
-        val organoleptics: Double,
-        val physicalChemicalParameters: Int
-    )
 }

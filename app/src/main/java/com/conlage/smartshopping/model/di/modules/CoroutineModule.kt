@@ -12,7 +12,7 @@ import kotlinx.coroutines.SupervisorJob
 @Module
 class CoroutineModule {
 
-    private val scope by lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
+    private val handler by lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
         val errorHandler = CoroutineExceptionHandler { _, throwable ->
             Log.e(
                 "Coroutine Scope:",
@@ -20,11 +20,10 @@ class CoroutineModule {
             )
 
         }
-
-        CoroutineScope(Dispatchers.Main + SupervisorJob() + errorHandler)
+        errorHandler
     }
 
     @Provides
-    fun provideCoroutineScope(): CoroutineScope = scope
+    fun provideHandler(): CoroutineExceptionHandler = handler
 
 }

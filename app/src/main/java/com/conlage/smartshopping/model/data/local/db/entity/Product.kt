@@ -27,5 +27,5 @@ data class Product(
     val title: String,
 
     @Ignore
-    val bitmap: Bitmap? = null
+    var bitmap: Bitmap? = null
 )

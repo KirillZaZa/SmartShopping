@@ -4,8 +4,8 @@ data class ResponseError(
     val error: Error
 ) {
     data class Error(
-        val code: Int,
-        val localizedMessage: String,
-        val message: String
+        val code: Int = 404,
+        val localizedMessage: String = "Товар не найден",
+        val message: String = "Product not found"
     )
 }

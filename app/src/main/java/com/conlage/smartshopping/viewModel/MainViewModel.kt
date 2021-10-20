@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 class MainViewModel : ViewModel() {
 
     //Массив со всеми элементами чеклиста
-    var checkListItems: MutableList<Product> = ArrayList()
+//    var checkListItems: MutableList<Product> = ArrayList()
 
     //Состояние экрана
     // |-Обычное
@@ -13,6 +13,7 @@ class MainViewModel : ViewModel() {
 
     //При нажатии на кнопку "+"
     fun onPlusBtnTap() {
+
         //Опустить список вниз и добавить элемент наверх
 
         //Добавить empty элемент с placeholder

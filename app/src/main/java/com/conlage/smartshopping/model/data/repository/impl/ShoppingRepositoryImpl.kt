@@ -1,22 +1,29 @@
 package com.conlage.smartshopping.model.data.repository.impl
 
-import android.content.Context
 import com.conlage.smartshopping.model.data.local.db.dao.ProductDao
 import com.conlage.smartshopping.model.data.local.db.entity.Product
-import com.conlage.smartshopping.model.data.media.ImageDownloaderImpl
+import com.conlage.smartshopping.model.data.mapper.mapToProductList
+import com.conlage.smartshopping.model.data.mapper.toProductDetails
+import com.conlage.smartshopping.utils.media.ImageDownloaderImpl
+import com.conlage.smartshopping.utils.media.resultwrapper.LoadResult
+import com.conlage.smartshopping.model.data.network.dto.ResponseError
+import com.conlage.smartshopping.model.data.repository.resultwrapper.RepositoryResponse
 import com.conlage.smartshopping.model.data.network.service.SmartShoppingService
-import com.conlage.smartshopping.model.data.network.resultwrapper.ShoppingResponse
 import com.conlage.smartshopping.model.data.repository.ShoppingRepository
-import kotlinx.coroutines.CoroutineScope
+import com.conlage.smartshopping.utils.barcode.BarcodeGenerator
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
+import java.lang.IllegalArgumentException
 import javax.inject.Inject
 
 class ShoppingRepositoryImpl @Inject constructor(
     private val api: SmartShoppingService,
-    private val scope: CoroutineScope,
-    private val context: Context,
     private val productDao: ProductDao,
-    private val imageDownloaderImpl: ImageDownloaderImpl
-): ShoppingRepository {
+    private val imageDownloader: ImageDownloaderImpl,
+    private val barcodeGenerator: BarcodeGenerator
+) : ShoppingRepository {
 
 
     /**
@@ -25,8 +32,32 @@ class ShoppingRepositoryImpl @Inject constructor(
      *  если нет -> ошибку в колбек
      *
      */
-    override fun getProductList(query: String, page: Int, callback: (ShoppingResponse) -> Unit) {
+    override suspend fun getProductList(query: String, page: Int): RepositoryResponse {
+        val networkProductList = api.getProductListByName(query, page)
+        return if (!networkProductList.response.isNullOrEmpty()) {
 
+            val mappedList = networkProductList.response.mapToProductList()
+
+            val result = withContext(Dispatchers.IO) {
+
+                mappedList.list.forEach { product ->
+
+                    product.bitmap = withContext(Dispatchers.IO) {
+                        when (val result =
+                            imageDownloader.downloadImageFromNetwork(product.image)) {
+                            is LoadResult.Success -> result.response
+                            is LoadResult.Failure -> result.throwable
+                            else -> throw IllegalArgumentException()
+                        }
+                    }
+
+                }
+
+                mappedList
+            }
+            RepositoryResponse.Success(result)
+
+        } else RepositoryResponse.Failure(ResponseError.Error())
     }
 
     /**
@@ -35,8 +66,14 @@ class ShoppingRepositoryImpl @Inject constructor(
      * 3)генерируем битмапу для barcode
      * 4)возвращаем результат
      */
-    override fun getProductById(id: Int, callback: (ShoppingResponse) -> Unit) {
+    override suspend fun getProductById(id: Int): RepositoryResponse {
+        val networkProduct = api.getProductDetailsById(id)
+        val productDetails = networkProduct.toProductDetails()
+        with(productDetails) {
+            this.barcodeImg = barcodeGenerator.generateBarcodeBitmap(this.barcode)
+        }
 
+        return RepositoryResponse.Success(productDetails)
     }
 
     /**
@@ -44,8 +81,18 @@ class ShoppingRepositoryImpl @Inject constructor(
      * 2)мапим результат - если баркод нашелся, нет - ошибка
      * 3)генерируем битмапу для barcode
      */
-    override fun getProductByBarcode(barcode: String, callback: (ShoppingResponse) -> Unit) {
-
+    override suspend fun getProductByBarcode(barcode: String): RepositoryResponse {
+        return try {
+            val networkProduct = api.getProductDetailsByBarcode(barcode)
+            val productDetails = networkProduct.toProductDetails()
+            with(productDetails) {
+                this.barcodeImg = barcodeGenerator.generateBarcodeBitmap(this.barcode)
+            }
+            RepositoryResponse.Success(productDetails)
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            RepositoryResponse.Failure(e)
+        }
     }
 
     /**
@@ -53,8 +100,15 @@ class ShoppingRepositoryImpl @Inject constructor(
      * 2) по колбеку от базы - сохраняем фотку
      * 3) колбек об успешной/провальной транзакции
      */
-    override fun saveProductInDb(product: Product, callback: (ShoppingResponse) -> Unit) {
-
+    override suspend fun saveProductInDb(product: Product): RepositoryResponse {
+        return try {
+            imageDownloader.saveImageToInternalStorage(product.bitmap!!, product.image)
+            val savedProduct = productDao.getProductList()
+            RepositoryResponse.Success(savedProduct)
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            RepositoryResponse.Failure(e)
+        }
     }
 
     /**
@@ -62,7 +116,36 @@ class ShoppingRepositoryImpl @Inject constructor(
      *  2)по колбеку от базы удаляем фотку
      *  3)далее колбек об успешной/провальной транзакции
      */
-    override fun deleteProductFromDb(product: Product, callback: (ShoppingResponse) -> Unit) {
+    override suspend fun deleteProductFromDb(product: Product): RepositoryResponse {
+        return try {
+            imageDownloader.deleteImageFromInternalStorage(product.image)
+            val deletedProduct = productDao.delete(product)
+            RepositoryResponse.Success(deletedProduct)
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            RepositoryResponse.Failure(e)
+        }
+    }
+
+    override suspend fun getProductListFromDb(): RepositoryResponse {
+        var repositoryResponse: RepositoryResponse? = null
+
+        productDao.getProductList()
+            .map { list ->
+                list.map { product ->
+                    product.bitmap = when (val loadResult =
+                        imageDownloader.loadImageFromInternalStorage(product.image)) {
+                        is LoadResult.Success -> loadResult.response
+                        is LoadResult.Failure -> loadResult.throwable
+                    }
+                }
+                list
+            }.collect{ list->
+                repositoryResponse = if(list.isNotEmpty()) RepositoryResponse.Success(list)
+                else RepositoryResponse.Failure(null)
+            }
+
+        return repositoryResponse!!
     }
 
 }
