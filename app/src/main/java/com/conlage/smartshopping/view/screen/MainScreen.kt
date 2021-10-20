@@ -3,7 +3,6 @@ package com.conlage.smartshopping.view.screen
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Surface
@@ -14,7 +13,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.conlage.smartshopping.ui.theme.BackgroundColor
@@ -23,11 +21,10 @@ import com.conlage.smartshopping.ui.theme.SmartShoppingTheme
 import com.conlage.smartshopping.view.component.AddListItemBtn
 import com.conlage.smartshopping.view.component.EmptyListWarning
 import com.conlage.smartshopping.view.component.ListItem
-import com.conlage.smartshopping.viewModel.MainViewModel
+import com.conlage.smartshopping.viewmodel.impl.MainViewModelImpl
 
-@Preview
 @Composable
-fun MainScreen(vm: MainViewModel = MainViewModel()) {
+fun MainScreen(vm: MainViewModelImpl) {
     val btnState by remember { mutableStateOf(1)}
     var transition = updateTransition(targetState = btnState, label = "")
     
@@ -47,7 +44,7 @@ fun MainScreen(vm: MainViewModel = MainViewModel()) {
                     modifier = Modifier.padding(vertical = 32.dp)
 
                 )
-                if (vm.checkListItems.isEmpty()){
+                if (){
                     Spacer(modifier = Modifier.weight(1.0f))
                     EmptyListWarning()
                 } else {
@@ -55,7 +52,8 @@ fun MainScreen(vm: MainViewModel = MainViewModel()) {
                         verticalArrangement = Arrangement.spacedBy(6.dp),
                         modifier = Modifier.verticalScroll(rememberScrollState())
                     ) {
-                        items(vm.checkListItems) {
+                        //items list
+                        items() {
                             ListItem()
                         }
                     }

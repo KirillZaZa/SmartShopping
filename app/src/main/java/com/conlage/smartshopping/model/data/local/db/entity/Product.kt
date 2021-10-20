@@ -26,6 +26,8 @@ data class Product(
     @ColumnInfo(name = "product_id")
     val title: String,
 
+    val quantity: Int,
+
     @Ignore
     var bitmap: Bitmap? = null
 )

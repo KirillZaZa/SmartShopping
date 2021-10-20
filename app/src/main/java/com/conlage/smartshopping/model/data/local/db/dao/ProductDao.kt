@@ -13,5 +13,7 @@ abstract class ProductDao : BaseDao<Product> {
     @Query("SELECT * FROM product_table")
     abstract fun getProductList(): Flow<List<Product>>
 
+    @Query("SELECT * FROM product_table WHERE product_id LIKE :productId")
+    abstract fun getProduct(productId: Int): Flow<Product>
 
 }

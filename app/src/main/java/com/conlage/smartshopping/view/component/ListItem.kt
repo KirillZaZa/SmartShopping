@@ -7,20 +7,22 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.conlage.smartshopping.ui.theme.LightGray
 import com.conlage.smartshopping.ui.theme.Purple
 import com.conlage.smartshopping.ui.theme.SmartShoppingTheme
-import com.conlage.smartshopping.viewModel.MainViewModel
+import com.conlage.smartshopping.viewmodel.impl.MainViewModelImpl
 
-@Preview(showBackground = true)
+
 @Composable
-fun ListItem(viewModel: MainViewModel = MainViewModel()) {
+fun ListItem(
+   viewModelImpl: MainViewModelImpl
+) {
     SmartShoppingTheme {
         Card(
             elevation = 0.dp,
