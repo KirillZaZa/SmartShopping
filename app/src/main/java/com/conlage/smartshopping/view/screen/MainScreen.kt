@@ -25,7 +25,7 @@ import com.conlage.smartshopping.viewmodel.impl.MainViewModelImpl
 
 @Composable
 fun MainScreen(vm: MainViewModelImpl) {
-    val btnState by remember { mutableStateOf(1)}
+    val state = remember { vm.currentState }.value
     var transition = updateTransition(targetState = btnState, label = "")
     
     SmartShoppingTheme {
@@ -44,7 +44,7 @@ fun MainScreen(vm: MainViewModelImpl) {
                     modifier = Modifier.padding(vertical = 32.dp)
 
                 )
-                if (){
+                if (state.productList.isNullOrEmpty()){
                     Spacer(modifier = Modifier.weight(1.0f))
                     EmptyListWarning()
                 } else {
@@ -53,14 +53,14 @@ fun MainScreen(vm: MainViewModelImpl) {
                         modifier = Modifier.verticalScroll(rememberScrollState())
                     ) {
                         //items list
-                        items() {
-                            ListItem()
+                        items(state.productList.size) {
+                            ListItem(vm)
                         }
                     }
                 }
                 Spacer(modifier = Modifier.weight(1.0f))
                 AddListItemBtn {
-                    vm.onPlusBtnTap()
+                    vm.handlePlusButton()
                 }
             }
         }

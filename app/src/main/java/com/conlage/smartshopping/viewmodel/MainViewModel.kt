@@ -4,18 +4,26 @@ import com.conlage.smartshopping.model.data.local.db.entity.Product
 
 interface MainViewModel {
 
-    fun handlePlusButton()
+    fun getProductList(): List<Product>
 
-    fun handleIncProduct(product: Product)
+    fun handlePlusButton(newProduct: Product)
 
-    fun handleOnProductClick(productItem: Int)
+    fun handleIncProduct(productIndex: Int)
+
+    fun handleProductCheckBox(productIndex: Int)
 
     fun handleSearchQuery(query: String)
 
     fun handleSearchOpen(isOpen: Boolean)
 
-    fun handleScanBarcode(barcode: String)
-
     fun handleDeleteProduct(product: Product)
+
+    fun handleDecProduct(productIndex: Int)
+
+    fun handleNewPage()
+
+    fun handleSaveProduct(productId: Int)
+
+    suspend fun getProductListFromNetwork(query: String): List<Product>
 
 }

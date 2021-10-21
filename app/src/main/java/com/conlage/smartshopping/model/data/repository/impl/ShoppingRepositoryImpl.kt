@@ -1,7 +1,9 @@
 package com.conlage.smartshopping.model.data.repository.impl
 
+import com.conlage.smartshopping.model.data.local.ProductDetails
 import com.conlage.smartshopping.model.data.local.db.dao.ProductDao
 import com.conlage.smartshopping.model.data.local.db.entity.Product
+import com.conlage.smartshopping.model.data.local.db.entity.ProductList
 import com.conlage.smartshopping.model.data.mapper.mapToProductList
 import com.conlage.smartshopping.model.data.mapper.toProductDetails
 import com.conlage.smartshopping.utils.media.ImageDownloaderImpl
@@ -32,7 +34,7 @@ class ShoppingRepositoryImpl @Inject constructor(
      *  если нет -> ошибку в колбек
      *
      */
-    override suspend fun getProductList(query: String, page: Int): RepositoryResponse {
+    override suspend fun getProductList(query: String, page: Int): RepositoryResponse<ProductList> {
         val networkProductList = api.getProductListByName(query, page)
         return if (!networkProductList.response.isNullOrEmpty()) {
 
@@ -57,7 +59,7 @@ class ShoppingRepositoryImpl @Inject constructor(
             }
             RepositoryResponse.Success(result)
 
-        } else RepositoryResponse.Failure(ResponseError.Error())
+        } else RepositoryResponse.Failure(Throwable())
     }
 
     /**
@@ -66,7 +68,7 @@ class ShoppingRepositoryImpl @Inject constructor(
      * 3)генерируем битмапу для barcode
      * 4)возвращаем результат
      */
-    override suspend fun getProductById(id: Int): RepositoryResponse {
+    override suspend fun getProductById(id: Int): RepositoryResponse<ProductDetails> {
         val networkProduct = api.getProductDetailsById(id)
         val productDetails = networkProduct.toProductDetails()
         with(productDetails) {
@@ -81,7 +83,7 @@ class ShoppingRepositoryImpl @Inject constructor(
      * 2)мапим результат - если баркод нашелся, нет - ошибка
      * 3)генерируем битмапу для barcode
      */
-    override suspend fun getProductByBarcode(barcode: String): RepositoryResponse {
+    override suspend fun getProductByBarcode(barcode: String): RepositoryResponse<ProductDetails> {
         return try {
             val networkProduct = api.getProductDetailsByBarcode(barcode)
             val productDetails = networkProduct.toProductDetails()
@@ -100,11 +102,11 @@ class ShoppingRepositoryImpl @Inject constructor(
      * 2) по колбеку от базы - сохраняем фотку
      * 3) колбек об успешной/провальной транзакции
      */
-    override suspend fun saveProductInDb(product: Product): RepositoryResponse {
+    override suspend fun saveProductInDb(product: Product): RepositoryResponse<Int> {
         return try {
             imageDownloader.saveImageToInternalStorage(product.bitmap!!, product.image)
-            val savedProduct = productDao.getProductList()
-            RepositoryResponse.Success(savedProduct)
+            val status = productDao.insert(product)
+            RepositoryResponse.Success(status)
         } catch (e: Throwable) {
             e.printStackTrace()
             RepositoryResponse.Failure(e)
@@ -116,19 +118,40 @@ class ShoppingRepositoryImpl @Inject constructor(
      *  2)по колбеку от базы удаляем фотку
      *  3)далее колбек об успешной/провальной транзакции
      */
-    override suspend fun deleteProductFromDb(product: Product): RepositoryResponse {
+    override suspend fun deleteProductFromDb(product: Product): RepositoryResponse<Int> {
         return try {
             imageDownloader.deleteImageFromInternalStorage(product.image)
-            val deletedProduct = productDao.delete(product)
-            RepositoryResponse.Success(deletedProduct)
+            val status = productDao.delete(product)
+            RepositoryResponse.Success(status)
         } catch (e: Throwable) {
             e.printStackTrace()
             RepositoryResponse.Failure(e)
         }
     }
 
-    override suspend fun getProductListFromDb(): RepositoryResponse {
-        var repositoryResponse: RepositoryResponse? = null
+    override suspend fun deleteProductFromDbById(productId: Int, productImage: String): RepositoryResponse<Int> {
+        return try {
+            imageDownloader.deleteImageFromInternalStorage(productImage)
+            val status = productDao.deleteProductById(productId)
+            RepositoryResponse.Success(status)
+        }catch (e : Throwable){
+            e.printStackTrace()
+            RepositoryResponse.Failure(e)
+        }
+    }
+
+    override suspend fun updateProductInDb(product: Product): RepositoryResponse<Int> {
+        return try {
+            val status = productDao.update(product)
+            RepositoryResponse.Success(status)
+        }catch (e : Throwable){
+            e.printStackTrace()
+            RepositoryResponse.Failure(e)
+        }
+    }
+
+    override suspend fun getProductListFromDb(): RepositoryResponse<List<Product>> {
+        var repositoryResponse: RepositoryResponse<List<Product>>? = null
 
         productDao.getProductList()
             .map { list ->

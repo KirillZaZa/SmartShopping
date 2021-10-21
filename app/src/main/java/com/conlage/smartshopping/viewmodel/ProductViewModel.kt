@@ -1,6 +1,10 @@
 package com.conlage.smartshopping.viewmodel
 
+import com.conlage.smartshopping.model.data.local.ProductDetails
+
 interface ProductViewModel {
+
+    fun getProductDetails(): ProductDetails?
 
     fun handleAddButton()
 
@@ -8,6 +12,9 @@ interface ProductViewModel {
 
     fun handleReadMore()
 
-    fun handleBackButton()
+    fun handleAboutEvaluation()
 
+    suspend fun getProductDetailsById(): ProductDetails?
+
+    suspend fun getProductDetailsByBarcode(): ProductDetails?
 }

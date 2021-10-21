@@ -5,7 +5,8 @@ import com.conlage.smartshopping.model.data.usecase.wrapper.UseCaseResult
 
 interface ProductDeleteUseCase {
 
-    suspend fun deleteProductFromDb(product: Product): UseCaseResult
+    suspend fun deleteProductFromDb(product: Product): UseCaseResult<Int>
 
+    suspend fun deleteProductFromDbById(productId: Int, productImage: String): UseCaseResult<Int>
 
 }

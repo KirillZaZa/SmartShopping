@@ -5,6 +5,7 @@ import com.conlage.smartshopping.model.data.local.db.entity.Product
 import com.conlage.smartshopping.model.data.repository.impl.ShoppingRepositoryImpl
 import com.conlage.smartshopping.model.data.repository.resultwrapper.RepositoryResponse
 import com.conlage.smartshopping.model.data.usecase.ProductSaveUseCase
+import com.conlage.smartshopping.model.data.usecase.exception.FailureException
 import com.conlage.smartshopping.model.data.usecase.wrapper.UseCaseResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -15,12 +16,12 @@ class ProductSaveUseCaseImpl @Inject constructor(
 ) : ProductSaveUseCase {
 
 
-    override suspend fun saveProductInDb(product: Product): UseCaseResult {
+    override suspend fun saveProductInDb(product: Product): UseCaseResult<Int> {
         return try {
             val isSaved = withContext(Dispatchers.IO){
                 when(val result = repositoryImpl.saveProductInDb(product)){
-                    is RepositoryResponse.Success<*> -> result.response
-                    is RepositoryResponse.Failure<*> -> result.responseError
+                    is RepositoryResponse.Success<Int> -> result.response
+                    is RepositoryResponse.Failure<Int> -> throw FailureException()
                 }
             }
             Log.e(this::class.java.simpleName, "saveProductInDb: $isSaved")
