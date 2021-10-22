@@ -12,19 +12,19 @@ data class Product(
 
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "product_id")
-    val id: Int,
+    var id: Int,
 
-    @ColumnInfo(name = "product_id")
-    val image: String, // img path
+    @ColumnInfo(name = "product_image")
+    var image: String, // img path
 
-    @ColumnInfo(name = "product_id")
-    val price: String,
+    @ColumnInfo(name = "product_price")
+    var price: String,
 
-    @ColumnInfo(name = "product_id")
-    val rate: Int,
+    @ColumnInfo(name = "product_rate")
+    var rate: Int,
 
-    @ColumnInfo(name = "product_id")
-    val title: String,
+    @ColumnInfo(name = "product_title")
+    var title: String,
 
     @ColumnInfo(name = "product_quantity")
     var quantity: Int = 1,

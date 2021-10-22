@@ -102,14 +102,12 @@ class ShoppingRepositoryImpl @Inject constructor(
      * 2) по колбеку от базы - сохраняем фотку
      * 3) колбек об успешной/провальной транзакции
      */
-    override suspend fun saveProductInDb(product: Product): RepositoryResponse<Int> {
-        return try {
+    override suspend fun saveProductInDb(product: Product){
+        try {
             imageDownloader.saveImageToInternalStorage(product.bitmap!!, product.image)
-            val status = productDao.insert(product)
-            RepositoryResponse.Success(status)
+            productDao.insert(product)
         } catch (e: Throwable) {
             e.printStackTrace()
-            RepositoryResponse.Failure(e)
         }
     }
 
@@ -118,35 +116,29 @@ class ShoppingRepositoryImpl @Inject constructor(
      *  2)по колбеку от базы удаляем фотку
      *  3)далее колбек об успешной/провальной транзакции
      */
-    override suspend fun deleteProductFromDb(product: Product): RepositoryResponse<Int> {
-        return try {
+    override suspend fun deleteProductFromDb(product: Product) {
+        try {
             imageDownloader.deleteImageFromInternalStorage(product.image)
-            val status = productDao.delete(product)
-            RepositoryResponse.Success(status)
+            productDao.delete(product)
         } catch (e: Throwable) {
             e.printStackTrace()
-            RepositoryResponse.Failure(e)
         }
     }
 
-    override suspend fun deleteProductFromDbById(productId: Int, productImage: String): RepositoryResponse<Int> {
-        return try {
+    override suspend fun deleteProductFromDbById(productId: Int, productImage: String) {
+        try {
             imageDownloader.deleteImageFromInternalStorage(productImage)
-            val status = productDao.deleteProductById(productId)
-            RepositoryResponse.Success(status)
-        }catch (e : Throwable){
+            productDao.deleteProductById(productId)
+        } catch (e: Throwable) {
             e.printStackTrace()
-            RepositoryResponse.Failure(e)
         }
     }
 
-    override suspend fun updateProductInDb(product: Product): RepositoryResponse<Int> {
-        return try {
-            val status = productDao.update(product)
-            RepositoryResponse.Success(status)
-        }catch (e : Throwable){
+    override suspend fun updateProductInDb(product: Product) {
+        try {
+            productDao.update(product)
+        } catch (e: Throwable) {
             e.printStackTrace()
-            RepositoryResponse.Failure(e)
         }
     }
 
@@ -163,8 +155,8 @@ class ShoppingRepositoryImpl @Inject constructor(
                     }
                 }
                 list
-            }.collect{ list->
-                repositoryResponse = if(list.isNotEmpty()) RepositoryResponse.Success(list)
+            }.collect { list ->
+                repositoryResponse = if (list.isNotEmpty()) RepositoryResponse.Success(list)
                 else RepositoryResponse.Failure(null)
             }
 

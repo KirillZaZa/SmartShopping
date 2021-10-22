@@ -14,13 +14,13 @@ interface ShoppingRepository {
 
     suspend fun getProductByBarcode(barcode: String): RepositoryResponse<ProductDetails>
 
-    suspend fun saveProductInDb(product: Product): RepositoryResponse<Int>
+    suspend fun saveProductInDb(product: Product)
 
-    suspend fun deleteProductFromDb(product: Product): RepositoryResponse<Int>
+    suspend fun deleteProductFromDb(product: Product)
 
-    suspend fun deleteProductFromDbById(productId: Int, productImage: String): RepositoryResponse<Int>
+    suspend fun deleteProductFromDbById(productId: Int, productImage: String)
 
-    suspend fun updateProductInDb(product: Product): RepositoryResponse<Int>
+    suspend fun updateProductInDb(product: Product)
 
     suspend fun getProductListFromDb(): RepositoryResponse<List<Product>>
 

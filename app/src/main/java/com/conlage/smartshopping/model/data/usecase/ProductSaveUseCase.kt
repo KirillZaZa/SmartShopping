@@ -5,7 +5,7 @@ import com.conlage.smartshopping.model.data.usecase.wrapper.UseCaseResult
 
 interface ProductSaveUseCase {
 
-    suspend fun saveProductInDb(product: Product): UseCaseResult
+    suspend fun saveProductInDb(product: Product)
 
 
 }

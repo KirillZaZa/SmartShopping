@@ -1,6 +1,7 @@
 package com.conlage.smartshopping.model.di
 
 import android.app.Application
+import com.conlage.smartshopping.viewmodel.impl.ProductViewModelImpl
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
@@ -11,6 +12,7 @@ import javax.inject.Singleton
 interface AppShoppingComponent {
 
 
+    fun inject(productViewModelImpl: ProductViewModelImpl)
 
     @Component.Builder
     interface Builder{

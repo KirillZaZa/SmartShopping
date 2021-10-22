@@ -32,12 +32,8 @@ abstract class BaseViewModel<T>(
         value = initState
     )
 
-    protected val currentValue
+    val currentValue
         get() = state.value
-
-
-    val currentState: State<T>
-        get() = state
 
 
 
@@ -45,7 +41,7 @@ abstract class BaseViewModel<T>(
     protected inline fun updateState(
         update: (currentState: T) -> T
     ) {
-        val updatedState: T = update(currentState.value)
+        val updatedState: T = update(currentValue)
         state.value = updatedState
     }
 
@@ -54,7 +50,7 @@ abstract class BaseViewModel<T>(
         source: S,
         onChanged: (newValue: S, currentState: T) -> T?
     ) {
-        state.value = onChanged(source, currentState.value) ?: return
+        state.value = onChanged(source, currentValue) ?: return
     }
 
 

@@ -13,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.conlage.smartshopping.ui.theme.BackgroundColor
@@ -23,10 +24,11 @@ import com.conlage.smartshopping.view.component.EmptyListWarning
 import com.conlage.smartshopping.view.component.ListItem
 import com.conlage.smartshopping.viewmodel.impl.MainViewModelImpl
 
+@Preview
 @Composable
 fun MainScreen(vm: MainViewModelImpl) {
-    val state = remember { vm.currentState }.value
-    var transition = updateTransition(targetState = btnState, label = "")
+    val state = remember { vm.currentValue }
+//    var transition = updateTransition(targetState = btnState, label = "")
     
     SmartShoppingTheme {
         Surface(color = BackgroundColor) {
@@ -60,7 +62,7 @@ fun MainScreen(vm: MainViewModelImpl) {
                 }
                 Spacer(modifier = Modifier.weight(1.0f))
                 AddListItemBtn {
-                    vm.handlePlusButton()
+                    vm.handleSearchOpen(true)
                 }
             }
         }

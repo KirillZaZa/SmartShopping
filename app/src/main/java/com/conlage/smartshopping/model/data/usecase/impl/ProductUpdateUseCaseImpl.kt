@@ -15,12 +15,9 @@ class ProductUpdateUseCaseImpl @Inject constructor(
 
 
     override suspend fun updateProductInDb(product: Product) {
-        return try {
+        try {
             withContext(Dispatchers.IO){
-                when(repositoryImpl.updateProductInDb(product)){
-                    is RepositoryResponse.Success -> return@withContext
-                    else -> throw FailureException()
-                }
+                repositoryImpl.updateProductInDb(product)
             }
         }catch (e: Throwable){
             e.printStackTrace()

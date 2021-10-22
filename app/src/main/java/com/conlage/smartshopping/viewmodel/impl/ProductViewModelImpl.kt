@@ -14,8 +14,6 @@ import java.lang.IllegalArgumentException
 import javax.inject.Inject
 
 class ProductViewModelImpl @Inject constructor(
-    private val deleteUseCase: ProductDeleteUseCaseImpl? = null,
-    private val saveUseCase: ProductSaveUseCaseImpl? = null,
     private val productIdUseCase: ProductIdUseCaseImpl? = null,
     private val productBarCodeUseCase: ProductBarCodeUseCaseImpl? = null,
     private val barcode: String? = null,
