@@ -29,9 +29,11 @@ data class Product(
     @ColumnInfo(name = "product_quantity")
     var quantity: Int = 1,
 
+
+){
     @Ignore
-    var wantBeDeleted: Boolean = false,
+    var wantBeDeleted: Boolean = false
 
     @Ignore
     var bitmap: Bitmap? = null
-)
+}

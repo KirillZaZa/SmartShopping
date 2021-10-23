@@ -8,37 +8,52 @@ import com.conlage.smartshopping.model.data.usecase.impl.*
 import com.conlage.smartshopping.model.data.usecase.wrapper.UseCaseResult
 import com.conlage.smartshopping.viewmodel.ProductViewModel
 import com.conlage.smartshopping.viewmodel.base.BaseViewModel
+import com.conlage.smartshopping.viewmodel.extension.getProductById
 import com.conlage.smartshopping.viewmodel.state.ProductScreenState
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
-import javax.inject.Inject
 
-class ProductViewModelImpl @Inject constructor(
-    private val productIdUseCase: ProductIdUseCaseImpl? = null,
-    private val productBarCodeUseCase: ProductBarCodeUseCaseImpl? = null,
+
+class ProductViewModelImpl(
+    private val productIdUseCase: ProductIdUseCaseImpl,
+    private val productBarCodeUseCase: ProductBarCodeUseCaseImpl,
     private val barcode: String? = null,
-    private val id: Int? = null
+    private val id: Int? = null,
+    private val isAdded: Boolean = false
 ) : BaseViewModel<ProductScreenState>(ProductScreenState()), ProductViewModel {
 
     init {
-        subscribeOnDataSource(getProductDetails()){ productDetails, state ->
+        subscribeOnDataSource(getProductDetails()) { productDetails, state ->
             productDetails ?: return@subscribeOnDataSource null
             state.copy(
-               product = productDetails
+                productDetails = productDetails
             )
         }
+
     }
 
     override fun getProductDetails(): ProductDetails? {
         viewModelScope.launch(dispatcherMain + errHandler) {
             updateState { it.copy(isLoading = true) }
 
-            if (barcode == null) currentValue.product = getProductDetailsById()
-            else currentValue.product = getProductDetailsByBarcode()
+            if (barcode.isNullOrBlank()){
+                currentValue.productDetails = getProductDetailsById()
+            }
+            else{
+                currentValue.productDetails = getProductDetailsByBarcode()
+            }
 
-            updateState { it.copy(isLoading = false) }
+
+
+            updateState { it.copy(
+                isLoading = false,
+                isAdded = isAdded
+            ) }
         }
-        return currentValue.product
+        return currentValue.productDetails
     }
 
 
@@ -85,16 +100,39 @@ class ProductViewModelImpl @Inject constructor(
     }
 
 
-}
 
-class ProductViewModelFactory(
-    private val id: Int?,
-    private val barcode: String?
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(ProductViewModelImpl::class.java))
-            return ProductViewModelImpl(id = id, barcode = barcode) as T
-        throw IllegalArgumentException("Unknown ViewModel class")
+    class ProductViewModelFactory @AssistedInject constructor(
+        @Assisted("product_id") private val id: Int,
+        @Assisted("product_barcode") private val barcode: String,
+        @Assisted("product_is_added") private val isAdded: Boolean,
+        private val productIdUseCase: ProductIdUseCaseImpl,
+        private val productBarCodeUseCase: ProductBarCodeUseCaseImpl,
+    ) : ViewModelProvider.Factory {
+
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(ProductViewModelImpl::class.java))
+                return ProductViewModelImpl(
+                    id = id,
+                    barcode = barcode,
+                    productBarCodeUseCase = productBarCodeUseCase,
+                    productIdUseCase = productIdUseCase
+                ) as T
+            throw IllegalArgumentException("Unknown ViewModel class")
+        }
+
+        @AssistedFactory
+        interface Factory {
+
+            fun create(
+                @Assisted("product_id") id: Int,
+                @Assisted("product_barcode") barcode: String,
+                @Assisted("product_is_added") isAdded: Boolean
+            ): ProductViewModelFactory
+
+        }
+
     }
 
+
 }
+

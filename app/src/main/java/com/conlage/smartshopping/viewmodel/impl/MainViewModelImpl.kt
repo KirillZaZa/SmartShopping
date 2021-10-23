@@ -7,6 +7,7 @@ import com.conlage.smartshopping.model.data.usecase.impl.*
 import com.conlage.smartshopping.model.data.usecase.wrapper.UseCaseResult
 import com.conlage.smartshopping.viewmodel.MainViewModel
 import com.conlage.smartshopping.viewmodel.base.BaseViewModel
+import com.conlage.smartshopping.viewmodel.extension.containsId
 import com.conlage.smartshopping.viewmodel.extension.getProductById
 import com.conlage.smartshopping.viewmodel.state.MainScreenState
 import kotlinx.coroutines.*
@@ -160,10 +161,19 @@ class MainViewModelImpl @Inject constructor(
     }
 
     override fun handleSaveProduct(productId: Int) {
+        if(currentValue.productList.containsId(productId)) return
         viewModelScope.launch(dispatcherMain + errHandler) {
             val product = currentValue.searchList.getProductById(productId)
             saveUseCase.saveProductInDb(product)
             currentValue.productList.add(product)
+        }
+    }
+
+    override fun handleDeleteProductById(productId: Int) {
+        if(!currentValue.productList.containsId(productId)) return
+        viewModelScope.launch(dispatcherMain + errHandler) {
+            val product = currentValue.productList.getProductById(productId)
+            deleteUseCase.deleteProductFromDb(product)
         }
     }
 

@@ -24,6 +24,8 @@ interface MainViewModel {
 
     fun handleSaveProduct(productId: Int)
 
+    fun handleDeleteProductById(productId: Int)
+
     suspend fun getProductListFromNetwork(query: String): List<Product>
 
 }

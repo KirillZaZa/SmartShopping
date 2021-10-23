@@ -57,6 +57,7 @@ fun MainScreen(vm: MainViewModelImpl) {
                         //items list
                         items(state.productList.size) {
                             ListItem(vm)
+
                         }
                     }
                 }

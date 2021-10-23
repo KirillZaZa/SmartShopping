@@ -16,4 +16,5 @@ abstract class ProductDao : BaseDao<Product> {
     @Query("DELETE FROM product_table WHERE product_id LIKE :productId")
     abstract fun deleteProductById(productId: Int)
 
+
 }
