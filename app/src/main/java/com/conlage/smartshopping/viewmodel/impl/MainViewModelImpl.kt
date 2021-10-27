@@ -5,11 +5,17 @@ import com.conlage.smartshopping.model.data.local.db.entity.Product
 import com.conlage.smartshopping.model.data.local.db.entity.ProductList
 import com.conlage.smartshopping.model.data.usecase.impl.*
 import com.conlage.smartshopping.model.data.usecase.wrapper.UseCaseResult
+import com.conlage.smartshopping.view.components.main.floating_button.FabStateEnum
 import com.conlage.smartshopping.viewmodel.MainViewModel
 import com.conlage.smartshopping.viewmodel.base.BaseViewModel
+import com.conlage.smartshopping.viewmodel.events.DeleteEvent
+import com.conlage.smartshopping.viewmodel.events.SaveEvent
 import com.conlage.smartshopping.viewmodel.extension.containsId
 import com.conlage.smartshopping.viewmodel.extension.getProductById
 import com.conlage.smartshopping.viewmodel.state.MainScreenState
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.MultiplePermissionsState
+import com.google.accompanist.permissions.PermissionState
 import kotlinx.coroutines.*
 import javax.inject.Inject
 
@@ -86,6 +92,7 @@ class MainViewModelImpl @Inject constructor(
             val job = viewModelScope.launch(dispatcherMain + errHandler) {
                 delay(5000)
                 deleteUseCase.deleteProductFromDb(product)
+                currentValue.productList.remove(product)
             }
             deleteJobs[productIndex] = job
         }else{
@@ -121,13 +128,14 @@ class MainViewModelImpl @Inject constructor(
         ) }
     }
 
-
-    //delete product from list and db
-    override fun handleDeleteProduct(product: Product) {
-        viewModelScope.launch(dispatcherMain + errHandler) {
-            deleteUseCase.deleteProductFromDb(product)
-        }
+    override fun handleFabState() {
+        if(currentValue.fabState == FabStateEnum.COLLAPSED){
+            updateState { it.copy(
+                fabState = FabStateEnum.EXPANDED
+            ) }
+        }else updateState{ it.copy(fabState = FabStateEnum.COLLAPSED) }
     }
+
 
     //dec quantity of product (if quantity == 0) -> delete item (handle delete product)
     override fun handleDecProduct(productIndex: Int) {
@@ -145,6 +153,15 @@ class MainViewModelImpl @Inject constructor(
 
         }
     }
+
+    override fun handleCameraPermission(isGranted: Boolean) {
+        updateState { it.copy(isCameraGranted = isGranted) }
+    }
+
+    override fun handleStoragePermission(isGranted: Boolean) {
+        updateState { it.copy(isStorageGranted = isGranted) }
+    }
+
 
     override fun handleNewPage() {
         if(currentValue.searchQuery == null) return
@@ -164,8 +181,14 @@ class MainViewModelImpl @Inject constructor(
         if(currentValue.productList.containsId(productId)) return
         viewModelScope.launch(dispatcherMain + errHandler) {
             val product = currentValue.searchList.getProductById(productId)
+
             saveUseCase.saveProductInDb(product)
+
             currentValue.productList.add(product)
+
+            val index = currentValue.productList.indexOf(product)
+
+            handleEvent(SaveEvent(index))
         }
     }
 
@@ -173,7 +196,13 @@ class MainViewModelImpl @Inject constructor(
         if(!currentValue.productList.containsId(productId)) return
         viewModelScope.launch(dispatcherMain + errHandler) {
             val product = currentValue.productList.getProductById(productId)
+            val index = currentValue.productList.indexOf(product)
+
             deleteUseCase.deleteProductFromDb(product)
+
+            handleEvent(DeleteEvent(index))
+
+            currentValue.productList.remove(product)
         }
     }
 

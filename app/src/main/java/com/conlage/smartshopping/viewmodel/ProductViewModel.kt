@@ -6,6 +6,8 @@ interface ProductViewModel {
 
     fun getProductDetails(): ProductDetails?
 
+
+
     fun handleAddButton()
 
     fun handleDeleteButton()

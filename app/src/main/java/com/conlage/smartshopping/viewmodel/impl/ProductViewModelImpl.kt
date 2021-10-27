@@ -8,12 +8,12 @@ import com.conlage.smartshopping.model.data.usecase.impl.*
 import com.conlage.smartshopping.model.data.usecase.wrapper.UseCaseResult
 import com.conlage.smartshopping.viewmodel.ProductViewModel
 import com.conlage.smartshopping.viewmodel.base.BaseViewModel
-import com.conlage.smartshopping.viewmodel.extension.getProductById
 import com.conlage.smartshopping.viewmodel.state.ProductScreenState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
+import okio.ByteString.Companion.decodeBase64
 import java.lang.IllegalArgumentException
 
 
@@ -29,7 +29,7 @@ class ProductViewModelImpl(
         subscribeOnDataSource(getProductDetails()) { productDetails, state ->
             productDetails ?: return@subscribeOnDataSource null
             state.copy(
-                productDetails = productDetails
+                productDetails = productDetails,
             )
         }
 
@@ -39,19 +39,20 @@ class ProductViewModelImpl(
         viewModelScope.launch(dispatcherMain + errHandler) {
             updateState { it.copy(isLoading = true) }
 
-            if (barcode.isNullOrBlank()){
+            if (barcode.isNullOrBlank()) {
                 currentValue.productDetails = getProductDetailsById()
-            }
-            else{
+            } else {
                 currentValue.productDetails = getProductDetailsByBarcode()
             }
 
 
 
-            updateState { it.copy(
-                isLoading = false,
-                isAdded = isAdded
-            ) }
+            updateState {
+                it.copy(
+                    isLoading = false,
+                    isAdded = isAdded
+                )
+            }
         }
         return currentValue.productDetails
     }
@@ -86,24 +87,23 @@ class ProductViewModelImpl(
     }
 
     override suspend fun getProductDetailsById(): ProductDetails? {
-        return when (val result = productIdUseCase!!.getProductById(id!!)) {
+        return when (val result = productIdUseCase.getProductById(id!!)) {
             is UseCaseResult.Response -> result.value
             is UseCaseResult.Error -> null
         }
     }
 
     override suspend fun getProductDetailsByBarcode(): ProductDetails? {
-        return when (val result = productBarCodeUseCase!!.getProductByBarcode(barcode!!)) {
+        return when (val result = productBarCodeUseCase.getProductByBarcode(barcode!!)) {
             is UseCaseResult.Response -> result.value
             is UseCaseResult.Error -> null
         }
     }
 
 
-
     class ProductViewModelFactory @AssistedInject constructor(
-        @Assisted("product_id") private val id: Int,
-        @Assisted("product_barcode") private val barcode: String,
+        @Assisted("product_id") private val id: Int?,
+        @Assisted("product_barcode") private val barcode: String?,
         @Assisted("product_is_added") private val isAdded: Boolean,
         private val productIdUseCase: ProductIdUseCaseImpl,
         private val productBarCodeUseCase: ProductBarCodeUseCaseImpl,
@@ -112,6 +112,7 @@ class ProductViewModelImpl(
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(ProductViewModelImpl::class.java))
                 return ProductViewModelImpl(
+                    isAdded = isAdded,
                     id = id,
                     barcode = barcode,
                     productBarCodeUseCase = productBarCodeUseCase,
@@ -124,8 +125,8 @@ class ProductViewModelImpl(
         interface Factory {
 
             fun create(
-                @Assisted("product_id") id: Int,
-                @Assisted("product_barcode") barcode: String,
+                @Assisted("product_id") id: Int?,
+                @Assisted("product_barcode") barcode: String?,
                 @Assisted("product_is_added") isAdded: Boolean
             ): ProductViewModelFactory
 

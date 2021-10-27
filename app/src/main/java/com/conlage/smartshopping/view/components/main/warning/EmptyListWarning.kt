@@ -1,4 +1,4 @@
-package com.conlage.smartshopping.view.component
+package com.conlage.smartshopping.view.components.main.warning
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,19 +11,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.conlage.smartshopping.R
 import com.conlage.smartshopping.ui.theme.Gray
 
-@Preview
+
 @Composable
 fun EmptyListWarning() {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
 
     ) {
         Icon(
@@ -33,15 +33,15 @@ fun EmptyListWarning() {
         Text(
             text = "Список пуст",
             color = Gray,
-            fontSize = 22.sp
+            fontSize = 24.sp
         )
         Text(
             text = "Нажмите + чтобы \n" +
                     "добавить товар",
             color = Gray,
-            fontSize = 11.sp,
+            fontSize = 16.sp,
             textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Light
+            fontWeight = FontWeight.Light,
         )
     }
 }

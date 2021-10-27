@@ -1,6 +1,7 @@
 package com.conlage.smartshopping.viewmodel.state
 
 import com.conlage.smartshopping.model.data.local.db.entity.Product
+import com.conlage.smartshopping.view.components.main.floating_button.FabStateEnum
 
 data class MainScreenState(
     val productList: MutableList<Product> = mutableListOf(),
@@ -8,6 +9,9 @@ data class MainScreenState(
     var searchQuery: String? = null,
     var isSearchOpen: Boolean = false,
     var isLoadingProducts: Boolean = false,
+    var fabState: FabStateEnum = FabStateEnum.COLLAPSED,
     var isLoadingSearchProducts: Boolean = false,
+    var isCameraGranted: Boolean = true,
+    var isStorageGranted: Boolean = true,
     var currentPage: Int = 1
 )

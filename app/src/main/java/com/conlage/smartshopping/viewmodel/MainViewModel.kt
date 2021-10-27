@@ -1,6 +1,9 @@
 package com.conlage.smartshopping.viewmodel
 
 import com.conlage.smartshopping.model.data.local.db.entity.Product
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.MultiplePermissionsState
+import com.google.accompanist.permissions.PermissionState
 
 interface MainViewModel {
 
@@ -16,9 +19,13 @@ interface MainViewModel {
 
     fun handleSearchOpen(isOpen: Boolean)
 
-    fun handleDeleteProduct(product: Product)
+    fun handleFabState()
 
     fun handleDecProduct(productIndex: Int)
+
+    fun handleCameraPermission(isGranted: Boolean)
+
+    fun handleStoragePermission(isGranted: Boolean)
 
     fun handleNewPage()
 

@@ -59,7 +59,6 @@ class ImageDownloaderImpl @Inject constructor(
     override suspend fun loadImageFromInternalStorage(image: String): LoadResult<Bitmap> {
         var loadResult: LoadResult<Bitmap>? = null
         withContext(Dispatchers.IO){
-
             val files = context.filesDir.listFiles()
 
             files?.filter { file -> file.canRead() && file.isFile && file.name.equals("$image.jpg")

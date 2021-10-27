@@ -8,7 +8,7 @@ import androidx.compose.ui.text.font.FontWeight
 import com.conlage.smartshopping.R
 
 
-private val appFontFamily = FontFamily(
+val appFontFamily = FontFamily(
     fonts = listOf(
         Font(
             resId = R.font.rubik_light,
