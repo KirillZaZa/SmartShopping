@@ -1,6 +1,7 @@
 package com.conlage.smartshopping.model.data.repository.impl
 
 import com.conlage.smartshopping.model.data.local.ProductDetails
+import com.conlage.smartshopping.model.data.local.db.ShoppingDatabase
 import com.conlage.smartshopping.model.data.local.db.dao.ProductDao
 import com.conlage.smartshopping.model.data.local.db.entity.Product
 import com.conlage.smartshopping.model.data.local.db.entity.ProductList
@@ -22,7 +23,7 @@ import javax.inject.Inject
 
 class ShoppingRepositoryImpl @Inject constructor(
     private val api: SmartShoppingService,
-    private val productDao: ProductDao,
+    private val db: ShoppingDatabase,
     private val imageDownloader: ImageDownloaderImpl,
     private val barcodeGenerator: BarcodeGenerator
 ) : ShoppingRepository {
@@ -105,7 +106,7 @@ class ShoppingRepositoryImpl @Inject constructor(
     override suspend fun saveProductInDb(product: Product){
         try {
             imageDownloader.saveImageToInternalStorage(product.bitmap!!, product.image)
-            productDao.insert(product)
+            db.getProductDao().insert(product)
         } catch (e: Throwable) {
             e.printStackTrace()
         }
@@ -119,7 +120,7 @@ class ShoppingRepositoryImpl @Inject constructor(
     override suspend fun deleteProductFromDb(product: Product) {
         try {
             imageDownloader.deleteImageFromInternalStorage(product.image)
-            productDao.delete(product)
+            db.getProductDao().delete(product)
         } catch (e: Throwable) {
             e.printStackTrace()
         }
@@ -128,7 +129,7 @@ class ShoppingRepositoryImpl @Inject constructor(
     override suspend fun deleteProductFromDbById(productId: Int, productImage: String) {
         try {
             imageDownloader.deleteImageFromInternalStorage(productImage)
-            productDao.deleteProductById(productId)
+            db.getProductDao().deleteProductById(productId)
         } catch (e: Throwable) {
             e.printStackTrace()
         }
@@ -136,7 +137,7 @@ class ShoppingRepositoryImpl @Inject constructor(
 
     override suspend fun updateProductInDb(product: Product) {
         try {
-            productDao.update(product)
+            db.getProductDao().update(product)
         } catch (e: Throwable) {
             e.printStackTrace()
         }
@@ -145,7 +146,7 @@ class ShoppingRepositoryImpl @Inject constructor(
     override suspend fun getProductListFromDb(): RepositoryResponse<List<Product>> {
         var repositoryResponse: RepositoryResponse<List<Product>>? = null
 
-        productDao.getProductList()
+        db.getProductDao().getProductList()
             .map { list ->
                 list.map { product ->
                     product.bitmap = when (val loadResult =

@@ -21,7 +21,7 @@ data class Product(
     var price: String,
 
     @ColumnInfo(name = "product_rate")
-    var rate: Int,
+    var rate: Double,
 
     @ColumnInfo(name = "product_title")
     var title: String,

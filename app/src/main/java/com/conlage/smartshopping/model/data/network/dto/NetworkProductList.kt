@@ -7,7 +7,7 @@ data class NetworkProductList(
         val id: Int,
         val image: String,
         val price: String,
-        val rate: Int,
+        val rate: Double,
         val title: String
     )
 }

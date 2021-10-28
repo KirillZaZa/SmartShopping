@@ -15,9 +15,10 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
 import okio.ByteString.Companion.decodeBase64
 import java.lang.IllegalArgumentException
+import javax.inject.Inject
 
 
-class ProductViewModelImpl(
+class ProductViewModelImpl @Inject constructor(
     private val productIdUseCase: ProductIdUseCaseImpl,
     private val productBarCodeUseCase: ProductBarCodeUseCaseImpl,
     private val barcode: String? = null,

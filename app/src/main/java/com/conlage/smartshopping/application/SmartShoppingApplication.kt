@@ -18,6 +18,8 @@ class SmartShoppingApplication : Application() {
             .builder()
             .application(this)
             .build()
+
+
     }
 
 }

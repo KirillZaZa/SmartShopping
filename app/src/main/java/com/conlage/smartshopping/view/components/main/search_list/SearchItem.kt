@@ -10,7 +10,5 @@ import com.conlage.smartshopping.model.data.local.db.entity.Product
  */
 @Composable
 fun SearchItem(){
-    Column(modifier = ) {
-        
-    }
+
 }

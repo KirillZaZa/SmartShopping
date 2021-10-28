@@ -1,5 +1,7 @@
 package com.conlage.smartshopping.viewmodel.impl
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.conlage.smartshopping.model.data.local.db.entity.Product
 import com.conlage.smartshopping.model.data.local.db.entity.ProductList
@@ -16,17 +18,23 @@ import com.conlage.smartshopping.viewmodel.state.MainScreenState
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.PermissionState
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.*
+import java.lang.IllegalArgumentException
 import javax.inject.Inject
+
 
 class MainViewModelImpl @Inject constructor(
     private val deleteUseCase: ProductDeleteUseCaseImpl,
     private val saveUseCase: ProductSaveUseCaseImpl,
     private val productListUseCase: ProductListUseCaseImpl,
     private val productUpdateUseCase: ProductUpdateUseCaseImpl,
-    private val deleteJobs: HashMap<Int, Job> = HashMap()
 ) : BaseViewModel<MainScreenState>(MainScreenState()), MainViewModel {
 
+
+    private val deleteJobs: HashMap<Int, Job> = HashMap()
 
     //subscribe to data sources and observe the data
     init {
@@ -38,14 +46,14 @@ class MainViewModelImpl @Inject constructor(
     }
 
     override fun getProductList(): List<Product> {
-        var list: List<Product> = emptyList()
+        var list: List<Product> = mutableListOf()
 
         viewModelScope.launch(dispatcherMain + errHandler) {
             currentValue.isLoadingProducts = true
 
             list = when (val result = productListUseCase.getProductListFromDb()) {
                 is UseCaseResult.Response<List<Product>> -> result.value
-                else -> emptyList()
+                else -> mutableListOf()
             }
 
             currentValue.isLoadingProducts = false
@@ -206,5 +214,32 @@ class MainViewModelImpl @Inject constructor(
         }
     }
 
+
+    class MainViewModelFactory @AssistedInject constructor(
+        private val deleteUseCase: ProductDeleteUseCaseImpl,
+        private val saveUseCase: ProductSaveUseCaseImpl,
+        private val productListUseCase: ProductListUseCaseImpl,
+        private val productUpdateUseCase: ProductUpdateUseCaseImpl,
+    ) : ViewModelProvider.Factory {
+
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(MainViewModelImpl::class.java))
+                return MainViewModelImpl(
+                    deleteUseCase,
+                    saveUseCase,
+                    productListUseCase,
+                    productUpdateUseCase,
+                ) as T
+            throw IllegalArgumentException("Unknown ViewModel class")
+        }
+
+        @AssistedFactory
+        interface Factory {
+
+            fun create(): MainViewModelFactory
+
+        }
+
+    }
 
 }

@@ -58,15 +58,20 @@ class ImageDownloaderImpl @Inject constructor(
 
     override suspend fun loadImageFromInternalStorage(image: String): LoadResult<Bitmap> {
         var loadResult: LoadResult<Bitmap>? = null
-        withContext(Dispatchers.IO){
-            val files = context.filesDir.listFiles()
+        try{
+            withContext(Dispatchers.IO){
+                val files = context.filesDir.listFiles()
 
-            files?.filter { file -> file.canRead() && file.isFile && file.name.equals("$image.jpg")
-            }?.map {
-                val imageBytes = it.readBytes()
-                loadResult = LoadResult.Success(BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size))
-            } ?: { loadResult = LoadResult.Failure() }
+                files?.filter { file -> file.canRead() && file.isFile && file.name.equals("$image.jpg")
+                }?.map {
+                    val imageBytes = it.readBytes()
+                    loadResult = LoadResult.Success(BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size))
+                } ?: { loadResult = LoadResult.Failure() }
+            }
+        }catch (e: Throwable){
+
         }
+
         return loadResult!!
     }
 

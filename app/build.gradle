@@ -64,11 +64,15 @@ dependencies {
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
 
+    implementation "androidx.compose.runtime:runtime:1.1.0-beta01"
+
     implementation "com.google.dagger:dagger:$daggerVer"
     implementation "com.google.dagger:dagger-android:$daggerVer"
     implementation "com.google.dagger:dagger-android-support:$daggerVer"
     kapt "com.google.dagger:dagger-compiler:$daggerVer"
     kapt "com.google.dagger:dagger-android-processor:$daggerVer"
+
+    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0-rc01"
 
 
     implementation(platform("com.squareup.okhttp3:okhttp-bom:4.9.2"))

@@ -1,26 +1,21 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.SmartShopping" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.SmartShopping" parent="Theme.AppCompat.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="statusBarBackground">@color/blue</item>
+        <item name="android:windowIsTranslucent">true</item>
+
         <item name="colorPrimary">@color/blue</item>
         <item name="colorPrimaryVariant">@color/blue</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/purple</item>
         <item name="colorSecondaryVariant">@color/purple</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
+        <item name="android:statusBarColor">@color/blue</item>
     </style>
 
-    <style name="Theme.SmartShopping.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+    <style name="SplashScreen" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:statusBarColor">@color/blue</item>
+        <item name="android:windowBackground">@drawable/splash_screen</item>
     </style>
 
-    <style name="Theme.SmartShopping.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="Theme.SmartShopping.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

@@ -1,10 +1,12 @@
 package com.conlage.smartshopping.view.screen
 
 import android.Manifest
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,8 +24,10 @@ import com.conlage.smartshopping.view.components.main.snackbar.SnackbarPermissio
 import com.conlage.smartshopping.view.components.main.warning.EmptyListWarning
 import com.conlage.smartshopping.view.navigation.Screen
 import com.conlage.smartshopping.viewmodel.impl.MainViewModelImpl
+import com.conlage.smartshopping.viewmodel.impl.ProductViewModelImpl
 import com.conlage.smartshopping.viewmodel.state.MainScreenState
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
 import kotlinx.coroutines.coroutineScope
@@ -40,21 +44,22 @@ fun TextMainHeader() {
     )
 }
 
-@ExperimentalPermissionsApi
 @Preview
 @Composable
 //navController
 //viewmodel
 fun MainScreen(
+    vm: MainViewModelImpl? = null,
     navController: NavController? = null,
 ) {
 
-    val msc = MainScreenState()
+    val screenState = remember{vm!!.currentValue}
+
     val context = LocalContext.current
 
+
+
     val scope = rememberCoroutineScope()
-
-
 
 
 //
@@ -72,36 +77,42 @@ fun MainScreen(
     ) {
         TextMainHeader()
 
-        if (msc.isSearchOpen) {
+        if (screenState.isSearchOpen) {
 
         }
 
-        if (msc.productList.isNullOrEmpty()) {
-            Spacer(modifier = Modifier.weight(1.0f))
-
+        if (screenState.productList.isNullOrEmpty()) {
+            Spacer(modifier = Modifier.weight(0.5f))
             EmptyListWarning()
-
-            Spacer(modifier = Modifier.weight(1.0f))
-        } else {
+            Spacer(modifier = Modifier.weight(0.5f))
+        }
+        else {
             // product list
         }
 
 
-        ButtonNewProduct(msc.fabState,
+        ButtonNewProduct(screenState.fabState,
             onClick = {
                 // vm handle fabState
             },
             onFabItemClick = {
                 when (it) {
                     is FabItem.CameraFabItem ->{
-                        if(msc.isCameraGranted){
+                        if(screenState.isCameraGranted){
                             navController!!
                                 .navigate(Screen.ScannerScreen.route)
+                        }else{
+                            // handle show snackbar
                         }
                     }
 
                     is FabItem.AddFabItem -> {
                         //handle isSearch = true
+                        if(screenState.isStorageGranted){
+                            //open search
+                        }else{
+                            // handle show snackbar
+                        }
                     }
                 }
             })
@@ -119,5 +130,7 @@ fun MainScreen(
     }
 
 }
+
+
 
 
