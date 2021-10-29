@@ -1,11 +1,11 @@
 package com.conlage.smartshopping.view.screen
 
-import android.Manifest
-import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -20,18 +21,11 @@ import androidx.navigation.NavController
 import com.conlage.smartshopping.ui.theme.BackgroundColor
 import com.conlage.smartshopping.view.components.main.floating_button.ButtonNewProduct
 import com.conlage.smartshopping.view.components.main.floating_button.FabItem
+import com.conlage.smartshopping.view.components.main.search.SearchProductComp
 import com.conlage.smartshopping.view.components.main.snackbar.SnackbarPermission
 import com.conlage.smartshopping.view.components.main.warning.EmptyListWarning
 import com.conlage.smartshopping.view.navigation.Screen
 import com.conlage.smartshopping.viewmodel.impl.MainViewModelImpl
-import com.conlage.smartshopping.viewmodel.impl.ProductViewModelImpl
-import com.conlage.smartshopping.viewmodel.state.MainScreenState
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.PermissionState
-import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.google.accompanist.permissions.rememberPermissionState
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 
 
 @Composable
@@ -44,22 +38,19 @@ fun TextMainHeader() {
     )
 }
 
-@Preview
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-//navController
-//viewmodel
+
 fun MainScreen(
-    vm: MainViewModelImpl? = null,
-    navController: NavController? = null,
+    vm: MainViewModelImpl,
+    navController: NavController,
 ) {
 
-    val screenState = remember{vm!!.currentValue}
+    val screenState = remember { vm.state }
+
+    Log.e("Main", "MainScreen: $screenState")
 
     val context = LocalContext.current
-
-
-
-    val scope = rememberCoroutineScope()
 
 
 //
@@ -77,40 +68,50 @@ fun MainScreen(
     ) {
         TextMainHeader()
 
-        if (screenState.isSearchOpen) {
+        SearchProductComp(
+            searchQuery = vm.currentValue.searchQuery,
+            isLoading = vm.currentValue.isLoadingSearchProducts,
+            searchList = vm.currentValue.searchList,
+            onQueryChange = { vm.handleSearchQuery(it)},
+            onCloseClick = { vm.handleSearchOpen(isOpen = false) },
+            onProductClick = { /*TODO*/ },
+            incClick = { /*TODO*/ },
+            decClick = {}
+        )
+//
+//        if (screenState.isSearchOpen) {
+//
+//        }
 
-        }
-
-        if (screenState.productList.isNullOrEmpty()) {
+        if (screenState.value.productList.isNullOrEmpty()) {
             Spacer(modifier = Modifier.weight(0.5f))
             EmptyListWarning()
             Spacer(modifier = Modifier.weight(0.5f))
-        }
-        else {
+        } else {
             // product list
         }
 
 
-        ButtonNewProduct(screenState.fabState,
+        ButtonNewProduct(screenState.value.fabState,
             onClick = {
                 // vm handle fabState
             },
             onFabItemClick = {
                 when (it) {
-                    is FabItem.CameraFabItem ->{
-                        if(screenState.isCameraGranted){
+                    is FabItem.CameraFabItem -> {
+                        if (screenState.value.isCameraGranted) {
                             navController!!
                                 .navigate(Screen.ScannerScreen.route)
-                        }else{
+                        } else {
                             // handle show snackbar
                         }
                     }
 
                     is FabItem.AddFabItem -> {
                         //handle isSearch = true
-                        if(screenState.isStorageGranted){
+                        if (screenState.value.isStorageGranted) {
                             //open search
-                        }else{
+                        } else {
                             // handle show snackbar
                         }
                     }
@@ -124,7 +125,8 @@ fun MainScreen(
          *
          */
 
-        SnackbarPermission()
+
+//        SnackbarPermission()
 
 
     }

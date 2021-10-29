@@ -79,7 +79,11 @@ fun CameraFab(onFabItemClick: () -> Unit) {
         backgroundColor = Color.Blue,
         shape = RoundedCornerShape(20)
     ) {
-
+        Icon(
+            painter = painterResource(id = R.drawable.ic_scanner_icon),
+            contentDescription = null,
+            tint = Color.White
+        )
     }
 }
 
@@ -93,6 +97,10 @@ fun AddFab(onFabItemClick: () -> Unit) {
         backgroundColor = Color.Blue,
         shape = RoundedCornerShape(20)
     ) {
-
+        Icon(
+            painter = painterResource(id = R.drawable.ic_baseline_add_24),
+            contentDescription = null,
+            tint = Color.White
+        )
     }
 }

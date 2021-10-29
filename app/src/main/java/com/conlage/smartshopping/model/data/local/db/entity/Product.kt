@@ -27,7 +27,7 @@ data class Product(
     var title: String,
 
     @ColumnInfo(name = "product_quantity")
-    var quantity: Int = 1,
+    var quantity: Int = 0,
 
 
 ){
@@ -36,4 +36,5 @@ data class Product(
 
     @Ignore
     var bitmap: Bitmap? = null
+
 }

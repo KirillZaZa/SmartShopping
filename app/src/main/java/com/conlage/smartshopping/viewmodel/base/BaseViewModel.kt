@@ -1,6 +1,7 @@
 package com.conlage.smartshopping.viewmodel.base
 
 import android.util.Log
+import androidx.annotation.MainThread
 import androidx.annotation.UiThread
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
@@ -39,13 +40,12 @@ abstract class BaseViewModel<T>(
 
 
 
-    protected val state: MutableState<T> = mutableStateOf(
+   val state: MutableState<T> = mutableStateOf(
         value = initState
     )
 
     val currentValue
         get() = state.value
-
 
 
     @UiThread

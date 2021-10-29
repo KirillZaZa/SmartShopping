@@ -18,6 +18,7 @@
         android:allowBackup="true"
         android:fullBackupContent="true"
         android:icon="@drawable/ic_smart_shopping_icon"
+        android:usesCleartextTraffic="true"
         android:label="@string/app_name"
         android:roundIcon="@drawable/ic_smart_shopping_icon"
         android:supportsRtl="true"

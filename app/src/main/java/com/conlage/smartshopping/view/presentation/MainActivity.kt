@@ -14,6 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.conlage.smartshopping.application.appShoppingComponent
+import com.conlage.smartshopping.ui.theme.SmartShoppingTheme
 import com.conlage.smartshopping.view.navigation.ArgumentKeys
 import com.conlage.smartshopping.view.navigation.Screen
 import com.conlage.smartshopping.view.screen.MainScreen
@@ -50,21 +51,23 @@ class MainActivity : ComponentActivity() {
             //Permissions
             val navController = rememberNavController()
 
-
-            NavHost(
-                navController = navController,
-                startDestination = Screen.MainScreen.route
-            ) {
-
-
-                Main(navController)
-
-                Scanner(navController)
-
-                Product(navController)
+            SmartShoppingTheme {
+                NavHost(
+                    navController = navController,
+                    startDestination = Screen.MainScreen.route
+                ) {
 
 
+                    Main(navController)
+
+                    Scanner(navController)
+
+                    Product(navController)
+
+
+                }
             }
+
         }
     }
 

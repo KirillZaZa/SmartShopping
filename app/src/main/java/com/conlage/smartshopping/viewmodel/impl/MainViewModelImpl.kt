@@ -63,7 +63,7 @@ class MainViewModelImpl @Inject constructor(
     }
 
     override suspend fun getProductListFromNetwork(query: String): List<Product> =
-        when(val result = productListUseCase.getProductList(query, currentValue.currentPage)){
+        when (val result = productListUseCase.getProductList(query, currentValue.currentPage)) {
             is UseCaseResult.Response<ProductList> -> result.value.list
             else -> mutableListOf()
         }
@@ -90,68 +90,15 @@ class MainViewModelImpl @Inject constructor(
         }
     }
 
-
-    //delay 5000 and delete if true, if false -> stop delay and dont delete
-    override fun handleProductCheckBox(productIndex: Int) {
-        val product = currentValue.productList[productIndex]
-        product.wantBeDeleted = !product.wantBeDeleted
-
-        if(product.wantBeDeleted){
-            val job = viewModelScope.launch(dispatcherMain + errHandler) {
-                delay(5000)
-                deleteUseCase.deleteProductFromDb(product)
-                currentValue.productList.remove(product)
-            }
-            deleteJobs[productIndex] = job
-        }else{
-            val job = deleteJobs[productIndex] ?: return
-            if(job.isActive) job.cancel()
-        }
-    }
-
-    //handle search query and make request for product list, and update list
-    override fun handleSearchQuery(query: String) {
-        viewModelScope.launch(dispatcherMain + errHandler) {
-
-            if(query.length < 3) currentValue.searchList.clear()
-
-            updateState { it.copy(
-                searchQuery = query,
-                isLoadingSearchProducts = true
-            ) }
-
-            val list = getProductListFromNetwork(query)
-
-            updateState { it.copy(
-                isLoadingSearchProducts = false,
-                searchList = list as MutableList<Product>
-            ) }
-        }
-    }
-
-    //change current state for closing/opening search
-    override fun handleSearchOpen(isOpen: Boolean) {
-        updateState { it.copy(
-            isSearchOpen = isOpen
-        ) }
-    }
-
-    override fun handleFabState() {
-        if(currentValue.fabState == FabStateEnum.COLLAPSED){
-            updateState { it.copy(
-                fabState = FabStateEnum.EXPANDED
-            ) }
-        }else updateState{ it.copy(fabState = FabStateEnum.COLLAPSED) }
-    }
-
-
     //dec quantity of product (if quantity == 0) -> delete item (handle delete product)
     override fun handleDecProduct(productIndex: Int) {
         viewModelScope.launch(dispatcherMain + errHandler) {
 
-            if(currentValue.productList[productIndex].quantity.dec() <= 0){
-                handleDecProduct(productIndex)
-            }else{
+
+            if (currentValue.productList[productIndex].quantity == 0) {
+                val product = currentValue.productList[productIndex]
+                handleDeleteProductById(product.id)
+            } else {
 
                 val product = currentValue.productList[productIndex]
 
@@ -161,6 +108,85 @@ class MainViewModelImpl @Inject constructor(
 
         }
     }
+
+
+    //delay 5000 and delete if true, if false -> stop delay and dont delete
+    override fun handleProductCheckBox(productIndex: Int) {
+        val product = currentValue.productList[productIndex]
+        product.wantBeDeleted = !product.wantBeDeleted
+
+        if (product.wantBeDeleted) {
+            val job = viewModelScope.launch(dispatcherMain + errHandler) {
+                delay(5000)
+                deleteUseCase.deleteProductFromDb(product)
+                currentValue.productList.remove(product)
+            }
+            deleteJobs[productIndex] = job
+        } else {
+            val job = deleteJobs[productIndex] ?: return
+            if (job.isActive) job.cancel()
+        }
+    }
+
+    //handle search query and make request for product list, and update list
+    override fun handleSearchQuery(query: String) {
+
+
+        viewModelScope.launch(dispatcherMain + errHandler) {
+
+
+            updateState {
+                it.copy(
+                    searchQuery = query,
+                    isSearchOpen = true,
+                )
+            }
+
+            if (query != currentValue.searchQuery) {
+                return@launch
+            }
+
+            if (query.length < 3) return@launch
+
+            updateState {
+                it.copy(
+                    searchQuery = query,
+                    isSearchOpen = true,
+                    isLoadingSearchProducts = true
+                )
+            }
+
+            val list = getProductListFromNetwork(query)
+
+            updateState {
+                it.copy(
+                    isLoadingSearchProducts = false,
+                    searchList = list as MutableList<Product>
+                )
+            }
+        }
+    }
+
+    //change current state for closing/opening search
+    override fun handleSearchOpen(isOpen: Boolean) {
+        updateState {
+            it.copy(
+                isSearchOpen = isOpen,
+                searchQuery = ""
+            )
+        }
+    }
+
+    override fun handleFabState() {
+        if (currentValue.fabState == FabStateEnum.COLLAPSED) {
+            updateState {
+                it.copy(
+                    fabState = FabStateEnum.EXPANDED
+                )
+            }
+        } else updateState { it.copy(fabState = FabStateEnum.COLLAPSED) }
+    }
+
 
     override fun handleCameraPermission(isGranted: Boolean) {
         updateState { it.copy(isCameraGranted = isGranted) }
@@ -172,13 +198,13 @@ class MainViewModelImpl @Inject constructor(
 
 
     override fun handleNewPage() {
-        if(currentValue.searchQuery == null) return
+        if (currentValue.searchQuery == null) return
         viewModelScope.launch(dispatcherMain + errHandler) {
 
             updateState { it.copy(currentPage = it.currentPage.inc()) }
             val newPageList = getProductListFromNetwork(currentValue.searchQuery!!)
 
-            with(currentValue){
+            with(currentValue) {
                 searchList.addAll(searchList.size, newPageList)
             }
 
@@ -186,7 +212,7 @@ class MainViewModelImpl @Inject constructor(
     }
 
     override fun handleSaveProduct(productId: Int) {
-        if(currentValue.productList.containsId(productId)) return
+        if (currentValue.productList.containsId(productId)) return
         viewModelScope.launch(dispatcherMain + errHandler) {
             val product = currentValue.searchList.getProductById(productId)
 
@@ -201,7 +227,7 @@ class MainViewModelImpl @Inject constructor(
     }
 
     override fun handleDeleteProductById(productId: Int) {
-        if(!currentValue.productList.containsId(productId)) return
+        if (!currentValue.productList.containsId(productId)) return
         viewModelScope.launch(dispatcherMain + errHandler) {
             val product = currentValue.productList.getProductById(productId)
             val index = currentValue.productList.indexOf(product)
