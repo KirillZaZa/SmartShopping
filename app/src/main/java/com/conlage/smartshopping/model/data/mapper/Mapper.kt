@@ -10,10 +10,10 @@ import com.conlage.smartshopping.model.data.network.dto.NetworkProductList
 fun NetworkProductList.ProductItem.toProduct() =
     Product(
         id = this.id,
-        rate = this.rate,
-        title = this.title,
-        image = this.image,
-        price = this.price
+        rate = this.rate ?: 0.0,
+        title = this.title ?: "Неизвестный товар",
+        image = this.image ?: "" ,
+        price = this.price ?: "нет цены"
     )
 
 fun List<NetworkProductList.ProductItem>.mapToProductList(): ProductList{

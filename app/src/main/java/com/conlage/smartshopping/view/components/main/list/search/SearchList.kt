@@ -1,8 +1,7 @@
 package com.conlage.smartshopping.view.components.main.list.search
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.gestures.FlingBehavior
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -20,29 +19,38 @@ import com.conlage.smartshopping.viewmodel.impl.MainViewModelImpl
 @ExperimentalMaterialApi
 @Composable
 fun SearchList(
-   searchList: List<Product>,
-   onProductClick: () -> Unit,
-   incClick: () -> Unit,
-   decClick: () -> Unit
+    searchList: List<Product>,
+    onProductClick: () -> Unit,
+    incClick: () -> Unit,
+    decClick: () -> Unit
 ) {
 
-    val listState = rememberLazyListState()
+    if(!searchList.isNullOrEmpty()){
+        val listState = rememberLazyListState()
+
+        Spacer(modifier = Modifier.height(8.dp))
 
 
-    LazyColumn(
-        state = listState,
-        modifier = Modifier.wrapContentSize(),
-        verticalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-        items(searchList) { product ->
-            SearchItem(
-                product = product,
-                onProductClick = onProductClick,
-                incClick = incClick,
-                decClick = decClick
-            )
+        LazyColumn(
+            state = listState,
+            modifier = Modifier
+                .padding(horizontal = 8.dp)
+                .wrapContentSize(),
+        ) {
+            items(searchList) { product ->
+                SearchItem(
+                    product = product,
+                    onProductClick = onProductClick,
+                    incClick = incClick,
+                    decClick = decClick
+                )
+            }
         }
+
+        Spacer(modifier = Modifier.height(24.dp))
     }
+
+
 
 
 }

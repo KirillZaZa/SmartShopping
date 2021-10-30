@@ -1,5 +1,6 @@
 package com.conlage.smartshopping.viewmodel.impl
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -34,6 +35,7 @@ class MainViewModelImpl @Inject constructor(
 ) : BaseViewModel<MainScreenState>(MainScreenState()), MainViewModel {
 
 
+    private val searchJobs: HashMap<Int, Job> = HashMap()
     private val deleteJobs: HashMap<Int, Job> = HashMap()
 
     //subscribe to data sources and observe the data
@@ -130,51 +132,73 @@ class MainViewModelImpl @Inject constructor(
 
     //handle search query and make request for product list, and update list
     override fun handleSearchQuery(query: String) {
-
-
-        viewModelScope.launch(dispatcherMain + errHandler) {
-
-
-            updateState {
-                it.copy(
-                    searchQuery = query,
-                    isSearchOpen = true,
-                )
-            }
-
-            if (query != currentValue.searchQuery) {
-                return@launch
-            }
-
-            if (query.length < 3) return@launch
-
-            updateState {
-                it.copy(
-                    searchQuery = query,
-                    isSearchOpen = true,
-                    isLoadingSearchProducts = true
-                )
-            }
-
-            val list = getProductListFromNetwork(query)
-
-            updateState {
-                it.copy(
-                    isLoadingSearchProducts = false,
-                    searchList = list as MutableList<Product>
-                )
-            }
+        searchJobs.forEach {
+            it.value.cancel()
         }
+
+        updateState {
+            it.copy(
+                searchQuery = query,
+                isLoadingSearchProducts = true
+            )
+        }
+
+
+
+        if (query.length > 3) {
+
+
+            val job = viewModelScope.launch(dispatcherMain + errHandler) {
+                delay(50)
+
+                currentValue.searchList.clear()
+                Log.d("Scope", "handleSearchQuery: $currentValue ")
+
+                updateState { it.copy(isLoadingSearchProducts = true) }
+
+                val list = getProductListFromNetwork(query)
+                if (list.isNullOrEmpty()) updateState {
+                    it.copy(
+                        isLoadingSearchProducts = false,
+                        isSearchError = true
+                    )
+                }else{
+                    updateState {
+                        it.copy(
+                            searchList = list as MutableList<Product>,
+                            isLoadingSearchProducts = false,
+                            isSearchError = false
+                        )
+                    }
+                }
+
+
+
+            }
+
+
+            val queryLength = currentValue.searchQuery.length
+            searchJobs[queryLength] = job
+
+        } else {
+            updateState { it.copy(isLoadingSearchProducts = false, isSearchError = false) }
+            if (currentValue.searchList.isNullOrEmpty()) return
+            else currentValue.searchList.clear()
+        }
+
+
     }
+
 
     //change current state for closing/opening search
     override fun handleSearchOpen(isOpen: Boolean) {
         updateState {
             it.copy(
                 isSearchOpen = isOpen,
-                searchQuery = ""
+                searchQuery = "",
             )
         }
+        currentValue.searchList.clear()
     }
 
     override fun handleFabState() {

@@ -8,6 +8,7 @@ data class MainScreenState(
     val searchList: MutableList<Product> = mutableListOf(),
     var searchQuery: String = "",
     var isSearchOpen: Boolean = false,
+    var isSearchError: Boolean = false,
     var isLoadingProducts: Boolean = false,
     var fabState: FabStateEnum = FabStateEnum.COLLAPSED,
     var isLoadingSearchProducts: Boolean = false,

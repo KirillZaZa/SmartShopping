@@ -10,7 +10,7 @@ import retrofit2.http.Query
 interface SmartShoppingService {
 
 
-    @GET("/search/{name}")
+    @GET("search/{name}")
     suspend fun getProductListByName(
         @Path("name") productName: String,
         @Query("page") page: Int

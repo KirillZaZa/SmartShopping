@@ -71,11 +71,12 @@ fun MainScreen(
         SearchProductComp(
             searchQuery = vm.currentValue.searchQuery,
             isLoading = vm.currentValue.isLoadingSearchProducts,
+            isSearchError = vm.currentValue.isSearchError,
             searchList = vm.currentValue.searchList,
             onQueryChange = { vm.handleSearchQuery(it)},
             onCloseClick = { vm.handleSearchOpen(isOpen = false) },
-            onProductClick = { /*TODO*/ },
-            incClick = { /*TODO*/ },
+            onProductClick = {  },
+            incClick = { },
             decClick = {}
         )
 //

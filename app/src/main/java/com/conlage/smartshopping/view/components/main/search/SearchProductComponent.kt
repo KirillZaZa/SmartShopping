@@ -3,11 +3,13 @@ package com.conlage.smartshopping.view.components.main.search
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -18,10 +20,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.widget.Guideline
 import com.conlage.smartshopping.R
 import com.conlage.smartshopping.model.data.local.db.entity.Product
 import com.conlage.smartshopping.ui.theme.Blue
 import com.conlage.smartshopping.view.components.main.list.search.SearchList
+import com.conlage.smartshopping.view.components.main.warning.EmptySearchWarning
 
 /**
  *
@@ -34,6 +38,7 @@ import com.conlage.smartshopping.view.components.main.list.search.SearchList
 fun SearchProductComp(
     searchQuery: String,
     isLoading: Boolean,
+    isSearchError: Boolean,
     searchList: List<Product>,
     onQueryChange: (String) -> Unit,
     onCloseClick: () -> Unit,
@@ -51,7 +56,9 @@ fun SearchProductComp(
             .wrapContentHeight()
             .fillMaxWidth()
             .padding(top = 48.dp)
-            .background(Color.White, shape = RoundedCornerShape(20)),
+            .shadow(elevation = 4.dp,shape = RoundedCornerShape(20.dp), clip = true)
+            .background(Color.White, shape = RoundedCornerShape(20.dp))
+            ,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         //search edit
@@ -68,8 +75,7 @@ fun SearchProductComp(
 
 
 
-
-        if (isLoading){
+        if (isLoading) {
             Spacer(modifier = Modifier.height(24.dp))
 
             CircularProgressIndicator(color = Blue)
@@ -77,26 +83,24 @@ fun SearchProductComp(
             Spacer(modifier = Modifier.height(24.dp))
 
 
+        }else if(isSearchError) {
+
+            Spacer(modifier = Modifier.height(36.dp))
+            EmptySearchWarning()
+            Spacer(modifier = Modifier.height(36.dp))
+
+        } else {
+
+            SearchList(
+                searchList = searchList,
+                onProductClick = onProductClick,
+                incClick = incClick,
+                decClick = decClick
+            )
         }
-        else {
-            if(!searchList.isNullOrEmpty()){
-                Spacer(modifier = Modifier.height(24.dp))
-
-                SearchList(
-                    searchList = searchList,
-                    onProductClick = onProductClick,
-                    incClick = incClick,
-                    decClick = decClick
-                )
-                Spacer(modifier = Modifier.height(24.dp))
-
-            }
-        }
-
-
-
     }
 }
+
 
 @Composable
 fun CloseSearchButton(focusManager: FocusManager, onCloseClick: () -> Unit) {
@@ -147,7 +151,9 @@ fun SearchField(
         ),
         placeholder = {
             Text(text = "Найти продукт", color = Color.LightGray)
-        }
+        },
+        keyboardActions = KeyboardActions(onPrevious = {})
+
 
     )
 }

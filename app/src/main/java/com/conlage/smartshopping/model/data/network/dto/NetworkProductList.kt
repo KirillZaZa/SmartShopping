@@ -5,9 +5,9 @@ data class NetworkProductList(
 ) {
     data class ProductItem(
         val id: Int,
-        val image: String,
-        val price: String,
-        val rate: Double,
-        val title: String
+        val image: String?,
+        val price: String?,
+        val rate: Double?,
+        val title: String?
     )
 }

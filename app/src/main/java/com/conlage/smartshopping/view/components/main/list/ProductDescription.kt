@@ -26,7 +26,6 @@ import com.conlage.smartshopping.ui.theme.Yellow
 fun ProductDescription(product: Product) {
 
 
-
     Row(verticalAlignment = Alignment.CenterVertically) {
 
         ProductImage(bitmap = product.bitmap)
@@ -34,18 +33,22 @@ fun ProductDescription(product: Product) {
         //Description
         Column(
             horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.Top,
-            modifier = Modifier.padding(4.dp)
+            modifier = Modifier.padding(2.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
-            //название
+
+            //name
             Text(
                 text = product.title,
                 maxLines = 2,
-                modifier = Modifier.width(172.dp),
+                modifier = Modifier.width(124.dp),
                 color = DarkGray,
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Medium,
+                fontSize = 13.sp
             )
-            //Оценка
+
+
+            //rate
             Row(
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -66,19 +69,27 @@ fun ProductDescription(product: Product) {
                     fontWeight = FontWeight.Light
                 )
 
+            }
+
+            //price
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(top = 2.dp),
+            ) {
+
                 Image(
-                    painter = painterResource(id = R.drawable.ic_divider_icon),
-                    contentDescription = "divider",
-                    modifier = Modifier
-                        .padding(2.dp)
-                        .size(3.dp)
+                    painter = painterResource(id = R.drawable.ic_price_icon),
+                    contentDescription = "ruble_price", modifier =
+                    Modifier.size(20.dp)
                 )
 
                 Text(
                     text = product.price,
-                    fontSize = 14.sp,
+                    fontSize = 12.sp,
                     color = DarkGray,
-                    fontWeight = FontWeight.Normal
+                    fontWeight = FontWeight.Normal,
+                    maxLines = 2,
                 )
             }
         }
@@ -95,8 +106,8 @@ fun ProductImage(bitmap: Bitmap?) {
             painter = painterResource(id = R.drawable.ic_product_standin_icon),
             contentDescription = null,
             modifier = Modifier
-                .height(72.dp)
-                .width(72.dp)
+                .height(88.dp)
+                .width(88.dp)
                 .padding(vertical = 4.dp)
                 .padding(horizontal = 4.dp)
                 .clip(RoundedCornerShape(20))
@@ -107,12 +118,12 @@ fun ProductImage(bitmap: Bitmap?) {
             bitmap = bitmap.asImageBitmap(),
             contentDescription = null,
             modifier = Modifier
-                .height(72.dp)
-                .width(72.dp)
+                .height(96.dp)
+                .width(96.dp)
                 .padding(vertical = 4.dp)
-                .padding(horizontal = 8.dp)
+                .padding(horizontal = 4.dp)
                 .clip(RoundedCornerShape(20)),
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.FillBounds
         )
     }
 

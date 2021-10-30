@@ -36,13 +36,14 @@ fun SearchItem(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),
-        shape = RoundedCornerShape(20)
+        shape = RoundedCornerShape(20),
+        elevation = 0.dp
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             ProductDescription(product)
 
             Spacer(modifier = Modifier.weight(1f))
-            if (product.quantity == 0) {
+            if (product.quantity != 0) {
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
