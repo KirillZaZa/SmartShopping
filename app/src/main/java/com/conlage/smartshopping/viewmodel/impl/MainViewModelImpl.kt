@@ -149,7 +149,7 @@ class MainViewModelImpl @Inject constructor(
 
 
             val job = viewModelScope.launch(dispatcherMain + errHandler) {
-                delay(50)
+                delay(100)
 
                 currentValue.searchList.clear()
                 Log.d("Scope", "handleSearchQuery: $currentValue ")
