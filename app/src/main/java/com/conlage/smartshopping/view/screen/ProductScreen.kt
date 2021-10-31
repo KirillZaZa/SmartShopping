@@ -9,6 +9,10 @@ import com.conlage.smartshopping.viewmodel.impl.ProductViewModelImpl
 @Composable
 //navController
 //viewmodel
-fun ProductScreen(navController: NavController? = null) {
+fun ProductScreen(
+    navController: NavController? = null
+) {
+
+    
 
 }

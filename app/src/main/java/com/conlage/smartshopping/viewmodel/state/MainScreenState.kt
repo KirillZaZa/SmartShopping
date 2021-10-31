@@ -5,7 +5,7 @@ import com.conlage.smartshopping.view.components.main.floating_button.FabStateEn
 
 data class MainScreenState(
     val productList: MutableList<Product> = mutableListOf(),
-    val searchList: MutableList<Product> = mutableListOf(),
+    var searchList: MutableList<Product> = mutableListOf(),
     var searchQuery: String = "",
     var isSearchOpen: Boolean = false,
     var isSearchError: Boolean = false,

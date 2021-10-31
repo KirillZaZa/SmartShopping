@@ -12,22 +12,22 @@ data class Product(
 
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "product_id")
-    var id: Int,
+    val id: Int,
 
     @ColumnInfo(name = "product_image")
-    var image: String, // img path
+    val image: String, // img path
 
     @ColumnInfo(name = "product_price")
-    var price: String,
+    val price: String,
 
     @ColumnInfo(name = "product_rate")
-    var rate: Double,
+    val rate: Double,
 
     @ColumnInfo(name = "product_title")
-    var title: String,
+    val title: String,
 
     @ColumnInfo(name = "product_quantity")
-    var quantity: Int = 0,
+    val quantity: Int = 0,
 
 
 ){
@@ -35,6 +35,29 @@ data class Product(
     var wantBeDeleted: Boolean = false
 
     @Ignore
+    var bitmap: Bitmap? = null
+
+}
+
+
+data class ProductState(
+
+    var id: Int,
+
+    var image: String, // img path
+
+    var price: String,
+
+    var rate: Double,
+
+    var title: String,
+
+    var quantity: Int = 0,
+
+
+    ){
+    var wantBeDeleted: Boolean = false
+
     var bitmap: Bitmap? = null
 
 }

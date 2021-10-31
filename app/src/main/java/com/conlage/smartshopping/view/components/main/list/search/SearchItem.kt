@@ -35,7 +35,7 @@ fun SearchItem(
         backgroundColor = LightBlue,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(vertical = 4.dp),
         shape = RoundedCornerShape(20),
         elevation = 0.dp
     ) {

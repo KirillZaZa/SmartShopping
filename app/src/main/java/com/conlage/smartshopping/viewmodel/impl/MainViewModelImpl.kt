@@ -80,29 +80,59 @@ class MainViewModelImpl @Inject constructor(
     }
 
     // inc quantity of product in current list and update db
+    /**
+     * FINISHED
+     *
+     */
     override fun handleIncProduct(productIndex: Int) {
+
         viewModelScope.launch(dispatcherMain + errHandler) {
+            val currentList = currentValue.searchList
+            val replacedList = currentList.mapIndexed { i, product ->
+                if(productIndex == i){
+                    val newQuantity = product.quantity + 1
+                    val newProduct = product.copy(quantity = newQuantity)
+                    newProduct.bitmap = product.bitmap
+                    newProduct
+                }else product
+            }
+            updateState { it.copy(searchList = replacedList as MutableList<Product>) }
 
-            currentValue.productList[productIndex].quantity.inc()
+            val product = currentValue.searchList[productIndex]
 
-            val product = currentValue.productList[productIndex]
-
-            productUpdateUseCase.updateProductInDb(product)
+            saveUseCase.saveProductInDb(product)
 
         }
     }
 
     //dec quantity of product (if quantity == 0) -> delete item (handle delete product)
+    /**
+     * FINISHED
+     *
+     */
     override fun handleDecProduct(productIndex: Int) {
+
         viewModelScope.launch(dispatcherMain + errHandler) {
 
+            if (currentValue.searchList[productIndex].quantity > 0) {
+                val currentList = currentValue.searchList
+                val replacedList = currentList.mapIndexed { i, product ->
+                    if(productIndex == i){
+                        val newQuantity = product.quantity - 1
+                        val newProduct = product.copy(quantity = newQuantity)
+                        newProduct.bitmap = product.bitmap
+                        newProduct
+                    }else product
+                }
+                updateState { it.copy(searchList = replacedList as MutableList<Product>) }
+            }
 
-            if (currentValue.productList[productIndex].quantity == 0) {
-                val product = currentValue.productList[productIndex]
+            if (currentValue.searchList[productIndex].quantity == 0) {
+                val product = currentValue.searchList[productIndex]
                 handleDeleteProductById(product.id)
             } else {
 
-                val product = currentValue.productList[productIndex]
+                val product = currentValue.searchList[productIndex]
 
                 productUpdateUseCase.updateProductInDb(product)
 
@@ -131,7 +161,12 @@ class MainViewModelImpl @Inject constructor(
     }
 
     //handle search query and make request for product list, and update list
+    /**
+     * FINISHED
+     *
+     */
     override fun handleSearchQuery(query: String) {
+        Log.e("Search Query", "handleSearchQuery: $query", )
         searchJobs.forEach {
             it.value.cancel()
         }
@@ -139,13 +174,14 @@ class MainViewModelImpl @Inject constructor(
         updateState {
             it.copy(
                 searchQuery = query,
+                isSearchOpen = true,
                 isLoadingSearchProducts = true
             )
         }
 
 
 
-        if (query.length > 3) {
+        if (query.length > 2) {
 
 
             val job = viewModelScope.launch(dispatcherMain + errHandler) {
@@ -162,7 +198,7 @@ class MainViewModelImpl @Inject constructor(
                         isLoadingSearchProducts = false,
                         isSearchError = true
                     )
-                }else{
+                } else {
                     updateState {
                         it.copy(
                             searchList = list as MutableList<Product>,
@@ -171,7 +207,6 @@ class MainViewModelImpl @Inject constructor(
                         )
                     }
                 }
-
 
 
             }
@@ -191,6 +226,10 @@ class MainViewModelImpl @Inject constructor(
 
 
     //change current state for closing/opening search
+    /**
+     * FINISHED
+     *
+     */
     override fun handleSearchOpen(isOpen: Boolean) {
         updateState {
             it.copy(

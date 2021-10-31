@@ -73,12 +73,16 @@ fun MainScreen(
             isLoading = vm.currentValue.isLoadingSearchProducts,
             isSearchError = vm.currentValue.isSearchError,
             searchList = vm.currentValue.searchList,
-            onQueryChange = { vm.handleSearchQuery(it)},
+            onQueryChange = { vm.handleSearchQuery(it) },
             onCloseClick = { vm.handleSearchOpen(isOpen = false) },
-            onProductClick = {  },
-            incClick = { },
-            decClick = {}
+            onProductClick = {
+                val productId = vm.currentValue.searchList[it].id
+                navController.navigate(Screen.ProductScreen.withArgs("$productId"))
+            },
+            incClick = { vm.handleIncProduct(it) },
+            decClick = { vm.handleDecProduct(it) }
         )
+
 //
 //        if (screenState.isSearchOpen) {
 //

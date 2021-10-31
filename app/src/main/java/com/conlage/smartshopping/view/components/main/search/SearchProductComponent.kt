@@ -1,5 +1,6 @@
 package com.conlage.smartshopping.view.components.main.search
 
+import android.widget.Space
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,10 +21,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.widget.Guideline
 import com.conlage.smartshopping.R
 import com.conlage.smartshopping.model.data.local.db.entity.Product
 import com.conlage.smartshopping.ui.theme.Blue
+import com.conlage.smartshopping.ui.theme.DarkGray
+import com.conlage.smartshopping.ui.theme.LightGray
 import com.conlage.smartshopping.view.components.main.list.search.SearchList
 import com.conlage.smartshopping.view.components.main.warning.EmptySearchWarning
 
@@ -42,9 +46,9 @@ fun SearchProductComp(
     searchList: List<Product>,
     onQueryChange: (String) -> Unit,
     onCloseClick: () -> Unit,
-    onProductClick: () -> Unit,
-    incClick: () -> Unit,
-    decClick: () -> Unit
+    onProductClick: (Int) -> Unit,
+    incClick: (Int) -> Unit,
+    decClick: (Int) -> Unit
 ) {
 
     val focusRequester = remember { FocusRequester() }
@@ -54,11 +58,11 @@ fun SearchProductComp(
     Column(
         modifier = Modifier
             .wrapContentHeight()
+            .padding(bottom = 48.dp)
             .fillMaxWidth()
             .padding(top = 48.dp)
-            .shadow(elevation = 4.dp,shape = RoundedCornerShape(20.dp), clip = true)
-            .background(Color.White, shape = RoundedCornerShape(20.dp))
-            ,
+            .shadow(elevation = 4.dp, shape = RoundedCornerShape(20.dp), clip = true)
+            .background(Color.White, shape = RoundedCornerShape(20.dp)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         //search edit
@@ -72,6 +76,7 @@ fun SearchProductComp(
             Spacer(modifier = Modifier.weight(1f))
             CloseSearchButton(focusManager, onCloseClick)
         }
+
 
 
 
@@ -89,7 +94,7 @@ fun SearchProductComp(
             EmptySearchWarning()
             Spacer(modifier = Modifier.height(36.dp))
 
-        } else {
+        } else if(!searchList.isNullOrEmpty()){
 
             SearchList(
                 searchList = searchList,
@@ -97,8 +102,25 @@ fun SearchProductComp(
                 incClick = incClick,
                 decClick = decClick
             )
+
+
+
+
+            Text(
+                text = "Нажмите на товар, чтобы увидеть подробности",
+                color = LightGray,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Medium
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+
+
         }
     }
+
+
 }
 
 

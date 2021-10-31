@@ -27,12 +27,15 @@ class ImageDownloaderImpl @Inject constructor(
 
             val request = ImageRequest.Builder(context.applicationContext)
                 .data(url)
-                .allowHardware(false)
+                .allowHardware(true)
+                .size(150,150)
                 .build()
 
             val result = (loader.execute(request) as SuccessResult).drawable
 
             val bitmap = (result as BitmapDrawable).bitmap
+
+
 
             LoadResult.Success(bitmap)
         } catch (e: CancellationException) {
@@ -47,7 +50,7 @@ class ImageDownloaderImpl @Inject constructor(
     ) {
         try{
             context.openFileOutput("$image.jpg", Context.MODE_PRIVATE).use {stream->
-                if(!bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)){
+                if(!bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream)){
                     throw IOException()
                 }
             }
