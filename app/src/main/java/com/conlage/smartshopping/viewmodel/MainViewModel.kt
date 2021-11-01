@@ -7,11 +7,13 @@ import com.google.accompanist.permissions.PermissionState
 
 interface MainViewModel {
 
+    fun handleIncAddedProduct(product: Product)
+
+    fun handleDecAddedProduct(product: Product)
+
     fun getProductList(): List<Product>
 
-    fun handlePlusButton(newProduct: Product)
-
-    fun handleIncProduct(productIndex: Int)
+    fun handleIncSearchItem(productIndex: Int, callback:(product: Product) -> Unit)
 
     fun handleProductCheckBox(productIndex: Int)
 
@@ -19,9 +21,7 @@ interface MainViewModel {
 
     fun handleSearchOpen(isOpen: Boolean)
 
-    fun handleFabState()
-
-    fun handleDecProduct(productIndex: Int)
+    fun handleDecSearchItem(productIndex: Int, callback:(product: Product) -> Unit)
 
     fun handleCameraPermission(isGranted: Boolean)
 

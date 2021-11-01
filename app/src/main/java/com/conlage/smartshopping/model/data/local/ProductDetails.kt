@@ -16,7 +16,8 @@ data class ProductDetails(
     val rate_details: NetworkProduct.Response.RateDetails,
     val research_document: String,
     val title: String,
-    var barcodeImg: Bitmap? = null
+    var barcodeImg: Bitmap? = null,
+    var bitmap: Bitmap? = null
 ){
 
 }

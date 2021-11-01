@@ -1,6 +1,7 @@
 package com.conlage.smartshopping.viewmodel.impl
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -8,7 +9,6 @@ import com.conlage.smartshopping.model.data.local.db.entity.Product
 import com.conlage.smartshopping.model.data.local.db.entity.ProductList
 import com.conlage.smartshopping.model.data.usecase.impl.*
 import com.conlage.smartshopping.model.data.usecase.wrapper.UseCaseResult
-import com.conlage.smartshopping.view.components.main.floating_button.FabStateEnum
 import com.conlage.smartshopping.viewmodel.MainViewModel
 import com.conlage.smartshopping.viewmodel.base.BaseViewModel
 import com.conlage.smartshopping.viewmodel.events.DeleteEvent
@@ -16,10 +16,6 @@ import com.conlage.smartshopping.viewmodel.events.SaveEvent
 import com.conlage.smartshopping.viewmodel.extension.containsId
 import com.conlage.smartshopping.viewmodel.extension.getProductById
 import com.conlage.smartshopping.viewmodel.state.MainScreenState
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.MultiplePermissionsState
-import com.google.accompanist.permissions.PermissionState
-import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.*
@@ -34,18 +30,16 @@ class MainViewModelImpl @Inject constructor(
     private val productUpdateUseCase: ProductUpdateUseCaseImpl,
 ) : BaseViewModel<MainScreenState>(MainScreenState()), MainViewModel {
 
+    val productListState: MutableList<Product> = mutableStateListOf()
 
     private val searchJobs: HashMap<Int, Job> = HashMap()
     private val deleteJobs: HashMap<Int, Job> = HashMap()
 
     //subscribe to data sources and observe the data
     init {
-        subscribeOnDataSource(getProductList()) { list, state ->
-            state.copy(
-                productList = list as MutableList<Product>
-            )
-        }
+        productListState.addAll(getProductList())
     }
+
 
     override fun getProductList(): List<Product> {
         var list: List<Product> = mutableListOf()
@@ -71,32 +65,67 @@ class MainViewModelImpl @Inject constructor(
         }
 
 
-    //add current product to list and db
-    override fun handlePlusButton(newProduct: Product) {
+
+
+    override fun handleIncAddedProduct(product: Product) {
         viewModelScope.launch(dispatcherMain + errHandler) {
-            currentValue.productList.add(newProduct)
-            saveUseCase.saveProductInDb(newProduct)
+            if(productListState.containsId(product.id) && productListState.isNotEmpty()){
+                val oldProduct = productListState.getProductById(product.id)
+                val index = productListState.indexOf(oldProduct)
+
+                val newProduct = oldProduct.copy(quantity = oldProduct.quantity + 1)
+                newProduct.bitmap = product.bitmap
+                productListState[index] = newProduct
+            }else{
+                productListState.add(0, product)
+            }
         }
+
     }
 
-    // inc quantity of product in current list and update db
-    /**
-     * FINISHED
-     *
-     */
-    override fun handleIncProduct(productIndex: Int) {
+    override fun handleDecAddedProduct(product: Product) {
+        viewModelScope.launch(dispatcherMain + errHandler) {
+            if(productListState.containsId(product.id) && productListState.isNotEmpty()){
+                val oldProduct = productListState.getProductById(product.id)
+                val index = productListState.indexOf(oldProduct)
 
+                if(oldProduct.quantity > 1){
+                    val newProduct = oldProduct.copy(quantity = oldProduct.quantity - 1)
+                    newProduct.bitmap = product.bitmap
+                    productListState[index] = newProduct
+                }else productListState.removeAt(index)
+            }
+        }
+
+    }
+
+
+    override fun handleIncSearchItem(productIndex: Int, callback: (product: Product) -> Unit) {
         viewModelScope.launch(dispatcherMain + errHandler) {
             val currentList = currentValue.searchList
+
             val replacedList = currentList.mapIndexed { i, product ->
                 if(productIndex == i){
+
                     val newQuantity = product.quantity + 1
                     val newProduct = product.copy(quantity = newQuantity)
+
                     newProduct.bitmap = product.bitmap
+
+                    callback(newProduct)
+
                     newProduct
-                }else product
+                }else {
+                    product
+                }
             }
-            updateState { it.copy(searchList = replacedList as MutableList<Product>) }
+
+            updateState { it.copy(
+                searchList = replacedList as MutableList<Product>,
+            ) }
+
+
+
 
             val product = currentValue.searchList[productIndex]
 
@@ -105,22 +134,23 @@ class MainViewModelImpl @Inject constructor(
         }
     }
 
-    //dec quantity of product (if quantity == 0) -> delete item (handle delete product)
-    /**
-     * FINISHED
-     *
-     */
-    override fun handleDecProduct(productIndex: Int) {
+    override fun handleDecSearchItem(productIndex: Int, callback: (product: Product) -> Unit) {
 
         viewModelScope.launch(dispatcherMain + errHandler) {
 
             if (currentValue.searchList[productIndex].quantity > 0) {
                 val currentList = currentValue.searchList
+
                 val replacedList = currentList.mapIndexed { i, product ->
                     if(productIndex == i){
+
                         val newQuantity = product.quantity - 1
                         val newProduct = product.copy(quantity = newQuantity)
+
                         newProduct.bitmap = product.bitmap
+
+                        callback(newProduct)
+
                         newProduct
                     }else product
                 }
@@ -142,7 +172,6 @@ class MainViewModelImpl @Inject constructor(
     }
 
 
-    //delay 5000 and delete if true, if false -> stop delay and dont delete
     override fun handleProductCheckBox(productIndex: Int) {
         val product = currentValue.productList[productIndex]
         product.wantBeDeleted = !product.wantBeDeleted
@@ -160,11 +189,7 @@ class MainViewModelImpl @Inject constructor(
         }
     }
 
-    //handle search query and make request for product list, and update list
-    /**
-     * FINISHED
-     *
-     */
+
     override fun handleSearchQuery(query: String) {
         Log.e("Search Query", "handleSearchQuery: $query", )
         searchJobs.forEach {
@@ -225,29 +250,20 @@ class MainViewModelImpl @Inject constructor(
     }
 
 
-    //change current state for closing/opening search
-    /**
-     * FINISHED
-     *
-     */
     override fun handleSearchOpen(isOpen: Boolean) {
+        if(!isOpen){
+            searchJobs.forEach { job ->
+                job.value.cancel()
+            }
+        }
         updateState {
             it.copy(
                 isSearchOpen = isOpen,
                 searchQuery = "",
+                isSearchError = false
             )
         }
         currentValue.searchList.clear()
-    }
-
-    override fun handleFabState() {
-        if (currentValue.fabState == FabStateEnum.COLLAPSED) {
-            updateState {
-                it.copy(
-                    fabState = FabStateEnum.EXPANDED
-                )
-            }
-        } else updateState { it.copy(fabState = FabStateEnum.COLLAPSED) }
     }
 
 
@@ -261,11 +277,11 @@ class MainViewModelImpl @Inject constructor(
 
 
     override fun handleNewPage() {
-        if (currentValue.searchQuery == null) return
         viewModelScope.launch(dispatcherMain + errHandler) {
 
             updateState { it.copy(currentPage = it.currentPage.inc()) }
-            val newPageList = getProductListFromNetwork(currentValue.searchQuery!!)
+
+            val newPageList = getProductListFromNetwork(currentValue.searchQuery)
 
             with(currentValue) {
                 searchList.addAll(searchList.size, newPageList)

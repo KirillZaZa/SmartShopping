@@ -37,27 +37,6 @@ data class Product(
     @Ignore
     var bitmap: Bitmap? = null
 
-}
 
-
-data class ProductState(
-
-    var id: Int,
-
-    var image: String, // img path
-
-    var price: String,
-
-    var rate: Double,
-
-    var title: String,
-
-    var quantity: Int = 0,
-
-
-    ){
-    var wantBeDeleted: Boolean = false
-
-    var bitmap: Bitmap? = null
 
 }

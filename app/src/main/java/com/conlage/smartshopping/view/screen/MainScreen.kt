@@ -5,24 +5,21 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.conlage.smartshopping.ui.theme.BackgroundColor
-import com.conlage.smartshopping.view.components.main.floating_button.ButtonNewProduct
-import com.conlage.smartshopping.view.components.main.floating_button.FabItem
+import com.conlage.smartshopping.view.components.main.fab.ButtonScanner
+import com.conlage.smartshopping.view.components.main.list.added.AddedListProduct
 import com.conlage.smartshopping.view.components.main.search.SearchProductComp
-import com.conlage.smartshopping.view.components.main.snackbar.SnackbarPermission
 import com.conlage.smartshopping.view.components.main.warning.EmptyListWarning
 import com.conlage.smartshopping.view.navigation.Screen
 import com.conlage.smartshopping.viewmodel.impl.MainViewModelImpl
@@ -46,83 +43,89 @@ fun MainScreen(
     navController: NavController,
 ) {
 
+    val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+
     val screenState = remember { vm.state }
+    val screen = screenState.value
+
+    val productListState = remember { vm.productListState }
 
     Log.e("Main", "MainScreen: $screenState")
 
     val context = LocalContext.current
 
-
+    //migrate to constraint layout
 //
 //    if(args.id != null){
 //        handleIdArg()
 //    }
-
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(BackgroundColor)
             .padding(horizontal = 20.dp)
             .padding(top = 36.dp),
-        horizontalAlignment = Alignment.Start,
+        contentAlignment = Alignment.BottomEnd
     ) {
-        TextMainHeader()
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.Start,
+        ) {
 
-        SearchProductComp(
-            searchQuery = vm.currentValue.searchQuery,
-            isLoading = vm.currentValue.isLoadingSearchProducts,
-            isSearchError = vm.currentValue.isSearchError,
-            searchList = vm.currentValue.searchList,
-            onQueryChange = { vm.handleSearchQuery(it) },
-            onCloseClick = { vm.handleSearchOpen(isOpen = false) },
-            onProductClick = {
-                val productId = vm.currentValue.searchList[it].id
-                navController.navigate(Screen.ProductScreen.withArgs("$productId"))
-            },
-            incClick = { vm.handleIncProduct(it) },
-            decClick = { vm.handleDecProduct(it) }
-        )
+            TextMainHeader()
 
-//
-//        if (screenState.isSearchOpen) {
-//
-//        }
+            SearchProductComp(
+                searchQuery = screen.searchQuery,
+                isLoading = screen.isLoadingSearchProducts,
+                isSearchError = screen.isSearchError,
+                searchList = screen.searchList,
+                onQueryChange = { vm.handleSearchQuery(it) },
+                onCloseClick = { vm.handleSearchOpen(isOpen = false) },
+                onProductClick = {
+                    val productId = screen.searchList[it].id
+                    navController.navigate(Screen.ProductScreen.withArgs("$productId"))
+                },
+                incClick = {
+                    vm.handleIncSearchItem(it) { product ->
+                        vm.handleIncAddedProduct(product)
+                    }
+                },
+                decClick = {
+                    vm.handleDecSearchItem(it) { product ->
+                        vm.handleDecAddedProduct(product)
+                    }
+                },
+                onAddTextClick = {},
+                focusRequester = focusRequester,
+                focusManager = focusManager
+            )
 
-        if (screenState.value.productList.isNullOrEmpty()) {
-            Spacer(modifier = Modifier.weight(0.5f))
-            EmptyListWarning()
-            Spacer(modifier = Modifier.weight(0.5f))
-        } else {
-            // product list
+
+
+            if (productListState.isNullOrEmpty()) {
+                Spacer(modifier = Modifier.weight(0.5f))
+                EmptyListWarning()
+                Spacer(modifier = Modifier.weight(1f))
+            } else {
+                AddedListProduct(
+                    productList = productListState,
+                    onProductClick = {
+                        /* navigate to product page
+                        *  if product have id
+                        *  else show snackbar that product does not exist
+                        * */
+                    }
+                )
+            }
+
+
+
         }
-
-
-        ButtonNewProduct(screenState.value.fabState,
-            onClick = {
-                // vm handle fabState
-            },
-            onFabItemClick = {
-                when (it) {
-                    is FabItem.CameraFabItem -> {
-                        if (screenState.value.isCameraGranted) {
-                            navController!!
-                                .navigate(Screen.ScannerScreen.route)
-                        } else {
-                            // handle show snackbar
-                        }
-                    }
-
-                    is FabItem.AddFabItem -> {
-                        //handle isSearch = true
-                        if (screenState.value.isStorageGranted) {
-                            //open search
-                        } else {
-                            // handle show snackbar
-                        }
-                    }
-                }
-            })
-
+        if (!screen.isSearchOpen) {
+            ButtonScanner(onClick = {})
+        }
 
         /**
          * if isCameraGranted = false , and event is PermissionEvent
@@ -130,11 +133,10 @@ fun MainScreen(
          *
          */
 
-
-//        SnackbarPermission()
-
+        //        SnackbarPermission()
 
     }
+
 
 }
 

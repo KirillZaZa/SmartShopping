@@ -27,7 +27,8 @@ fun SearchItem(
     product: Product,
     onProductClick: () -> Unit,
     incClick: () -> Unit,
-    decClick: () -> Unit
+    decClick: () -> Unit,
+    isLast: Boolean,
 ) {
 
     Card(
@@ -62,6 +63,26 @@ fun SearchItem(
             } else {
                 IncProductButton(incClick)
             }
+        }
+    }
+
+    if (isLast) {
+        Column(
+            modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = "Нажмите на товар, чтобы увидеть подробности",
+                color = LightGray,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Medium
+            )
+            Spacer(modifier = Modifier.weight(1f))
+
+            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }

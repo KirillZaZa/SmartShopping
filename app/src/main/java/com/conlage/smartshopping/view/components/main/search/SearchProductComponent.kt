@@ -15,6 +15,7 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -48,17 +49,16 @@ fun SearchProductComp(
     onCloseClick: () -> Unit,
     onProductClick: (Int) -> Unit,
     incClick: (Int) -> Unit,
-    decClick: (Int) -> Unit
+    decClick: (Int) -> Unit,
+    onAddTextClick: () -> Unit,
+    focusRequester: FocusRequester,
+    focusManager: FocusManager
 ) {
-
-    val focusRequester = remember { FocusRequester() }
-    val focusManager = LocalFocusManager.current
 
 
     Column(
         modifier = Modifier
             .wrapContentHeight()
-            .padding(bottom = 48.dp)
             .fillMaxWidth()
             .padding(top = 48.dp)
             .shadow(elevation = 4.dp, shape = RoundedCornerShape(20.dp), clip = true)
@@ -74,7 +74,10 @@ fun SearchProductComp(
 
             SearchField(searchQuery, focusRequester, onQueryChange)
             Spacer(modifier = Modifier.weight(1f))
-            CloseSearchButton(focusManager, onCloseClick)
+
+            if (searchQuery.isNotBlank()) {
+                CloseSearchButton(focusManager, onCloseClick)
+            } else SearchIcon()
         }
 
 
@@ -88,13 +91,15 @@ fun SearchProductComp(
             Spacer(modifier = Modifier.height(24.dp))
 
 
-        }else if(isSearchError) {
+        } else if (isSearchError) {
 
             Spacer(modifier = Modifier.height(36.dp))
             EmptySearchWarning()
             Spacer(modifier = Modifier.height(36.dp))
+            AddTextProductButton(onAddTextClick)
+            Spacer(modifier = Modifier.height(36.dp))
 
-        } else if(!searchList.isNullOrEmpty()){
+        } else if (!searchList.isNullOrEmpty()) {
 
             SearchList(
                 searchList = searchList,
@@ -104,28 +109,39 @@ fun SearchProductComp(
             )
 
 
-
-
-            Text(
-                text = "Нажмите на товар, чтобы увидеть подробности",
-                color = LightGray,
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Medium
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-
-
         }
     }
 
 
 }
 
+@Composable
+fun AddTextProductButton(onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(horizontal = 24.dp)
+            .background(color = Blue, shape = RoundedCornerShape(35)),
+        contentAlignment = Alignment.Center
+    ) {
+        TextButton(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
+            Text(
+                text = "Добавить в список",
+                color = Color.White,
+                fontWeight = FontWeight.Normal,
+                fontSize = 14.sp
+            )
+        }
+    }
+}
+
 
 @Composable
-fun CloseSearchButton(focusManager: FocusManager, onCloseClick: () -> Unit) {
+fun CloseSearchButton(
+    focusManager: FocusManager,
+    onCloseClick: () -> Unit,
+) {
 
     IconButton(
         onClick = {
@@ -134,7 +150,7 @@ fun CloseSearchButton(focusManager: FocusManager, onCloseClick: () -> Unit) {
         },
         modifier = Modifier
             .padding(end = 20.dp)
-            .size(32.dp)
+            .size(28.dp)
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_close_icon),
@@ -142,6 +158,20 @@ fun CloseSearchButton(focusManager: FocusManager, onCloseClick: () -> Unit) {
             tint = Color.LightGray
         )
     }
+}
+
+@Composable
+fun SearchIcon(
+) {
+
+    Icon(
+        painter = painterResource(id = R.drawable.ic_search_icon),
+        contentDescription = null,
+        tint = Color.LightGray,
+        modifier = Modifier
+            .padding(end = 20.dp)
+            .size(28.dp)
+    )
 }
 
 @Composable
@@ -172,9 +202,8 @@ fun SearchField(
             fontWeight = FontWeight.Normal
         ),
         placeholder = {
-            Text(text = "Найти продукт", color = Color.LightGray)
-        },
-        keyboardActions = KeyboardActions(onPrevious = {})
+            Text(text = "Название товара", color = Color.LightGray)
+        }
 
 
     )

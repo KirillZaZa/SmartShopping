@@ -5,9 +5,12 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.util.Log
+import androidx.core.graphics.drawable.toBitmap
 import coil.ImageLoader
+import coil.request.CachePolicy
 import coil.request.ImageRequest
 import coil.request.SuccessResult
+import com.conlage.smartshopping.R
 import com.conlage.smartshopping.utils.media.resultwrapper.LoadResult
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -29,11 +32,12 @@ class ImageDownloaderImpl @Inject constructor(
                 .data(url)
                 .allowHardware(true)
                 .size(150,150)
+                .error(R.drawable.ic_product_standin_icon)
+                .diskCachePolicy(CachePolicy.ENABLED)
                 .build()
 
-            val result = (loader.execute(request) as SuccessResult).drawable
-
-            val bitmap = (result as BitmapDrawable).bitmap
+            val imgResult = loader.execute(request)
+            val bitmap = imgResult.drawable!!.toBitmap()
 
 
 

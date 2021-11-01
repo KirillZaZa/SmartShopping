@@ -18,12 +18,13 @@ data class NetworkProduct(
         val title: String
     ) {
         data class Details(
-            val yearOfManufacture: String,
-            val yearOfResearch: String,
+            val weight: String,
+            val composition: String,
+            val barcode: String,
             val manufacturer: String,
             val producer: String,
-            val composition: String,
-            val barcode: String
+            val yearOfResearch: String,
+            val countryOfManufacture: String
         )
 
         data class RateDetails(

@@ -32,7 +32,7 @@ fun SearchList(
 
     val listState = rememberLazyListState()
 
-    Spacer(modifier = Modifier.height(8.dp))
+    Spacer(modifier = Modifier.height(4.dp))
 
 
     LazyColumn(
@@ -42,11 +42,13 @@ fun SearchList(
             .wrapContentSize()
     ) {
         itemsIndexed(searchList) { i,product ->
+            val isLast = i == searchList.size - 1
             SearchItem(
                 product = product,
                 onProductClick = { onProductClick(i) },
                 incClick = {incClick(i)},
-                decClick = {decClick(i)}
+                decClick = {decClick(i)},
+                isLast
             )
         }
 
