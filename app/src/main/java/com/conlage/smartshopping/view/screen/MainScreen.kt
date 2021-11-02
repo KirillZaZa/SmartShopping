@@ -60,6 +60,8 @@ fun MainScreen(
 //    if(args.id != null){
 //        handleIdArg()
 //    }
+
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -68,39 +70,39 @@ fun MainScreen(
             .padding(top = 36.dp),
         contentAlignment = Alignment.BottomEnd
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.Start,
-        ) {
+
+
+        Column() {
 
             TextMainHeader()
 
-            SearchProductComp(
-                searchQuery = screen.searchQuery,
-                isLoading = screen.isLoadingSearchProducts,
-                isSearchError = screen.isSearchError,
-                searchList = screen.searchList,
-                onQueryChange = { vm.handleSearchQuery(it) },
-                onCloseClick = { vm.handleSearchOpen(isOpen = false) },
-                onProductClick = {
-                    val productId = screen.searchList[it].id
-                    navController.navigate(Screen.ProductScreen.withArgs("$productId"))
-                },
-                incClick = {
-                    vm.handleIncSearchItem(it) { product ->
-                        vm.handleIncAddedProduct(product)
-                    }
-                },
-                decClick = {
-                    vm.handleDecSearchItem(it) { product ->
-                        vm.handleDecAddedProduct(product)
-                    }
-                },
-                onAddTextClick = {},
-                focusRequester = focusRequester,
-                focusManager = focusManager
-            )
+                SearchProductComp(
+                    searchQuery = screen.searchQuery,
+                    isLoading = screen.isLoadingSearchProducts,
+                    isSearchError = screen.isSearchError,
+                    searchList = screen.searchList,
+                    onQueryChange = { vm.handleSearchQuery(it) },
+                    onCloseClick = { vm.handleSearchOpen(isOpen = false) },
+                    onProductClick = {
+                        val productId = screen.searchList[it].id
+                        navController.navigate(Screen.ProductScreen.withArgs("$productId"))
+                    },
+                    incClick = {
+                        vm.handleIncSearchItem(it) { product ->
+                            vm.handleIncAddedProduct(product)
+                        }
+                    },
+                    decClick = {
+                        vm.handleDecSearchItem(it) { product ->
+                            vm.handleDecAddedProduct(product)
+                        }
+                    },
+                    onAddTextClick = {
+
+                    },
+                    focusRequester = focusRequester,
+                    focusManager = focusManager
+                )
 
 
 
@@ -109,6 +111,7 @@ fun MainScreen(
                 EmptyListWarning()
                 Spacer(modifier = Modifier.weight(1f))
             } else {
+
                 AddedListProduct(
                     productList = productListState,
                     onProductClick = {
@@ -119,7 +122,6 @@ fun MainScreen(
                     }
                 )
             }
-
 
 
         }

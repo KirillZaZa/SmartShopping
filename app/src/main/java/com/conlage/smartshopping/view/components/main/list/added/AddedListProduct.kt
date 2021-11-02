@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.conlage.smartshopping.model.data.local.db.entity.Product
@@ -21,17 +22,19 @@ fun AddedListProduct(
 ) {
     val listState = rememberLazyListState()
 
+
     LazyColumn(
         state = listState,
         modifier = Modifier
-            .wrapContentSize()
+            .fillMaxSize()
+            .offset(y = (-20).dp)
     ) {
         itemsIndexed(productList) { i, product ->
             AddedProduct(
                 product = product,
                 onProductClick = { onProductClick(i) },
                 productIndex = i,
-                listSize = productList.size
+                listSize = productList.size,
             )
         }
 

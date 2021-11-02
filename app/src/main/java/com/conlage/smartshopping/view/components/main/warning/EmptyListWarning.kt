@@ -37,8 +37,7 @@ fun EmptyListWarning() {
             fontSize = 24.sp
         )
         Text(
-            text = "Нажмите + чтобы \n" +
-                    "добавить товар",
+            text = "Добавьте товар из поиска",
             color = Gray,
             fontSize = 16.sp,
             textAlign = TextAlign.Center,

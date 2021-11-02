@@ -1,9 +1,8 @@
-package com.conlage.smartshopping.view.components.product.fab
+package com.conlage.smartshopping.view.components.productitem.fab
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

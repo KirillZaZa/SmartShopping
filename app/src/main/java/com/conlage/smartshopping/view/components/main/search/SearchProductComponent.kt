@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.constraintlayout.widget.Guideline
 import com.conlage.smartshopping.R
 import com.conlage.smartshopping.model.data.local.db.entity.Product
@@ -61,7 +62,8 @@ fun SearchProductComp(
             .wrapContentHeight()
             .fillMaxWidth()
             .padding(top = 48.dp)
-            .shadow(elevation = 4.dp, shape = RoundedCornerShape(20.dp), clip = true)
+            .shadow(elevation = 10.dp, shape = RoundedCornerShape(20.dp), clip = true)
+            .zIndex(10f)
             .background(Color.White, shape = RoundedCornerShape(20.dp)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

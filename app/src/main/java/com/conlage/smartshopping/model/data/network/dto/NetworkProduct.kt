@@ -8,7 +8,7 @@ data class NetworkProduct(
         val barcode: String,
         val description: String,
         val details: Details,
-        val disadvantages: List<Any>,
+        val disadvantages: List<String>,
         val id: Int,
         val image: String,
         val price: String,
@@ -28,9 +28,7 @@ data class NetworkProduct(
         )
 
         data class RateDetails(
-            val quality: Double,
-            val organoleptics: Double,
-            val physicalChemicalParameters: Int
+            val rate_details: Map<String, Int>
         )
     }
 }

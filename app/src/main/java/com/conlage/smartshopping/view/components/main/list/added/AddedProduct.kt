@@ -25,18 +25,20 @@ fun AddedProduct(
     product: Product,
     onProductClick: () -> Unit,
     productIndex: Int,
-    listSize: Int
+    listSize: Int,
 ) {
-    if(productIndex == 0){
-        Spacer(modifier = Modifier.height(24.dp))
+    val modifier = Modifier
+        .fillMaxWidth()
+        .padding(vertical = 4.dp)
+    if (productIndex == 0) {
+        Spacer(modifier = Modifier.height(48.dp))
     }
+
 
     Card(
         onClick = onProductClick,
         backgroundColor = LightBlue,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
+        modifier = modifier,
         shape = RoundedCornerShape(20),
         elevation = 0.dp
     ) {
@@ -63,7 +65,7 @@ fun AddedProduct(
         }
     }
 
-    if(productIndex == listSize - 1){
+    if (productIndex == listSize - 1) {
         Spacer(modifier = Modifier.height(96.dp))
     }
 
