@@ -8,6 +8,7 @@ import android.util.Log
 import androidx.core.graphics.drawable.toBitmap
 import coil.ImageLoader
 import coil.request.CachePolicy
+import coil.request.ErrorResult
 import coil.request.ImageRequest
 import coil.request.SuccessResult
 import com.conlage.smartshopping.R
@@ -31,13 +32,16 @@ class ImageDownloaderImpl @Inject constructor(
             val request = ImageRequest.Builder(context.applicationContext)
                 .data(url)
                 .allowHardware(true)
-                .size(150,150)
+                .size(150, 150)
                 .error(R.drawable.ic_product_standin_icon)
                 .diskCachePolicy(CachePolicy.ENABLED)
                 .build()
 
-            val imgResult = loader.execute(request)
-            val bitmap = imgResult.drawable!!.toBitmap()
+            val imgResult = when(val result = loader.execute(request)){
+                is SuccessResult -> result.drawable
+                else -> null
+            }
+            val bitmap = imgResult?.toBitmap()
 
 
 
@@ -52,48 +56,56 @@ class ImageDownloaderImpl @Inject constructor(
         bitmap: Bitmap,
         image: String
     ) {
-        try{
-            context.openFileOutput("$image.jpg", Context.MODE_PRIVATE).use {stream->
-                if(!bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream)){
+        try {
+            context.openFileOutput("$image.jpg", Context.MODE_PRIVATE).use { stream ->
+                if (!bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)) {
                     throw IOException()
                 }
             }
-        }catch (e: Exception){
-            logError(e)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
+
+    //check working
     override suspend fun loadImageFromInternalStorage(image: String): LoadResult<Bitmap> {
-        var loadResult: LoadResult<Bitmap>? = null
-        try{
-            withContext(Dispatchers.IO){
+        return try {
+            withContext(Dispatchers.IO) {
                 val files = context.filesDir.listFiles()
 
-                files?.filter { file -> file.canRead() && file.isFile && file.name.equals("$image.jpg")
+                val bitmap = files?.filter { file ->
+
+                    file.canRead() && file.isFile && file.name.equals("$image.jpg")
+
                 }?.map {
                     val imageBytes = it.readBytes()
-                    loadResult = LoadResult.Success(BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size))
-                } ?: { loadResult = LoadResult.Failure() }
+                    BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                }?.get(0)
+
+                if (bitmap == null) LoadResult.Failure()
+                else LoadResult.Success(bitmap)
+
             }
-        }catch (e: Throwable){
 
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            LoadResult.Failure()
         }
-
-        return loadResult!!
     }
 
     override fun deleteImageFromInternalStorage(image: String) {
         try {
             context.deleteFile("$image.jpg")
-        }catch (e: IOException){
+        } catch (e: IOException) {
             logError(e)
         }
     }
 
 }
 
-fun ImageDownloaderImpl.logError(e: Throwable){
-    Log.e(ImageDownloaderImpl::class.java.simpleName, "logError: ${e.localizedMessage}", )
+fun ImageDownloaderImpl.logError(e: Throwable) {
+    Log.e(ImageDownloaderImpl::class.java.simpleName, "logError: ${e.localizedMessage}")
 }
 
 

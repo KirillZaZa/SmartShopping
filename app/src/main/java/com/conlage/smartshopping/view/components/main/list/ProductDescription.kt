@@ -124,8 +124,9 @@ fun ProductImage(bitmap: Bitmap?) {
                 .width(80.dp)
                 .padding(vertical = 4.dp)
                 .padding(horizontal = 4.dp)
-                .clip(RoundedCornerShape(20)),
-            contentScale = ContentScale.FillBounds
+                .clip(RoundedCornerShape(20))
+                .background(Standin),
+            contentScale = ContentScale.Fit
         )
     }
 

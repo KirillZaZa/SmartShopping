@@ -1,5 +1,6 @@
 package com.conlage.smartshopping.model.data.usecase.impl
 
+import android.util.Log
 import com.conlage.smartshopping.model.data.local.db.entity.Product
 import com.conlage.smartshopping.model.data.local.db.entity.ProductList
 import com.conlage.smartshopping.model.data.repository.impl.ShoppingRepositoryImpl
@@ -33,15 +34,22 @@ class ProductListUseCaseImpl @Inject constructor(
 
     override suspend fun getProductListFromDb(): UseCaseResult<List<Product>> {
         return try {
+            Log.e("ProductUseCase", "getting..", )
             val productList = withContext(Dispatchers.IO) {
-                when(val result = repositoryImpl.getProductListFromDb()){
-                    is RepositoryResponse.Success<List<Product>> -> result.response
-                    is RepositoryResponse.Failure<List<Product>> -> throw FailureException()
+                var list: List<Product>? = null
+                repositoryImpl.getProductListFromDb {
+                    list = it
                 }
+                Log.e("ProductUseCase", "getting..", )
+                list
             }
-            UseCaseResult.Response(productList)
+
+            Log.e("ProductUseCase", "$productList", )
+            UseCaseResult.Response(productList!!)
         } catch (e: Throwable) {
             e.printStackTrace()
+            Log.e("ProductUseCase", "catch", )
+
             UseCaseResult.Error(e)
         }
     }

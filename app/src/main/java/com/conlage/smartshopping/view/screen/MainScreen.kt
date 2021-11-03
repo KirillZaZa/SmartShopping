@@ -37,7 +37,6 @@ fun TextMainHeader() {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-
 fun MainScreen(
     vm: MainViewModelImpl,
     navController: NavController,

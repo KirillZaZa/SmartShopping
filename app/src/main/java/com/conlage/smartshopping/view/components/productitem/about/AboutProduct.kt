@@ -22,7 +22,7 @@ import com.conlage.smartshopping.ui.theme.Yellow
 
 @Composable
 fun AboutProduct(
-//    bitmap: Bitmap,
+    bitmap: Bitmap,
     rate: Double,
     price: String,
     onAboutRateClick: () -> Unit,
@@ -38,8 +38,7 @@ fun AboutProduct(
     ) {
 
         Image(
-//            bitmap = bitmap.asImageBitmap(),
-            painter = painterResource(id = R.drawable.ic_product_standin_icon),
+            bitmap = bitmap.asImageBitmap(),
             contentDescription = "image_product",
             modifier = Modifier.size(126.dp)
         )

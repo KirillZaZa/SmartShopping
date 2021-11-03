@@ -157,7 +157,7 @@ fun ProductScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             AboutProduct(
-//                bitmap = bitmap,
+                bitmap = bitmap,
                 rate = productDetails.rate,
                 price = productDetails.price,
                 onAboutRateClick = { /*vm handle isRateOpen = !isRateOpen*/ },

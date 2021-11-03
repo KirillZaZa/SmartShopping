@@ -1,5 +1,6 @@
 package com.conlage.smartshopping.model.data.repository.impl
 
+import android.util.Log
 import com.conlage.smartshopping.model.data.local.ProductDetails
 import com.conlage.smartshopping.model.data.local.db.ShoppingDatabase
 import com.conlage.smartshopping.model.data.local.db.dao.ProductDao
@@ -74,7 +75,7 @@ class ShoppingRepositoryImpl @Inject constructor(
         val productDetails = networkProduct.toProductDetails()
         with(productDetails) {
             this.barcodeImg = barcodeGenerator.generateBarcodeBitmap(this.barcode)
-            this.bitmap = withContext(Dispatchers.IO){
+            this.bitmap = withContext(Dispatchers.IO) {
                 when (val result =
                     imageDownloader.downloadImageFromNetwork(this@with.image)) {
                     is LoadResult.Success -> result.response
@@ -111,9 +112,11 @@ class ShoppingRepositoryImpl @Inject constructor(
      * 2) по колбеку от базы - сохраняем фотку
      * 3) колбек об успешной/провальной транзакции
      */
-    override suspend fun saveProductInDb(product: Product){
+    override suspend fun saveProductInDb(product: Product) {
         try {
-            imageDownloader.saveImageToInternalStorage(product.bitmap!!, product.image)
+            if (product.bitmap != null ){
+                imageDownloader.saveImageToInternalStorage(product.bitmap!!, "${product.id}")
+            }
             db.getProductDao().insert(product)
         } catch (e: Throwable) {
             e.printStackTrace()
@@ -127,7 +130,7 @@ class ShoppingRepositoryImpl @Inject constructor(
      */
     override suspend fun deleteProductFromDb(product: Product) {
         try {
-            imageDownloader.deleteImageFromInternalStorage(product.image)
+            imageDownloader.deleteImageFromInternalStorage("${product.id}")
             db.getProductDao().delete(product)
         } catch (e: Throwable) {
             e.printStackTrace()
@@ -151,24 +154,22 @@ class ShoppingRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getProductListFromDb(): RepositoryResponse<List<Product>> {
-        var repositoryResponse: RepositoryResponse<List<Product>>? = null
-
-        db.getProductDao().getProductList()
-            .map { list ->
-                list.map { product ->
-                    product.bitmap = when (val loadResult =
-                        imageDownloader.loadImageFromInternalStorage(product.image)) {
-                        is LoadResult.Success -> loadResult.response
-                        is LoadResult.Failure -> loadResult.throwable
-                    }
+    override suspend fun getProductListFromDb(callback: (List<Product>) -> Unit) {
+        val list = db.getProductDao().getProductList()
+            .map { product ->
+                product.bitmap = when (val loadResult =
+                    imageDownloader.loadImageFromInternalStorage("${product.id}")) {
+                    is LoadResult.Success -> loadResult.response
+                    is LoadResult.Failure -> loadResult.throwable
                 }
-                list
-            }.collect { list ->
-                repositoryResponse = if (list.isNotEmpty()) RepositoryResponse.Success(list)
-                else RepositoryResponse.Failure(null)
+                product
             }
+        Log.e("List", "$list")
 
-        return repositoryResponse!!
+        callback(list)
+
     }
+
+
+
 }

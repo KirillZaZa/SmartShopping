@@ -37,25 +37,32 @@ class MainViewModelImpl @Inject constructor(
 
     //subscribe to data sources and observe the data
     init {
-        productListState.addAll(getProductList())
+        getProductList()
     }
 
 
-    override fun getProductList(): List<Product> {
-        var list: List<Product> = mutableListOf()
+    override fun getProductList() {
 
         viewModelScope.launch(dispatcherMain + errHandler) {
             currentValue.isLoadingProducts = true
 
-            list = when (val result = productListUseCase.getProductListFromDb()) {
+            Log.e("GetProductList", "getting..")
+
+            val list = when (val result = productListUseCase.getProductListFromDb()) {
                 is UseCaseResult.Response<List<Product>> -> result.value
                 else -> mutableListOf()
             }
 
+            Log.e("GetProductList", "$list")
+
+
+
             currentValue.isLoadingProducts = false
+
+            productListState.addAll(list)
+
         }
 
-        return list
     }
 
     override suspend fun getProductListFromNetwork(query: String): List<Product> =
@@ -65,18 +72,16 @@ class MainViewModelImpl @Inject constructor(
         }
 
 
-
-
     override fun handleIncAddedProduct(product: Product) {
         viewModelScope.launch(dispatcherMain + errHandler) {
-            if(productListState.containsId(product.id) && productListState.isNotEmpty()){
+            if (productListState.containsId(product.id) && productListState.isNotEmpty()) {
                 val oldProduct = productListState.getProductById(product.id)
                 val index = productListState.indexOf(oldProduct)
 
                 val newProduct = oldProduct.copy(quantity = oldProduct.quantity + 1)
                 newProduct.bitmap = product.bitmap
                 productListState[index] = newProduct
-            }else{
+            } else {
                 productListState.add(0, product)
             }
         }
@@ -85,15 +90,15 @@ class MainViewModelImpl @Inject constructor(
 
     override fun handleDecAddedProduct(product: Product) {
         viewModelScope.launch(dispatcherMain + errHandler) {
-            if(productListState.containsId(product.id) && productListState.isNotEmpty()){
+            if (productListState.containsId(product.id) && productListState.isNotEmpty()) {
                 val oldProduct = productListState.getProductById(product.id)
                 val index = productListState.indexOf(oldProduct)
 
-                if(oldProduct.quantity > 1){
+                if (oldProduct.quantity > 1) {
                     val newProduct = oldProduct.copy(quantity = oldProduct.quantity - 1)
                     newProduct.bitmap = product.bitmap
                     productListState[index] = newProduct
-                }else productListState.removeAt(index)
+                } else productListState.removeAt(index)
             }
         }
 
@@ -105,7 +110,7 @@ class MainViewModelImpl @Inject constructor(
             val currentList = currentValue.searchList
 
             val replacedList = currentList.mapIndexed { i, product ->
-                if(productIndex == i){
+                if (productIndex == i) {
 
                     val newQuantity = product.quantity + 1
                     val newProduct = product.copy(quantity = newQuantity)
@@ -115,16 +120,16 @@ class MainViewModelImpl @Inject constructor(
                     callback(newProduct)
 
                     newProduct
-                }else {
+                } else {
                     product
                 }
             }
 
-            updateState { it.copy(
-                searchList = replacedList as MutableList<Product>,
-            ) }
-
-
+            updateState {
+                it.copy(
+                    searchList = replacedList as MutableList<Product>,
+                )
+            }
 
 
             val product = currentValue.searchList[productIndex]
@@ -142,7 +147,7 @@ class MainViewModelImpl @Inject constructor(
                 val currentList = currentValue.searchList
 
                 val replacedList = currentList.mapIndexed { i, product ->
-                    if(productIndex == i){
+                    if (productIndex == i) {
 
                         val newQuantity = product.quantity - 1
                         val newProduct = product.copy(quantity = newQuantity)
@@ -152,7 +157,7 @@ class MainViewModelImpl @Inject constructor(
                         callback(newProduct)
 
                         newProduct
-                    }else product
+                    } else product
                 }
                 updateState { it.copy(searchList = replacedList as MutableList<Product>) }
             }
@@ -191,7 +196,7 @@ class MainViewModelImpl @Inject constructor(
 
 
     override fun handleSearchQuery(query: String) {
-        Log.e("Search Query", "handleSearchQuery: $query", )
+        Log.e("Search Query", "handleSearchQuery: $query")
         searchJobs.forEach {
             it.value.cancel()
         }
@@ -251,7 +256,7 @@ class MainViewModelImpl @Inject constructor(
 
 
     override fun handleSearchOpen(isOpen: Boolean) {
-        if(!isOpen){
+        if (!isOpen) {
             searchJobs.forEach { job ->
                 job.value.cancel()
             }

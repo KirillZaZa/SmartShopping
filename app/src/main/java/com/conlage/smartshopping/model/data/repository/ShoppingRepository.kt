@@ -22,7 +22,7 @@ interface ShoppingRepository {
 
     suspend fun updateProductInDb(product: Product)
 
-    suspend fun getProductListFromDb(): RepositoryResponse<List<Product>>
+    suspend fun getProductListFromDb(callback: (List<Product>) -> Unit)
 
 
 

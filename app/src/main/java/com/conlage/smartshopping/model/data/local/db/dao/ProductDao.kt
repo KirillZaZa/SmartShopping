@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 abstract class ProductDao : BaseDao<Product> {
 
     @Query("SELECT * FROM product_table")
-    abstract fun getProductList(): Flow<List<Product>>
+    abstract fun getProductList(): List<Product>
 
     @Query("DELETE FROM product_table WHERE product_id LIKE :productId")
     abstract fun deleteProductById(productId: Int)

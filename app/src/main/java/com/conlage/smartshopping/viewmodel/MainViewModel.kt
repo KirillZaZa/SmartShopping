@@ -11,7 +11,7 @@ interface MainViewModel {
 
     fun handleDecAddedProduct(product: Product)
 
-    fun getProductList(): List<Product>
+    fun getProductList()
 
     fun handleIncSearchItem(productIndex: Int, callback:(product: Product) -> Unit)
 
