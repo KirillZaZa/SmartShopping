@@ -43,7 +43,7 @@ fun Barcode(bitmapBarcode: Bitmap?) {
             Image(
                 bitmap = bitmapBarcode.asImageBitmap(),
                 contentDescription = "barcode_image",
-                modifier = Modifier.wrapContentSize()
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }

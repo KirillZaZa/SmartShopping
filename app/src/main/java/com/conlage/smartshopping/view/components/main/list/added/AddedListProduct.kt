@@ -1,5 +1,6 @@
 package com.conlage.smartshopping.view.components.main.list.added
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,7 +19,7 @@ import com.conlage.smartshopping.model.data.local.db.entity.Product
 @Composable
 fun AddedListProduct(
     productList: List<Product>,
-    onProductClick: (Int) -> Unit,
+    onProductClick: (Product) -> Unit,
 ) {
     val listState = rememberLazyListState()
 
@@ -32,7 +33,9 @@ fun AddedListProduct(
         itemsIndexed(productList) { i, product ->
             AddedProduct(
                 product = product,
-                onProductClick = { onProductClick(i) },
+                onProductClick = {
+                    onProductClick(product)
+                },
                 productIndex = i,
                 listSize = productList.size,
             )

@@ -16,6 +16,7 @@ import com.conlage.smartshopping.ui.theme.RedColor
 @Composable
 fun FabManageProduct(onClick: () -> Unit, isAdded: Boolean) {
 
+
     Column(
         modifier = Modifier
             .padding(bottom = 16.dp)

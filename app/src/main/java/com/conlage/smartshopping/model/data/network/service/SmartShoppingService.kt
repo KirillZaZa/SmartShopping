@@ -16,13 +16,13 @@ interface SmartShoppingService {
         @Query("page") page: Int
     ): NetworkProductList
 
-    @GET("/id/{id}")
+    @GET("id/{id}")
     suspend fun getProductDetailsById(
         @Path("id") id: Int
     ): NetworkProduct
 
 
-    @GET("/barcode/{barcode}")
+    @GET("barcode/{barcode}")
     suspend fun getProductDetailsByBarcode(
         @Path("barcode") barcode: String
     ): NetworkProduct

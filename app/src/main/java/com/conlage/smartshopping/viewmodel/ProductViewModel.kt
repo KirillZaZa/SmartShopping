@@ -4,9 +4,7 @@ import com.conlage.smartshopping.model.data.local.ProductDetails
 
 interface ProductViewModel {
 
-    fun getProductDetails(): ProductDetails?
-
-
+    fun getProductDetails(productId: Int?, isAdded:Boolean, barcode: String?)
 
     fun handleAddButton()
 
@@ -16,7 +14,7 @@ interface ProductViewModel {
 
     fun handleAboutEvaluation()
 
-    suspend fun getProductDetailsById(): ProductDetails?
+    suspend fun getProductDetailsById(productId: Int): ProductDetails?
 
-    suspend fun getProductDetailsByBarcode(): ProductDetails?
+    suspend fun getProductDetailsByBarcode(barcode: String?): ProductDetails?
 }

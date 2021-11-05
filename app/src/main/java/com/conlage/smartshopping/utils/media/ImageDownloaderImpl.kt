@@ -52,6 +52,33 @@ class ImageDownloaderImpl @Inject constructor(
         }
     }
 
+    override suspend fun downloadImageForPage(url: String): LoadResult<Bitmap> {
+        return try {
+            val loader = ImageLoader(context.applicationContext)
+
+            val request = ImageRequest.Builder(context.applicationContext)
+                .data(url)
+                .allowHardware(true)
+                .error(R.drawable.ic_product_standin_icon)
+                .diskCachePolicy(CachePolicy.ENABLED)
+                .build()
+
+            val imgResult = when(val result = loader.execute(request)){
+                is SuccessResult -> result.drawable
+                else -> null
+            }
+            val bitmap = imgResult?.toBitmap()
+
+
+
+            LoadResult.Success(bitmap)
+        } catch (e: CancellationException) {
+            logError(e)
+            LoadResult.Failure()
+        }
+    }
+
+
     override fun saveImageToInternalStorage(
         bitmap: Bitmap,
         image: String

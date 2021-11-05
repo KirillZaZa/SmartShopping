@@ -14,4 +14,6 @@ interface ImageDownloader {
 
     fun deleteImageFromInternalStorage(image: String)
 
+    suspend fun downloadImageForPage(url: String): LoadResult<Bitmap>
+
 }

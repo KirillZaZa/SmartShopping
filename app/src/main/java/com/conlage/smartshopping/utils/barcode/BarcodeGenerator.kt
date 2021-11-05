@@ -22,14 +22,14 @@ class BarcodeGenerator @Inject constructor() {
 
                 val codeWriter = Code128Writer()
 
-                val byteMatrix = codeWriter.encode(code, BarcodeFormat.CODE_128, 192, 96, hintMap)
+                val byteMatrix = codeWriter.encode(code, BarcodeFormat.CODE_128, 600, 128, hintMap)
 
                 val width = byteMatrix.width
                 val height = byteMatrix.height
 
                 val barcodeBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-                for (i in 0..width) {
-                    for (j in 0..height) {
+                for (i in 0 until width) {
+                    for (j in 0 until height) {
                         val color = if (byteMatrix.get(i, j)) Color.BLACK
                         else Color.WHITE
                         barcodeBitmap.setPixel(i, j, color)

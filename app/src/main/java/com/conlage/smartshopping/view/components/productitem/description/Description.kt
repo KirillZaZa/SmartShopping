@@ -34,7 +34,7 @@ fun DescriptionProduct(
         Text(
             text = "Описание",
             fontSize = 18.sp,
-            fontWeight = FontWeight.Normal,
+            fontWeight = FontWeight.Medium,
             color = DarkGray
         )
         
@@ -57,7 +57,7 @@ fun DescriptionProduct(
                 text = if(!isReadMore) "Читать далее" else "Скрыть",
                 color = Blue,
                 fontWeight = FontWeight.Medium,
-                fontSize = 16.sp,
+                fontSize = 14.sp,
                 modifier = Modifier.clickable(onClick = onClickReadMore)
 
             )

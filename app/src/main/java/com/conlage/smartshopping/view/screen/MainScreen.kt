@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.conlage.smartshopping.ui.theme.BackgroundColor
+import com.conlage.smartshopping.ui.theme.Blue
 import com.conlage.smartshopping.view.components.main.fab.ButtonScanner
 import com.conlage.smartshopping.view.components.main.list.added.AddedListProduct
 import com.conlage.smartshopping.view.components.main.search.SearchProductComp
@@ -50,7 +51,6 @@ fun MainScreen(
 
     val productListState = remember { vm.productListState }
 
-    Log.e("Main", "MainScreen: $screenState")
 
     val context = LocalContext.current
 
@@ -75,49 +75,65 @@ fun MainScreen(
 
             TextMainHeader()
 
-                SearchProductComp(
-                    searchQuery = screen.searchQuery,
-                    isLoading = screen.isLoadingSearchProducts,
-                    isSearchError = screen.isSearchError,
-                    searchList = screen.searchList,
-                    onQueryChange = { vm.handleSearchQuery(it) },
-                    onCloseClick = { vm.handleSearchOpen(isOpen = false) },
-                    onProductClick = {
-                        val productId = screen.searchList[it].id
-                        navController.navigate(Screen.ProductScreen.withArgs("$productId"))
-                    },
-                    incClick = {
-                        vm.handleIncSearchItem(it) { product ->
-                            vm.handleIncAddedProduct(product)
+            SearchProductComp(
+                searchQuery = screen.searchQuery,
+                isLoading = screen.isLoadingSearchProducts,
+                isSearchError = screen.isSearchError,
+                searchList = screen.searchList,
+                onQueryChange = { vm.handleSearchQuery(it) },
+                onCloseClick = { vm.handleSearchOpen(isOpen = false) },
+                onProductClick = {
+                    val productId = screen.searchList[it].id
+                    navController
+                        .navigate(
+                            Screen.ProductScreen.withArgs(
+                                "$productId",
+                                "null",
+                                "false"
+                            )
+                        ){
                         }
-                    },
-                    decClick = {
-                        vm.handleDecSearchItem(it) { product ->
-                            vm.handleDecAddedProduct(product)
-                        }
-                    },
-                    onAddTextClick = {
+                },
+                incClick = {
+                    vm.handleIncSearchItem(it) { product ->
+                        vm.handleIncAddedProduct(product)
+                    }
+                },
+                decClick = {
+                    vm.handleDecSearchItem(it) { product ->
+                        vm.handleDecAddedProduct(product)
+                    }
+                },
+                onAddTextClick = {
 
-                    },
-                    focusRequester = focusRequester,
-                    focusManager = focusManager
-                )
+                },
+                focusRequester = focusRequester,
+                focusManager = focusManager
+            )
 
 
 
-            if (productListState.isNullOrEmpty()) {
+            if (productListState.isNullOrEmpty() && !screen.isLoadingProducts) {
                 Spacer(modifier = Modifier.weight(0.5f))
                 EmptyListWarning()
+                Spacer(modifier = Modifier.weight(1f))
+            } else if (screen.isLoadingProducts) {
+                Spacer(modifier = Modifier.weight(0.5f))
+                CircularProgressIndicator(color = Blue)
                 Spacer(modifier = Modifier.weight(1f))
             } else {
 
                 AddedListProduct(
                     productList = productListState,
-                    onProductClick = {
-                        /* navigate to product page
-                        *  if product have id
-                        *  else show snackbar that product does not exist
-                        * */
+                    onProductClick = { product ->
+                        navController
+                            .navigate(
+                                Screen.ProductScreen.withArgs(
+                                    "${product.id}",
+                                    "null",
+                                    "true"
+                                )
+                            )
                     }
                 )
             }

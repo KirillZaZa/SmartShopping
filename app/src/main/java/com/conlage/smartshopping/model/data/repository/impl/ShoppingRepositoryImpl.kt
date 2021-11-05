@@ -14,6 +14,7 @@ import com.conlage.smartshopping.model.data.network.dto.ResponseError
 import com.conlage.smartshopping.model.data.repository.resultwrapper.RepositoryResponse
 import com.conlage.smartshopping.model.data.network.service.SmartShoppingService
 import com.conlage.smartshopping.model.data.repository.ShoppingRepository
+import com.conlage.smartshopping.model.data.usecase.exception.FailureException
 import com.conlage.smartshopping.utils.barcode.BarcodeGenerator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
@@ -51,7 +52,7 @@ class ShoppingRepositoryImpl @Inject constructor(
                             imageDownloader.downloadImageFromNetwork(product.image)) {
                             is LoadResult.Success -> result.response
                             is LoadResult.Failure -> result.throwable
-                            else -> throw IllegalArgumentException()
+                            else -> throw FailureException()
                         }
                     }
 
@@ -77,7 +78,7 @@ class ShoppingRepositoryImpl @Inject constructor(
             this.barcodeImg = barcodeGenerator.generateBarcodeBitmap(this.barcode)
             this.bitmap = withContext(Dispatchers.IO) {
                 when (val result =
-                    imageDownloader.downloadImageFromNetwork(this@with.image)) {
+                    imageDownloader.downloadImageForPage(this@with.image)) {
                     is LoadResult.Success -> result.response
                     is LoadResult.Failure -> result.throwable
                     else -> throw IllegalArgumentException()
@@ -161,6 +162,7 @@ class ShoppingRepositoryImpl @Inject constructor(
                     imageDownloader.loadImageFromInternalStorage("${product.id}")) {
                     is LoadResult.Success -> loadResult.response
                     is LoadResult.Failure -> loadResult.throwable
+                    else -> throw IllegalArgumentException()
                 }
                 product
             }

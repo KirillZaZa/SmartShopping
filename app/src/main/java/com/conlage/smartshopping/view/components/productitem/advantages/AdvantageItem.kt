@@ -27,7 +27,7 @@ fun AdvantageItem(
     else RedColor
 
 
-    Row(verticalAlignment = Alignment.Top) {
+    Row(verticalAlignment = Alignment.Top, modifier = Modifier.fillMaxWidth()) {
 
         Image(painter = painterResource(id = image), contentDescription = "advantage_image", modifier = Modifier.offset(y = 4.dp))
 

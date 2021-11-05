@@ -2,14 +2,18 @@ package com.conlage.smartshopping.view.components.productitem.about
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -22,9 +26,9 @@ import com.conlage.smartshopping.ui.theme.Yellow
 
 @Composable
 fun AboutProduct(
-    bitmap: Bitmap,
+    bitmap: Bitmap?,
     rate: Double,
-    price: String,
+    price: String?,
     onAboutRateClick: () -> Unit,
     onResearchingClick: () -> Unit
 ) {
@@ -38,15 +42,17 @@ fun AboutProduct(
     ) {
 
         Image(
-            bitmap = bitmap.asImageBitmap(),
+            bitmap = bitmap!!.asImageBitmap(),
             contentDescription = "image_product",
-            modifier = Modifier.size(126.dp)
+            modifier = Modifier
+                .size(126.dp)
+                .clip(RoundedCornerShape(20.dp))
         )
 
         Column(
             modifier = Modifier.padding(start = 16.dp),
             horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 
             RateProduct(rate = "$rate", onClick = onAboutRateClick)
@@ -76,12 +82,12 @@ private fun RateProduct(rate: String, onClick: () -> Unit) {
         Image(
             painter = painterResource(id = R.drawable.ic_star_icon),
             contentDescription = "star_rate",
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(20.dp)
         )
 
         Text(
             text = rate,
-            fontSize = 18.sp,
+            fontSize = 16.sp,
             color = Yellow,
             fontWeight = FontWeight.Medium
         )
@@ -89,7 +95,7 @@ private fun RateProduct(rate: String, onClick: () -> Unit) {
         Text(
             text = "подробнее",
             color = Blue,
-            fontWeight = FontWeight.Normal,
+            fontWeight = FontWeight.Medium,
             fontSize = 14.sp
         )
 
@@ -110,7 +116,7 @@ private fun RateProduct(rate: String, onClick: () -> Unit) {
 }
 
 @Composable
-private fun PriceProduct(price: String) {
+private fun PriceProduct(price: String?) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -119,14 +125,14 @@ private fun PriceProduct(price: String) {
         Image(
             painter = painterResource(id = R.drawable.ic_price_icon),
             contentDescription = "price_icon",
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(20.dp)
         )
 
         Text(
-            text = price,
-            fontSize = 18.sp,
+            text = price ?: "нет цены",
+            fontSize = 16.sp,
             color = DarkGray,
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.W400
         )
 
     }
@@ -143,14 +149,14 @@ private fun ResearchProduct(onClick: () -> Unit) {
         Image(
             painter = painterResource(id = R.drawable.ic_doc_icon),
             contentDescription = "price_icon",
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(20.dp)
         )
 
         Text(
             text = "Исследование",
             color = Blue,
-            fontWeight = FontWeight.Normal,
-            fontSize = 14.sp
+            fontWeight = FontWeight.Medium,
+            fontSize = 14.sp,
         )
 
         Icon(

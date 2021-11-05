@@ -21,14 +21,16 @@ import com.conlage.smartshopping.ui.theme.DarkGray
 import com.conlage.smartshopping.ui.theme.Standin
 
 @Composable
-fun InformationProduct(details: NetworkProduct.Response.Details) {
+fun InformationProduct(details: Map<String, String>?) {
 
 
     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter){
         Image(
             painter = painterResource(id = R.drawable.ic_info_icon),
             contentDescription = "info_icon",
-            modifier = Modifier.offset(y = (-20).dp).zIndex(10f)
+            modifier = Modifier
+                .offset(y = (-20).dp)
+                .zIndex(10f)
         )
 
 
@@ -47,40 +49,22 @@ fun InformationProduct(details: NetworkProduct.Response.Details) {
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // information
+            if(details.isNullOrEmpty()){
+                Text(
+                    text = "Нет информации",
+                    fontSize = 16.sp,
+                    color = Standin,
+                    fontWeight = FontWeight.Medium
+                )
+            }else{
 
-            repeat(6) { i ->
-                when (i) {
-                    0 -> {
-                        InfoElement(placeHolder = "Производитель", item = details.manufacturer)
-                    }
-                    1 -> {
-                        InfoElement(placeHolder = "Страна производства", item = details.countryOfManufacture)
-
-                    }
-                    2 -> {
-                        InfoElement(placeHolder = "Изготовитель", item = details.producer)
-
-                    }
-
-                    3 -> {
-                        InfoElement(placeHolder = "Состав", item = details.composition)
-
-                    }
-
-                    4 -> {
-                        InfoElement(placeHolder = "Вес", item = details.weight)
-
-                    }
-
-                    5 -> {
-                        InfoElement(placeHolder = "Год изготовления", item = details.yearOfResearch)
-
-                    }
-
-
+                details.forEach { detail->
+                    InfoElement(placeHolder = detail.key, item = detail.value)
                 }
+
             }
+
+
 
 
         }
@@ -91,7 +75,7 @@ fun InformationProduct(details: NetworkProduct.Response.Details) {
 
 @Composable
 private fun InfoElement(placeHolder: String, item: String) {
-
+    Spacer(modifier = Modifier.height(4.dp))
     Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
         Text(
             text = "$placeHolder:",
@@ -103,10 +87,12 @@ private fun InfoElement(placeHolder: String, item: String) {
         Text(
             text = item,
             fontSize = 14.sp,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.Medium,
             color = DarkGray
         )
     }
+    Spacer(modifier = Modifier.height(4.dp))
+
 
 
 }

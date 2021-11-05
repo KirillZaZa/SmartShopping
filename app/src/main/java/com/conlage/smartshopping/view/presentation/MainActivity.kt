@@ -1,10 +1,10 @@
 package com.conlage.smartshopping.view.presentation
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -32,8 +32,9 @@ class MainActivity : ComponentActivity() {
     }
 
 
+
     @Inject
-    lateinit var product_vm_factory: ProductViewModelImpl.ProductViewModelFactory.Factory
+    lateinit var product_vm_factory: ProductViewModelImpl.ProductViewModelFactory.ProductFactory
 
     @Inject
     lateinit var host_vm_factory: MainViewModelImpl.MainViewModelFactory.Factory
@@ -107,9 +108,9 @@ class MainActivity : ComponentActivity() {
                     "/{${ArgumentKeys.ARG_IS_ADDED}}",
             arguments = listOf(
                 navArgument(ArgumentKeys.ARG_ID) {
-                    type = NavType.StringType
-                    defaultValue = null
-                    nullable = true
+                    type = NavType.IntType
+                    defaultValue = 0
+                    nullable = false
                 },
                 navArgument(ArgumentKeys.ARG_BARCODE) {
                     type = NavType.StringType
@@ -123,15 +124,28 @@ class MainActivity : ComponentActivity() {
                 }
             )
         ) { entry ->
-            val vm: ProductViewModelImpl by viewModels {
-                product_vm_factory.create(
-                    id = entry.arguments!!.getInt(ArgumentKeys.ARG_ID),
-                    barcode = entry.arguments!!.getString(ArgumentKeys.ARG_BARCODE),
-                    isAdded = entry.arguments!!.getBoolean(ArgumentKeys.ARG_IS_ADDED)
-                )
+
+
+            val productVm: ProductViewModelImpl by viewModels {
+                product_vm_factory.create()
             }
-            //pass vm
-            ProductScreen(navController)
+
+            Log.e("MainActivity", "entry: ${entry.arguments}", )
+            if(!entry.arguments!!.isEmpty){
+                productVm.start(productId = entry.arguments!!.getInt(ArgumentKeys.ARG_ID))
+            }
+
+
+            ProductScreen(
+                navController,
+                productVm,
+                close = {
+                    entry.arguments!!.clear()
+                    productVm.clear()
+                }
+            )
+
+
         }
     }
 
@@ -141,8 +155,6 @@ class MainActivity : ComponentActivity() {
 
         ) { entry ->
             // pass args
-
-
             MainScreen(hostVm, navController)
         }
     }

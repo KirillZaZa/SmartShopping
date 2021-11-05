@@ -24,14 +24,14 @@ import com.conlage.smartshopping.ui.theme.RedColor
 
 
 @Composable
-fun AdvantagesProduct(advantagesList: List<String>) {
+fun AdvantagesProduct(advantagesList: List<String>?) {
     val listState = rememberLazyListState()
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .sizeIn((LocalView.current.width / 2).dp)
-            .height(200.dp)
+            .wrapContentHeight()
+            .sizeIn(maxWidth = 172.dp)
             .background(Color.White, RoundedCornerShape(20.dp))
             .padding(horizontal = 12.dp)
             .padding(top = 8.dp)
@@ -43,7 +43,7 @@ fun AdvantagesProduct(advantagesList: List<String>) {
                 .sizeIn(minWidth = 142.dp)
                 .background(color = GreenColor, shape = RoundedCornerShape(30))
                 .padding(vertical = 8.dp),
-            fontSize = 16.sp,
+            fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
             textAlign = TextAlign.Center
 
@@ -51,14 +51,14 @@ fun AdvantagesProduct(advantagesList: List<String>) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        LazyColumn(
-            state = listState,
-            modifier = Modifier.wrapContentHeight(),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            items(advantagesList) { advantage ->
-                AdvantageItem(item = advantage, isAdvantage = true)
-            }
+
+        val advantages = advantagesList ?: listOf()
+        advantages.forEach { advantage->
+            Spacer(modifier = Modifier.height(4.dp))
+
+            AdvantageItem(item = advantage, isAdvantage = true)
+
+            Spacer(modifier = Modifier.height(4.dp))
         }
 
     }
@@ -66,14 +66,14 @@ fun AdvantagesProduct(advantagesList: List<String>) {
 
 
 @Composable
-fun DisadvantagesProduct(disadvantagesList: List<String>) {
+fun DisadvantagesProduct(disadvantagesList: List<String>?) {
     val listState = rememberLazyListState()
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .sizeIn((LocalView.current.width / 2).dp)
-            .height(200.dp)
+            .wrapContentHeight()
+            .sizeIn(maxWidth = 172.dp)
             .background(Color.White, RoundedCornerShape(20.dp))
             .padding(horizontal = 12.dp)
             .padding(top = 8.dp)
@@ -86,21 +86,22 @@ fun DisadvantagesProduct(disadvantagesList: List<String>) {
                 .sizeIn(minWidth = 142.dp)
                 .background(color = RedColor, shape = RoundedCornerShape(30))
                 .padding(vertical = 8.dp),
-            fontSize = 16.sp,
+            fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
             textAlign = TextAlign.Center
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        LazyColumn(
-            state = listState,
-            modifier = Modifier.wrapContentHeight()
-        ) {
-            items(disadvantagesList) { advantage ->
-                AdvantageItem(item = advantage, isAdvantage = false)
-            }
+        val advantages = disadvantagesList ?: listOf()
+        advantages.forEach { advantage->
+            Spacer(modifier = Modifier.height(4.dp))
+
+            AdvantageItem(item = advantage, isAdvantage = false)
+
+            Spacer(modifier = Modifier.height(4.dp))
         }
+
 
     }
 }

@@ -25,7 +25,7 @@ import com.conlage.smartshopping.ui.theme.Standin
 
 @Composable
 fun RateDialog(
-    rateDetails: Map<String, Int>,
+    rateDetails: Map<String, Double>?,
     onCloseRateDialog: () -> Unit
 ) {
     Dialog(
@@ -35,9 +35,13 @@ fun RateDialog(
             dismissOnClickOutside = true
         )
     ) {
-        val rateTitles = rateDetails.map { it.key }
-        val rateStars = rateDetails.map { it.value }
 
+        val rateTitles = rateDetails?.map { it.key }
+        val rateStars = rateDetails?.map { it.value }
+
+        if(rateTitles == null && rateStars == null){
+            return@Dialog
+        }
         Card(
             elevation = 4.dp,
             shape = RoundedCornerShape(20.dp),
@@ -51,8 +55,8 @@ fun RateDialog(
             ) {
 
             LazyColumn(modifier = Modifier.wrapContentSize()) {
-                itemsIndexed(rateTitles) { i, rateTitle ->
-                    RateItem(rateTitle = rateTitle, countOfStars = rateStars[i])
+                itemsIndexed(rateTitles!!) { i, rateTitle ->
+                    RateItem(rateTitle = rateTitle, countOfStars = rateStars!![i])
                 }
             }
 
@@ -62,7 +66,7 @@ fun RateDialog(
 }
 
 @Composable
-private fun RateItem(rateTitle: String, countOfStars: Int) {
+private fun RateItem(rateTitle: String, countOfStars: Double) {
     Column(
         modifier =
         Modifier
@@ -80,7 +84,7 @@ private fun RateItem(rateTitle: String, countOfStars: Int) {
             fontWeight = FontWeight.Medium
         )
 
-        GenerateStars(countOfStars = countOfStars)
+        GenerateStars(countOfStars = countOfStars.toInt())
 
     }
 }

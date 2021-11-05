@@ -34,7 +34,7 @@ fun NetworkProduct.toProductDetails(): ProductDetails{
             this.image,
             this.price,
             this.rate,
-            this.rate_details.rate_details,
+            this.rate_details,
             this.research_document,
             this.title
         )
