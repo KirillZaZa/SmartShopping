@@ -41,13 +41,24 @@ fun AboutProduct(
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
 
-        Image(
-            bitmap = bitmap!!.asImageBitmap(),
-            contentDescription = "image_product",
-            modifier = Modifier
-                .size(126.dp)
-                .clip(RoundedCornerShape(20.dp))
-        )
+        if(bitmap == null){
+            Image(
+                painter = painterResource(id = R.drawable.ic_product_standin_icon),
+                contentDescription = "image_product",
+                modifier = Modifier
+                    .size(126.dp)
+                    .clip(RoundedCornerShape(20.dp))
+            )
+        }else {
+            Image(
+                bitmap = bitmap!!.asImageBitmap(),
+                contentDescription = "image_product",
+                modifier = Modifier
+                    .size(126.dp)
+                    .clip(RoundedCornerShape(20.dp))
+            )
+        }
+ 
 
         Column(
             modifier = Modifier.padding(start = 16.dp),

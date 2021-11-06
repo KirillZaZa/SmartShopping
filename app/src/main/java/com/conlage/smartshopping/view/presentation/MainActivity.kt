@@ -32,7 +32,6 @@ class MainActivity : ComponentActivity() {
     }
 
 
-
     @Inject
     lateinit var product_vm_factory: ProductViewModelImpl.ProductViewModelFactory.ProductFactory
 
@@ -130,10 +129,15 @@ class MainActivity : ComponentActivity() {
                 product_vm_factory.create()
             }
 
-            Log.e("MainActivity", "entry: ${entry.arguments}", )
-            if(!entry.arguments!!.isEmpty){
-                productVm.start(productId = entry.arguments!!.getInt(ArgumentKeys.ARG_ID))
-            }
+            Log.e("MainActivity", "entry: ${entry.arguments}")
+            if (!entry.arguments!!.isEmpty) {
+                productVm.start(
+                    productId = entry.arguments!!.getInt(ArgumentKeys.ARG_ID),
+                    isAdded = entry.arguments!!.getBoolean(ArgumentKeys.ARG_IS_ADDED),
+                    barcode = entry.arguments!!.getString(ArgumentKeys.ARG_BARCODE)
+                )
+            } else productVm.clear()
+
 
 
             ProductScreen(
@@ -141,7 +145,6 @@ class MainActivity : ComponentActivity() {
                 productVm,
                 close = {
                     entry.arguments!!.clear()
-                    productVm.clear()
                 }
             )
 
@@ -152,7 +155,6 @@ class MainActivity : ComponentActivity() {
     private fun NavGraphBuilder.Main(navController: NavController) {
         composable(
             route = Screen.MainScreen.route
-
         ) { entry ->
             // pass args
             MainScreen(hostVm, navController)

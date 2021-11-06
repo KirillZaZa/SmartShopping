@@ -81,8 +81,11 @@ class MainViewModelImpl @Inject constructor(
                 val newProduct = oldProduct.copy(quantity = oldProduct.quantity + 1)
                 newProduct.bitmap = product.bitmap
                 productListState[index] = newProduct
+
+                productUpdateUseCase.updateProductInDb(newProduct)
             } else {
                 productListState.add(0, product)
+                saveUseCase.saveProductInDb(product)
             }
         }
 
@@ -98,7 +101,10 @@ class MainViewModelImpl @Inject constructor(
                     val newProduct = oldProduct.copy(quantity = oldProduct.quantity - 1)
                     newProduct.bitmap = product.bitmap
                     productListState[index] = newProduct
-                } else productListState.removeAt(index)
+                } else {
+                    productListState.removeAt(index)
+                    deleteUseCase.deleteProductFromDb(product)
+                }
             }
         }
 
@@ -132,10 +138,6 @@ class MainViewModelImpl @Inject constructor(
             }
 
 
-            val product = currentValue.searchList[productIndex]
-
-            saveUseCase.saveProductInDb(product)
-
         }
     }
 
@@ -162,16 +164,6 @@ class MainViewModelImpl @Inject constructor(
                 updateState { it.copy(searchList = replacedList as MutableList<Product>) }
             }
 
-            if (currentValue.searchList[productIndex].quantity == 0) {
-                val product = currentValue.searchList[productIndex]
-                handleDeleteProductById(product.id)
-            } else {
-
-                val product = currentValue.searchList[productIndex]
-
-                productUpdateUseCase.updateProductInDb(product)
-
-            }
 
         }
     }

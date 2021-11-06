@@ -59,7 +59,7 @@ fun TextProductHeader(title: String, onClick: () -> Unit) {
                 painter = painterResource(id = R.drawable.ic_baseline_arrow_back_ios_24),
                 contentDescription = "back_button",
                 tint = DarkGray,
-                modifier = Modifier.size(32.dp)
+                modifier = Modifier.size(64.dp)
             )
         }
 
@@ -70,12 +70,26 @@ fun TextProductHeader(title: String, onClick: () -> Unit) {
             fontSize = 17.sp,
             color = DarkGray,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.width(200.dp),
+            modifier = Modifier.sizeIn(minWidth = 200.dp, maxWidth = 256.dp),
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.weight(1f))
 
+    }
+}
+
+
+private fun navigateBack(
+    navController: NavController,
+    close: () -> Unit
+) {
+
+    navController.navigate(Screen.MainScreen.route) {
+        popUpTo(Screen.MainScreen.route) {
+            inclusive = true
+        }
+        close()
     }
 }
 
@@ -93,48 +107,56 @@ fun ProductScreen(
 
     val scrollState = rememberScrollState()
 
+    BackHandler { navigateBack(navController = navController, close = close) }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(color = BackgroundColor)
             .padding(horizontal = 20.dp),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.BottomCenter
     ) {
 
-        Column(
-            modifier = Modifier
-                .verticalScroll(state = scrollState)
-                .fillMaxSize()
-                .padding(top = 36.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            if (state.isLoading && state.productDetails == null) {
+        if (state.isLoading && state.productDetails == null) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = Blue, modifier = Modifier.size(72.dp))
+            }
 
-                CircularProgressIndicator(color = Blue)
-                Spacer(modifier = Modifier.weight(1f))
+        } else if (state.productDetails == null && !state.isLoading) {
 
-            } else if (state.productDetails == null && !state.isLoading) {
-                Spacer(modifier = Modifier.weight(1f))
+
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(
                     text = "Не удалось получить продукт",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
                     color = Standin,
                 )
-                Spacer(modifier = Modifier.weight(1f))
+            }
 
 
-            } else {
+        } else {
+
+
+            Column(
+                modifier = Modifier
+                    .verticalScroll(state = scrollState)
+                    .fillMaxSize()
+                    .padding(top = 36.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+
+
                 TextProductHeader(title = state.productDetails!!.title) {
-                    //onclick back
+                    //add args
+                    navigateBack(navController = navController, close = close)
                 }
 
                 Spacer(modifier = Modifier.height(32.dp))
 
                 AboutProduct(
-                    bitmap = state.productDetails!!.bitmap!!,
+                    bitmap = state.productDetails!!.bitmap,
                     rate = state.productDetails!!.rate,
                     price = state.productDetails!!.price,
                     onAboutRateClick = { /*vm handle isRateOpen = !isRateOpen*/ },
@@ -190,20 +212,16 @@ fun ProductScreen(
                 }
             }
 
-            BackHandler() {
-                navController.navigate(Screen.MainScreen.route) {
-                    popUpTo(Screen.ProductScreen.route) {
-                        inclusive = true
-                    }
-                }
-                close()
-            }
-
         }
+
+
         if (!state.isLoading || state.productDetails != null) {
             FabManageProduct(onClick = { /*TODO*/ }, isAdded = state.isAdded)
 
         }
+
+
     }
 
 }
+

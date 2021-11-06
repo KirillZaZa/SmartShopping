@@ -34,6 +34,7 @@ class ProductViewModelImpl @Inject constructor(
 
     fun clear() {
         viewModelScope.launch(dispatcherMain + errHandler) {
+            delay(100)
             updateState {
                 it.copy(
                     productDetails = null,
@@ -52,11 +53,10 @@ class ProductViewModelImpl @Inject constructor(
 
             val value = when{
                 productId == null -> {
-                    null
                     return@launch
                 }
 
-                barcode == null ->{
+                barcode == "null" ->{
                     getProductDetailsById(productId)
                 }
 
