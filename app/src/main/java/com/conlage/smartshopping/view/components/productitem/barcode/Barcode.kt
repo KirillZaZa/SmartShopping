@@ -32,7 +32,7 @@ fun Barcode(bitmapBarcode: Bitmap?) {
     ) {
         if (bitmapBarcode == null) {
             Text(
-                text = "Штрих-код отсутствует",
+                text = "Нет штрих-кода",
                 fontSize = 16.sp,
                 color = Standin,
                 fontWeight = FontWeight.Medium,

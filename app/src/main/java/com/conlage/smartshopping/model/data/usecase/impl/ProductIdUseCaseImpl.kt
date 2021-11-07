@@ -1,5 +1,6 @@
 package com.conlage.smartshopping.model.data.usecase.impl
 
+import android.util.Log
 import com.conlage.smartshopping.model.data.local.ProductDetails
 import com.conlage.smartshopping.model.data.repository.impl.ShoppingRepositoryImpl
 import com.conlage.smartshopping.model.data.repository.resultwrapper.RepositoryResponse
@@ -20,9 +21,11 @@ class ProductIdUseCaseImpl @Inject constructor(
             val product = withContext(Dispatchers.IO) {
                 when (val result = repositoryImpl.getProductById(id)) {
                     is RepositoryResponse.Success<ProductDetails> -> {
+
                         result.response
                     }
                     is RepositoryResponse.Failure<ProductDetails> -> {
+
                         throw FailureException()
                     }
                 }
@@ -30,6 +33,7 @@ class ProductIdUseCaseImpl @Inject constructor(
             UseCaseResult.Response(product)
         } catch (e: Throwable) {
             e.printStackTrace()
+
             UseCaseResult.Error(e)
         }
     }

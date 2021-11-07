@@ -38,7 +38,7 @@ fun AdvantageItem(
             color = textColor,
             fontSize = 12.sp,
             fontWeight = FontWeight.Normal,
-            modifier = Modifier.sizeIn(maxWidth = 112.dp).padding(vertical = 2.dp)
+            modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp)
         )
     }
 

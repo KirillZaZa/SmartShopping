@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
@@ -24,6 +25,7 @@ import com.conlage.smartshopping.viewmodel.impl.MainViewModelImpl
 import com.conlage.smartshopping.viewmodel.impl.ProductViewModelImpl
 import javax.inject.Inject
 
+@ExperimentalUnitApi
 
 class MainActivity : ComponentActivity() {
 
@@ -99,12 +101,12 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @ExperimentalUnitApi
     private fun NavGraphBuilder.Product(navController: NavController) {
         composable(
             route = Screen.ProductScreen.route +
                     "/{${ArgumentKeys.ARG_ID}}" +
-                    "/{${ArgumentKeys.ARG_BARCODE}}" +
-                    "/{${ArgumentKeys.ARG_IS_ADDED}}",
+                    "/{${ArgumentKeys.ARG_BARCODE}}",
             arguments = listOf(
                 navArgument(ArgumentKeys.ARG_ID) {
                     type = NavType.IntType
@@ -115,11 +117,6 @@ class MainActivity : ComponentActivity() {
                     type = NavType.StringType
                     defaultValue = null
                     nullable = true
-                },
-                navArgument(ArgumentKeys.ARG_IS_ADDED) {
-                    type = NavType.BoolType
-                    defaultValue = false
-                    nullable = false
                 }
             )
         ) { entry ->
@@ -133,7 +130,6 @@ class MainActivity : ComponentActivity() {
             if (!entry.arguments!!.isEmpty) {
                 productVm.start(
                     productId = entry.arguments!!.getInt(ArgumentKeys.ARG_ID),
-                    isAdded = entry.arguments!!.getBoolean(ArgumentKeys.ARG_IS_ADDED),
                     barcode = entry.arguments!!.getString(ArgumentKeys.ARG_BARCODE)
                 )
             } else productVm.clear()

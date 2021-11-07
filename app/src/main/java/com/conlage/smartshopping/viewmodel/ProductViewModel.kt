@@ -6,10 +6,6 @@ interface ProductViewModel {
 
     fun getProductDetails(productId: Int?, isAdded:Boolean, barcode: String?)
 
-    fun handleAddButton()
-
-    fun handleDeleteButton()
-
     fun handleReadMore()
 
     fun handleAboutEvaluation()

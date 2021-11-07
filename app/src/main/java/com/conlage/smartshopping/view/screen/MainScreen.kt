@@ -54,11 +54,6 @@ fun MainScreen(
 
     val context = LocalContext.current
 
-    //migrate to constraint layout
-//
-//    if(args.id != null){
-//        handleIdArg()
-//    }
 
 
     Box(
@@ -89,7 +84,6 @@ fun MainScreen(
                             Screen.ProductScreen.withArgs(
                                 "$productId",
                                 "null",
-                                "false"
                             )
                         ){
                         }
@@ -131,7 +125,6 @@ fun MainScreen(
                                 Screen.ProductScreen.withArgs(
                                     "${product.id}",
                                     "null",
-                                    "true"
                                 )
                             )
                     }

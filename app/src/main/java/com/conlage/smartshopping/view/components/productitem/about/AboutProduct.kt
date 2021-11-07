@@ -103,21 +103,15 @@ private fun RateProduct(rate: String, onClick: () -> Unit) {
             fontWeight = FontWeight.Medium
         )
 
-        Text(
-            text = "подробнее",
-            color = Blue,
-            fontWeight = FontWeight.Medium,
-            fontSize = 14.sp
-        )
 
         Icon(
             painter = painterResource(id = R.drawable.ic_baseline_arrow_back_ios_24),
             contentDescription = "star_rate",
             modifier = Modifier
-                .size(16.dp)
+                .size(24.dp)
                 .rotate(180f)
                 .offset(x = (8).dp),
-            tint = Blue
+            tint = Yellow
         )
 
 

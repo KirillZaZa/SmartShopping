@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.conlage.smartshopping.ui.theme.GreenColor
 import com.conlage.smartshopping.ui.theme.RedColor
+import com.conlage.smartshopping.ui.theme.Standin
 
 
 @Composable
@@ -30,8 +31,7 @@ fun AdvantagesProduct(advantagesList: List<String>?) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .wrapContentHeight()
-            .sizeIn(maxWidth = 172.dp)
+            .fillMaxWidth()
             .background(Color.White, RoundedCornerShape(20.dp))
             .padding(horizontal = 12.dp)
             .padding(top = 8.dp)
@@ -40,7 +40,7 @@ fun AdvantagesProduct(advantagesList: List<String>?) {
             text = "Достоинства",
             color = Color.White,
             modifier = Modifier
-                .sizeIn(minWidth = 142.dp)
+                .fillMaxWidth()
                 .background(color = GreenColor, shape = RoundedCornerShape(30))
                 .padding(vertical = 8.dp),
             fontSize = 14.sp,
@@ -52,14 +52,32 @@ fun AdvantagesProduct(advantagesList: List<String>?) {
         Spacer(modifier = Modifier.height(16.dp))
 
 
-        val advantages = advantagesList ?: listOf()
-        advantages.forEach { advantage->
-            Spacer(modifier = Modifier.height(4.dp))
+        if (advantagesList.isNullOrEmpty()) {
+            Spacer(modifier = Modifier.height(16.dp))
 
-            AdvantageItem(item = advantage, isAdvantage = true)
+            Text(
+                text = "Достоинств не обнаружено",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                color = Standin,
+                modifier = Modifier.wrapContentHeight(),
+                textAlign = TextAlign.Start
+            )
+            Spacer(modifier = Modifier.height(32.dp))
 
-            Spacer(modifier = Modifier.height(4.dp))
+        } else {
+            advantagesList.forEach { advantage ->
+                Spacer(modifier = Modifier.height(4.dp))
+
+                AdvantageItem(item = advantage, isAdvantage = true)
+
+                Spacer(modifier = Modifier.height(4.dp))
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
         }
+
 
     }
 }
@@ -72,8 +90,7 @@ fun DisadvantagesProduct(disadvantagesList: List<String>?) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .wrapContentHeight()
-            .sizeIn(maxWidth = 172.dp)
+            .fillMaxWidth()
             .background(Color.White, RoundedCornerShape(20.dp))
             .padding(horizontal = 12.dp)
             .padding(top = 8.dp)
@@ -83,7 +100,7 @@ fun DisadvantagesProduct(disadvantagesList: List<String>?) {
             text = "Недостатки",
             color = Color.White,
             modifier = Modifier
-                .sizeIn(minWidth = 142.dp)
+                .fillMaxWidth()
                 .background(color = RedColor, shape = RoundedCornerShape(30))
                 .padding(vertical = 8.dp),
             fontSize = 14.sp,
@@ -93,13 +110,30 @@ fun DisadvantagesProduct(disadvantagesList: List<String>?) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        val advantages = disadvantagesList ?: listOf()
-        advantages.forEach { advantage->
-            Spacer(modifier = Modifier.height(4.dp))
+        if (disadvantagesList.isNullOrEmpty()) {
+            Spacer(modifier = Modifier.height(16.dp))
 
-            AdvantageItem(item = advantage, isAdvantage = false)
+            Text(
+                text = "Недостатков не обнаружено",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                color = Standin,
+                modifier = Modifier.wrapContentHeight(),
+                textAlign = TextAlign.Start
+            )
+            Spacer(modifier = Modifier.height(32.dp))
 
-            Spacer(modifier = Modifier.height(4.dp))
+        } else {
+            disadvantagesList.forEach { advantage ->
+                Spacer(modifier = Modifier.height(4.dp))
+
+                AdvantageItem(item = advantage, isAdvantage = false)
+
+                Spacer(modifier = Modifier.height(4.dp))
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
         }
 
 

@@ -1,11 +1,12 @@
 package com.conlage.smartshopping.view.screen
 
-import android.graphics.BitmapFactory
+import android.content.Intent
+import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.ScrollableState
-import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.FlingBehavior
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -14,22 +15,19 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
-import com.conlage.smartshopping.model.data.local.ProductDetails
-import com.conlage.smartshopping.model.data.network.dto.NetworkProduct
 import com.conlage.smartshopping.ui.theme.BackgroundColor
 import com.conlage.smartshopping.view.components.productitem.fab.FabManageProduct
 import com.conlage.smartshopping.R
@@ -45,36 +43,40 @@ import com.conlage.smartshopping.view.components.productitem.dialog.RateDialog
 import com.conlage.smartshopping.view.components.productitem.info.InformationProduct
 import com.conlage.smartshopping.view.navigation.Screen
 import com.conlage.smartshopping.viewmodel.impl.ProductViewModelImpl
+import kotlinx.coroutines.launch
 
 
 @Composable
 fun TextProductHeader(title: String, onClick: () -> Unit) {
+    val newTitle = if (title.length > 24) {
+        title.substring(0, 20) + "..."
+    } else title
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Start,
+        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(onClick = onClick) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_baseline_arrow_back_ios_24),
-                contentDescription = "back_button",
-                tint = DarkGray,
-                modifier = Modifier.size(64.dp)
-            )
-        }
-
-        Spacer(modifier = Modifier.weight(0.5f))
+        Icon(
+            painter = painterResource(id = R.drawable.ic_baseline_arrow_back_ios_24),
+            contentDescription = "back_button",
+            tint = DarkGray,
+            modifier = Modifier
+                .size(48.dp)
+                .clickable(onClick = onClick)
+                .offset(x = (-16).dp)
+        )
+        Spacer(modifier = Modifier.weight(1f))
         Text(
-            text = title,
-            maxLines = 2,
+            text = newTitle,
+            maxLines = 1,
             fontSize = 17.sp,
             color = DarkGray,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.sizeIn(minWidth = 200.dp, maxWidth = 256.dp),
-            overflow = TextOverflow.Ellipsis,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            modifier = Modifier.offset(x = (-16).dp),
         )
         Spacer(modifier = Modifier.weight(1f))
+
 
     }
 }
@@ -94,8 +96,7 @@ private fun navigateBack(
 }
 
 
-//viewmodel
-//navController
+@ExperimentalUnitApi
 @Composable
 fun ProductScreen(
     navController: NavController,
@@ -106,122 +107,137 @@ fun ProductScreen(
     val state = stateRemember.value
 
     val scrollState = rememberScrollState()
+    val scope = rememberCoroutineScope()
+
+    val context = LocalContext.current
+
 
     BackHandler { navigateBack(navController = navController, close = close) }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = BackgroundColor)
-            .padding(horizontal = 20.dp),
-        contentAlignment = Alignment.BottomCenter
-    ) {
 
-        if (state.isLoading && state.productDetails == null) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = Blue, modifier = Modifier.size(72.dp))
+
+    if (state.isLoading && state.productDetails == null) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(BackgroundColor), contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(color = Blue, modifier = Modifier.size(72.dp))
+        }
+
+    } else if (state.productDetails == null && !state.isLoading) {
+
+
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(BackgroundColor), contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "Не удалось получить продукт",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium,
+                color = Standin,
+            )
+        }
+
+
+    } else {
+
+
+        Column(
+            modifier = Modifier
+                .verticalScroll(state = scrollState)
+                .fillMaxSize()
+                .background(BackgroundColor)
+                .padding(top = 36.dp)
+                .padding(horizontal = 20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+
+
+            TextProductHeader(title = state.productDetails!!.title) {
+                //add args
+                navigateBack(navController = navController, close = close)
             }
 
-        } else if (state.productDetails == null && !state.isLoading) {
+            Spacer(modifier = Modifier.height(32.dp))
 
+            AboutProduct(
+                bitmap = state.productDetails!!.bitmap,
+                rate = state.productDetails!!.rate,
+                price = state.productDetails!!.price,
+                onAboutRateClick = { vm.handleAboutEvaluation() },
+                onResearchingClick = {
 
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(
-                    text = "Не удалось получить продукт",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Standin,
-                )
-            }
-
-
-        } else {
-
-
-            Column(
-                modifier = Modifier
-                    .verticalScroll(state = scrollState)
-                    .fillMaxSize()
-                    .padding(top = 36.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-
-
-                TextProductHeader(title = state.productDetails!!.title) {
-                    //add args
-                    navigateBack(navController = navController, close = close)
-                }
-
-                Spacer(modifier = Modifier.height(32.dp))
-
-                AboutProduct(
-                    bitmap = state.productDetails!!.bitmap,
-                    rate = state.productDetails!!.rate,
-                    price = state.productDetails!!.price,
-                    onAboutRateClick = { /*vm handle isRateOpen = !isRateOpen*/ },
-                    onResearchingClick = {}
-                )
-
-                Spacer(modifier = Modifier.height(32.dp))
-
-                DescriptionProduct(
-                    description = state.productDetails!!.description,
-                    //vm.isReadMore
-                    isReadMore = false,
-                    onClickReadMore = {
-                        // vm.handleClickReadMore
+                    if (state.productDetails!!.research_document != null) {
+                        val intent = Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse(state.productDetails!!.research_document)
+                        )
+                        context.startActivity(intent)
                     }
-                )
 
-                Spacer(modifier = Modifier.height(24.dp))
+
+                }
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            DescriptionProduct(
+                description = state.productDetails!!.description,
+                isReadMore = state.isReadMore,
+                onClickReadMore = {
+                    if (state.isReadMore) {
+                        scope.launch {
+                            scrollState.scrollTo((scrollState.value / 3))
+                        }
+                    }
+                    vm.handleReadMore()
+
+                }
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
 
 
 //            Advantages
 
-                Row(horizontalArrangement = Arrangement.SpaceBetween) {
 
-                    //passing the advantages list
-                    AdvantagesProduct(advantagesList = state.productDetails!!.advantages)
+            AdvantagesProduct(advantagesList = state.productDetails!!.advantages)
 
-                    Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(24.dp))
 
-                    //passing the disadvantages list
-                    DisadvantagesProduct(disadvantagesList = state.productDetails!!.disadvantages)
-                }
+            DisadvantagesProduct(disadvantagesList = state.productDetails!!.disadvantages)
 
-                //Information
+            Spacer(modifier = Modifier.height(32.dp))
 
-                Spacer(modifier = Modifier.height(24.dp))
+            //Information
 
-                InformationProduct(details = state.productDetails!!.details)
+            InformationProduct(details = state.productDetails!!.details)
 
-                Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
-                //barcode
-                Barcode(bitmapBarcode = state.productDetails!!.barcodeImg)
+            //Barcode
+
+            Barcode(bitmapBarcode = state.productDetails!!.barcodeImg)
 
 
-                Spacer(modifier = Modifier.height(128.dp))
+            Spacer(modifier = Modifier.height(40.dp))
 
-                //rate dialog if isRateOpen = true
-                if (false) {
-                    RateDialog(rateDetails = state.productDetails!!.rate_details) {
-                        //vm isRate = false
-                    }
-                }
+            if (state.isEvaluation) {
+                RateDialog(
+                    rateDetails = state.productDetails!!.rate_details,
+                    onCloseRateDialog = { vm.handleAboutEvaluation() }
+                )
             }
-
         }
-
-
-        if (!state.isLoading || state.productDetails != null) {
-            FabManageProduct(onClick = { /*TODO*/ }, isAdded = state.isAdded)
-
-        }
-
 
     }
 
 }
+
+
 

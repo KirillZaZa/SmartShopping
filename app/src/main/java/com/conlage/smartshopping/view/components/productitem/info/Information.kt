@@ -11,7 +11,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
@@ -24,7 +30,7 @@ import com.conlage.smartshopping.ui.theme.Standin
 fun InformationProduct(details: Map<String, String>?) {
 
 
-    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter){
+    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
         Image(
             painter = painterResource(id = R.drawable.ic_info_icon),
             contentDescription = "info_icon",
@@ -49,22 +55,20 @@ fun InformationProduct(details: Map<String, String>?) {
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            if(details.isNullOrEmpty()){
+            if (details.isNullOrEmpty()) {
                 Text(
                     text = "Нет информации",
                     fontSize = 16.sp,
                     color = Standin,
                     fontWeight = FontWeight.Medium
                 )
-            }else{
+            } else {
 
-                details.forEach { detail->
+                details.forEach { detail ->
                     InfoElement(placeHolder = detail.key, item = detail.value)
                 }
 
             }
-
-
 
 
         }
@@ -76,23 +80,24 @@ fun InformationProduct(details: Map<String, String>?) {
 @Composable
 private fun InfoElement(placeHolder: String, item: String) {
     Spacer(modifier = Modifier.height(4.dp))
-    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text(
-            text = "$placeHolder:",
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Normal,
-            color = Standin
-        )
+    Text(
+        text = "$placeHolder: ",
+        fontSize = 14.sp,
+        fontWeight = FontWeight.Normal,
+        color = Standin,
+        modifier = Modifier.wrapContentHeight(),
+        textAlign = TextAlign.Start
+    )
 
-        Text(
-            text = item,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Medium,
-            color = DarkGray
-        )
-    }
+    Text(
+        text = item,
+        fontSize = 14.sp,
+        fontWeight = FontWeight.Medium,
+        color = DarkGray,
+        modifier = Modifier.fillMaxWidth(),
+        textAlign = TextAlign.Start
+    )
     Spacer(modifier = Modifier.height(4.dp))
-
 
 
 }

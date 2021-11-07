@@ -2,6 +2,7 @@ package com.conlage.smartshopping.utils.barcode
 
 import android.graphics.Bitmap
 import android.graphics.Color
+import androidx.core.text.isDigitsOnly
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.oned.Code128Writer
@@ -17,6 +18,7 @@ class BarcodeGenerator @Inject constructor() {
     suspend fun generateBarcodeBitmap(code: String): Bitmap? {
         try {
             return withContext(Dispatchers.Default) {
+                if (!code.isDigitsOnly()) return@withContext null
                 val hintMap = Hashtable<EncodeHintType, ErrorCorrectionLevel>()
                 hintMap[EncodeHintType.ERROR_CORRECTION] = ErrorCorrectionLevel.L
 
@@ -39,8 +41,8 @@ class BarcodeGenerator @Inject constructor() {
             }
         } catch (e: CancellationException) {
             e.printStackTrace()
+            return null
         }
-        return null
     }
 
 }
