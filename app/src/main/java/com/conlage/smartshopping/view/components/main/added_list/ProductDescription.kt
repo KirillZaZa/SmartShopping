@@ -1,4 +1,4 @@
-package com.conlage.smartshopping.view.components.main.list
+package com.conlage.smartshopping.view.components.main.added_list
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
@@ -17,9 +17,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.conlage.smartshopping.R
-import com.conlage.smartshopping.model.data.local.db.entity.Product
+import com.conlage.smartshopping.model.data.local.Product
 import com.conlage.smartshopping.ui.theme.DarkGray
-import com.conlage.smartshopping.ui.theme.ProductGray
 import com.conlage.smartshopping.ui.theme.Standin
 import com.conlage.smartshopping.ui.theme.Yellow
 

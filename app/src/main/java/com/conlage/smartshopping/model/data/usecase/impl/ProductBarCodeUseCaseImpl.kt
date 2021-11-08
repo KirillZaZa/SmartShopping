@@ -1,7 +1,6 @@
 package com.conlage.smartshopping.model.data.usecase.impl
 
 import com.conlage.smartshopping.model.data.local.ProductDetails
-import com.conlage.smartshopping.model.data.local.db.entity.Product
 import com.conlage.smartshopping.model.data.repository.impl.ShoppingRepositoryImpl
 import com.conlage.smartshopping.model.data.repository.resultwrapper.RepositoryResponse
 import com.conlage.smartshopping.model.data.usecase.ProductBarcodeUseCase

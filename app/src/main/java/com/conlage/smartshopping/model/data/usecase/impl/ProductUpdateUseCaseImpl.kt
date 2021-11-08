@@ -1,10 +1,8 @@
 package com.conlage.smartshopping.model.data.usecase.impl
 
-import com.conlage.smartshopping.model.data.local.db.entity.Product
+import com.conlage.smartshopping.model.data.local.db.entity.ShopItem
 import com.conlage.smartshopping.model.data.repository.impl.ShoppingRepositoryImpl
-import com.conlage.smartshopping.model.data.repository.resultwrapper.RepositoryResponse
 import com.conlage.smartshopping.model.data.usecase.ProductUpdateUseCase
-import com.conlage.smartshopping.model.data.usecase.exception.FailureException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -14,10 +12,10 @@ class ProductUpdateUseCaseImpl @Inject constructor(
 ) : ProductUpdateUseCase {
 
 
-    override suspend fun updateProductInDb(product: Product) {
+    override suspend fun updateProductInDb(shopItem: ShopItem) {
         try {
             withContext(Dispatchers.IO){
-                repositoryImpl.updateProductInDb(product)
+                repositoryImpl.updateProductInDb(shopItem)
             }
         }catch (e: Throwable){
             e.printStackTrace()

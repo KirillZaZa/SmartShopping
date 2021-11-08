@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -26,7 +27,6 @@ import com.conlage.smartshopping.viewmodel.impl.ProductViewModelImpl
 import javax.inject.Inject
 
 @ExperimentalUnitApi
-
 class MainActivity : ComponentActivity() {
 
     private val hostVm: MainViewModelImpl by viewModels {
@@ -41,6 +41,7 @@ class MainActivity : ComponentActivity() {
     lateinit var host_vm_factory: MainViewModelImpl.MainViewModelFactory.Factory
 
 
+    @ExperimentalComposeUiApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -101,6 +102,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @ExperimentalComposeUiApi
     @ExperimentalUnitApi
     private fun NavGraphBuilder.Product(navController: NavController) {
         composable(
@@ -148,6 +150,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @ExperimentalComposeUiApi
     private fun NavGraphBuilder.Main(navController: NavController) {
         composable(
             route = Screen.MainScreen.route

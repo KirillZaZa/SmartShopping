@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.conlage.smartshopping.R
 import com.conlage.smartshopping.model.data.local.db.ShoppingDatabase
-import com.conlage.smartshopping.model.data.local.db.dao.ProductDao
+import com.conlage.smartshopping.model.data.local.db.dao.ShopItemDao
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -31,8 +31,8 @@ object RoomModule {
     }
 
     @Provides
-    fun provideProductDao(database: ShoppingDatabase): ProductDao {
-        return database.getProductDao()
+    fun provideShopItemDao(database: ShoppingDatabase): ShopItemDao {
+        return database.getShopItemDao()
     }
 
 }

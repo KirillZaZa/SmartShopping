@@ -1,6 +1,5 @@
 package com.conlage.smartshopping.model.data.usecase.impl
 
-import android.util.Log
 import com.conlage.smartshopping.model.data.local.ProductDetails
 import com.conlage.smartshopping.model.data.repository.impl.ShoppingRepositoryImpl
 import com.conlage.smartshopping.model.data.repository.resultwrapper.RepositoryResponse

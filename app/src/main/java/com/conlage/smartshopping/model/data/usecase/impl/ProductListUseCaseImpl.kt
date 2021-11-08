@@ -1,8 +1,9 @@
 package com.conlage.smartshopping.model.data.usecase.impl
 
 import android.util.Log
-import com.conlage.smartshopping.model.data.local.db.entity.Product
-import com.conlage.smartshopping.model.data.local.db.entity.ProductList
+import com.conlage.smartshopping.model.data.local.Product
+import com.conlage.smartshopping.model.data.local.ProductList
+import com.conlage.smartshopping.model.data.local.db.entity.ShopItem
 import com.conlage.smartshopping.model.data.repository.impl.ShoppingRepositoryImpl
 import com.conlage.smartshopping.model.data.repository.resultwrapper.RepositoryResponse
 import com.conlage.smartshopping.model.data.usecase.ProductListUseCase
@@ -20,7 +21,7 @@ class ProductListUseCaseImpl @Inject constructor(
     override suspend fun getProductList(query: String, page: Int): UseCaseResult<ProductList> {
         return try {
             val productList = withContext(Dispatchers.IO) {
-                when(val result = repositoryImpl.getProductList(query, page)){
+                when(val result = repositoryImpl.getProductList(query.trim(), page)){
                     is RepositoryResponse.Success<ProductList> -> result.response
                     is RepositoryResponse.Failure<ProductList> -> throw FailureException()
                 }
@@ -32,11 +33,11 @@ class ProductListUseCaseImpl @Inject constructor(
         }
     }
 
-    override suspend fun getProductListFromDb(): UseCaseResult<List<Product>> {
+    override suspend fun getProductListFromDb(): UseCaseResult<List<ShopItem>> {
         return try {
             Log.e("ProductUseCase", "getting..", )
             val productList = withContext(Dispatchers.IO) {
-                var list: List<Product>? = null
+                var list: List<ShopItem>? = null
                 repositoryImpl.getProductListFromDb {
                     list = it
                 }

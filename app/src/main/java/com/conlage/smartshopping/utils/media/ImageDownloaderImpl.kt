@@ -79,6 +79,8 @@ class ImageDownloaderImpl @Inject constructor(
     }
 
 
+
+    @Deprecated("Useless in v1.0")
     override fun saveImageToInternalStorage(
         bitmap: Bitmap,
         image: String
@@ -95,7 +97,7 @@ class ImageDownloaderImpl @Inject constructor(
     }
 
 
-    //check working
+    @Deprecated("Useless in v1.0")
     override suspend fun loadImageFromInternalStorage(image: String): LoadResult<Bitmap> {
         return try {
             withContext(Dispatchers.IO) {
@@ -121,6 +123,7 @@ class ImageDownloaderImpl @Inject constructor(
         }
     }
 
+    @Deprecated("Useless in v1.0")
     override fun deleteImageFromInternalStorage(image: String) {
         try {
             context.deleteFile("$image.jpg")

@@ -1,11 +1,11 @@
 package com.conlage.smartshopping.model.data.usecase
 
-import com.conlage.smartshopping.model.data.local.db.entity.Product
-import com.conlage.smartshopping.model.data.usecase.wrapper.UseCaseResult
+import com.conlage.smartshopping.model.data.local.Product
+import com.conlage.smartshopping.model.data.local.db.entity.ShopItem
 
 interface ProductSaveUseCase {
 
-    suspend fun saveProductInDb(product: Product)
+    suspend fun saveProductInDb(shopItem: ShopItem)
 
 
 }

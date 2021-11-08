@@ -1,6 +1,6 @@
 package com.conlage.smartshopping.model.data.usecase.impl
 
-import com.conlage.smartshopping.model.data.local.db.entity.Product
+import com.conlage.smartshopping.model.data.local.db.entity.ShopItem
 import com.conlage.smartshopping.model.data.repository.impl.ShoppingRepositoryImpl
 import com.conlage.smartshopping.model.data.usecase.ProductSaveUseCase
 import kotlinx.coroutines.Dispatchers
@@ -12,10 +12,10 @@ class ProductSaveUseCaseImpl @Inject constructor(
 ) : ProductSaveUseCase {
 
 
-    override suspend fun saveProductInDb(product: Product) {
+    override suspend fun saveProductInDb(shopItem: ShopItem) {
         try {
             withContext(Dispatchers.IO){
-                repositoryImpl.saveProductInDb(product)
+                repositoryImpl.saveProductInDb(shopItem)
             }
         } catch (e: Throwable) {
             e.printStackTrace()

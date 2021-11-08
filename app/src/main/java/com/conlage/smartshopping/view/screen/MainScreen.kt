@@ -1,12 +1,14 @@
 package com.conlage.smartshopping.view.screen
 
-import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
@@ -18,10 +20,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.conlage.smartshopping.ui.theme.BackgroundColor
 import com.conlage.smartshopping.ui.theme.Blue
+import com.conlage.smartshopping.view.components.main.add_item.AddItemCard
 import com.conlage.smartshopping.view.components.main.fab.ButtonScanner
-import com.conlage.smartshopping.view.components.main.list.added.AddedListProduct
+import com.conlage.smartshopping.view.components.main.added_list.list.AddedListProduct
+import com.conlage.smartshopping.view.components.main.added_list.list.BulbDialog
 import com.conlage.smartshopping.view.components.main.search.SearchProductComp
-import com.conlage.smartshopping.view.components.main.warning.EmptyListWarning
 import com.conlage.smartshopping.view.navigation.Screen
 import com.conlage.smartshopping.viewmodel.impl.MainViewModelImpl
 
@@ -36,6 +39,7 @@ fun TextMainHeader() {
     )
 }
 
+@ExperimentalComposeUiApi
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MainScreen(
@@ -47,12 +51,21 @@ fun MainScreen(
     val focusManager = LocalFocusManager.current
 
     val screenState = remember { vm.state }
-    val screen = screenState.value
+    val state = screenState.value
 
     val productListState = remember { vm.productListState }
 
+    val addedListState =  rememberLazyListState()
+
 
     val context = LocalContext.current
+
+
+
+    BackHandler() {
+        focusManager.clearFocus(force = true)
+    }
+
 
 
 
@@ -71,71 +84,89 @@ fun MainScreen(
             TextMainHeader()
 
             SearchProductComp(
-                searchQuery = screen.searchQuery,
-                isLoading = screen.isLoadingSearchProducts,
-                isSearchError = screen.isSearchError,
-                searchList = screen.searchList,
+                searchQuery = state.searchQuery,
+                isLoading = state.isLoadingSearchProducts,
+                isSearchError = state.isSearchError,
+                searchList = state.searchList,
                 onQueryChange = { vm.handleSearchQuery(it) },
                 onCloseClick = { vm.handleSearchOpen(isOpen = false) },
                 onProductClick = {
-                    val productId = screen.searchList[it].id
+                    val productId = state.searchList[it].id
                     navController
                         .navigate(
                             Screen.ProductScreen.withArgs(
                                 "$productId",
                                 "null",
                             )
-                        ){
-                        }
-                },
-                incClick = {
-                    vm.handleIncSearchItem(it) { product ->
-                        vm.handleIncAddedProduct(product)
-                    }
-                },
-                decClick = {
-                    vm.handleDecSearchItem(it) { product ->
-                        vm.handleDecAddedProduct(product)
-                    }
-                },
-                onAddTextClick = {
-
+                        )
                 },
                 focusRequester = focusRequester,
                 focusManager = focusManager
             )
 
+            Spacer(modifier = Modifier.height(24.dp))
+
+            AddItemCard(
+                onValueChange = { title->
+                    vm.handleShopItemQuery(title)
+                },
+                value = state.addItemTitle,
+                focusRequester = focusRequester,
+                onDone = {
+                    vm.handleNewShopItem()
+                }
+            )
 
 
-            if (productListState.isNullOrEmpty() && !screen.isLoadingProducts) {
-                Spacer(modifier = Modifier.weight(0.5f))
-                EmptyListWarning()
-                Spacer(modifier = Modifier.weight(1f))
-            } else if (screen.isLoadingProducts) {
+            if (state.isLoadingProducts) {
                 Spacer(modifier = Modifier.weight(0.5f))
                 CircularProgressIndicator(color = Blue)
                 Spacer(modifier = Modifier.weight(1f))
             } else {
-
                 AddedListProduct(
                     productList = productListState,
-                    onProductClick = { product ->
-                        navController
-                            .navigate(
-                                Screen.ProductScreen.withArgs(
-                                    "${product.id}",
-                                    "null",
-                                )
-                            )
+                    addedListState = addedListState,
+                    onLightClick = { shopItem ->
+                        vm.handleDialogState(shopItem.title, state = true)
+                    },
+                    onCheckedChange = { index, isChecked ->
+                        vm.handleProductCheckBox(index, isChecked)
                     }
                 )
             }
 
 
+
+
         }
-        if (!screen.isSearchOpen) {
-            ButtonScanner(onClick = {})
+
+        if(state.isBulbOpen){
+            BulbDialog(
+                title = state.bulbTitle ,
+                foundProducts = state.bulbList,
+                isLoadingBulb = state.isLoadingBulb,
+                onProductClick = {
+                    val productId = state.bulbList[it].id
+                    navController
+                        .navigate(
+                            Screen.ProductScreen.withArgs(
+                                "$productId",
+                                "null",
+                            )
+                        )
+                },
+                onDismissRequest = {
+                    vm.handleDialogState("", state = false)
+                }
+            )
         }
+
+        if (!state.isSearchOpen) {
+            ButtonScanner(onClick = {
+
+            })
+        }
+
 
         /**
          * if isCameraGranted = false , and event is PermissionEvent

@@ -1,37 +1,29 @@
 package com.conlage.smartshopping.viewmodel
 
-import com.conlage.smartshopping.model.data.local.db.entity.Product
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.MultiplePermissionsState
-import com.google.accompanist.permissions.PermissionState
+import com.conlage.smartshopping.model.data.local.Product
+import com.conlage.smartshopping.model.data.local.db.entity.ShopItem
 
 interface MainViewModel {
 
-    fun handleIncAddedProduct(product: Product)
 
-    fun handleDecAddedProduct(product: Product)
+    fun handleShopItemQuery(title: String)
+
+    fun handleNewShopItem()
 
     fun getProductList()
 
-    fun handleIncSearchItem(productIndex: Int, callback:(product: Product) -> Unit)
+    fun handleProductCheckBox(shopItemIndex: Int, wantBeDeleted: Boolean)
 
-    fun handleProductCheckBox(productIndex: Int)
+    fun handleDialogState(shopItemTitle: String, state: Boolean)
 
     fun handleSearchQuery(query: String)
 
     fun handleSearchOpen(isOpen: Boolean)
 
-    fun handleDecSearchItem(productIndex: Int, callback:(product: Product) -> Unit)
-
     fun handleCameraPermission(isGranted: Boolean)
-
-    fun handleStoragePermission(isGranted: Boolean)
 
     fun handleNewPage()
 
-    fun handleSaveProduct(productId: Int)
-
-    fun handleDeleteProductById(productId: Int)
 
     suspend fun getProductListFromNetwork(query: String): List<Product>
 

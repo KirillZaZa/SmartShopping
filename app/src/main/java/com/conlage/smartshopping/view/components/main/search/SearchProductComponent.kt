@@ -1,13 +1,11 @@
 package com.conlage.smartshopping.view.components.main.search
 
-import android.widget.Space
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -15,22 +13,16 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.key.onKeyEvent
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import androidx.constraintlayout.widget.Guideline
 import com.conlage.smartshopping.R
-import com.conlage.smartshopping.model.data.local.db.entity.Product
+import com.conlage.smartshopping.model.data.local.Product
 import com.conlage.smartshopping.ui.theme.Blue
-import com.conlage.smartshopping.ui.theme.DarkGray
-import com.conlage.smartshopping.ui.theme.LightGray
-import com.conlage.smartshopping.view.components.main.list.search.SearchList
+import com.conlage.smartshopping.view.components.main.search.list.SearchList
 import com.conlage.smartshopping.view.components.main.warning.EmptySearchWarning
 
 /**
@@ -49,9 +41,6 @@ fun SearchProductComp(
     onQueryChange: (String) -> Unit,
     onCloseClick: () -> Unit,
     onProductClick: (Int) -> Unit,
-    incClick: (Int) -> Unit,
-    decClick: (Int) -> Unit,
-    onAddTextClick: () -> Unit,
     focusRequester: FocusRequester,
     focusManager: FocusManager
 ) {
@@ -60,9 +49,10 @@ fun SearchProductComp(
     Column(
         modifier = Modifier
             .wrapContentHeight()
+            .sizeIn(maxHeight = 500.dp)
             .fillMaxWidth()
             .padding(top = 48.dp)
-            .shadow(elevation = 10.dp, shape = RoundedCornerShape(20.dp), clip = true)
+            .shadow(elevation = 4.dp, shape = RoundedCornerShape(20.dp), clip = true)
             .zIndex(10f)
             .background(Color.White, shape = RoundedCornerShape(20.dp)),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -98,16 +88,12 @@ fun SearchProductComp(
             Spacer(modifier = Modifier.height(36.dp))
             EmptySearchWarning()
             Spacer(modifier = Modifier.height(36.dp))
-            AddTextProductButton(onAddTextClick)
-            Spacer(modifier = Modifier.height(36.dp))
 
         } else if (!searchList.isNullOrEmpty()) {
 
             SearchList(
                 searchList = searchList,
                 onProductClick = onProductClick,
-                incClick = incClick,
-                decClick = decClick
             )
 
 
@@ -115,27 +101,6 @@ fun SearchProductComp(
     }
 
 
-}
-
-@Composable
-fun AddTextProductButton(onClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(horizontal = 24.dp)
-            .background(color = Blue, shape = RoundedCornerShape(35)),
-        contentAlignment = Alignment.Center
-    ) {
-        TextButton(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
-            Text(
-                text = "Добавить в список",
-                color = Color.White,
-                fontWeight = FontWeight.Normal,
-                fontSize = 14.sp
-            )
-        }
-    }
 }
 
 
@@ -205,7 +170,11 @@ fun SearchField(
         ),
         placeholder = {
             Text(text = "Название товара", color = Color.LightGray)
-        }
+        },
+        keyboardOptions = KeyboardOptions(
+            imeAction = ImeAction.None
+        )
+
 
 
     )

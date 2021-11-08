@@ -1,8 +1,8 @@
 package com.conlage.smartshopping.model.data.mapper
 
 import com.conlage.smartshopping.model.data.local.ProductDetails
-import com.conlage.smartshopping.model.data.local.db.entity.Product
-import com.conlage.smartshopping.model.data.local.db.entity.ProductList
+import com.conlage.smartshopping.model.data.local.Product
+import com.conlage.smartshopping.model.data.local.ProductList
 import com.conlage.smartshopping.model.data.network.dto.NetworkProduct
 import com.conlage.smartshopping.model.data.network.dto.NetworkProductList
 
@@ -16,7 +16,7 @@ fun NetworkProductList.ProductItem.toProduct() =
         price = this.price ?: "нет цены"
     )
 
-fun List<NetworkProductList.ProductItem>.mapToProductList(): ProductList{
+fun List<NetworkProductList.ProductItem>.mapToProductList(): ProductList {
     return ProductList(
         list = this.map { it.toProduct() }
     )

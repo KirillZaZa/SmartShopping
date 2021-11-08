@@ -1,43 +1,43 @@
-package com.conlage.smartshopping.view.components.main.list.added
+package com.conlage.smartshopping.view.components.main.added_list.list
 
-import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.conlage.smartshopping.model.data.local.db.entity.Product
+import com.conlage.smartshopping.model.data.local.db.entity.ShopItem
 
 @ExperimentalMaterialApi
 @Composable
 fun AddedListProduct(
-    productList: List<Product>,
-    onProductClick: (Product) -> Unit,
+    productList: List<ShopItem>,
+    onLightClick: (ShopItem) -> Unit,
+    onCheckedChange: (Int, Boolean) -> Unit,
+    addedListState:LazyListState
 ) {
-    val listState = rememberLazyListState()
 
 
     LazyColumn(
-        state = listState,
+        state = addedListState,
         modifier = Modifier
             .fillMaxSize()
             .offset(y = (-20).dp)
     ) {
-        itemsIndexed(productList) { i, product ->
+        itemsIndexed(productList) { i, item ->
             AddedProduct(
-                product = product,
-                onProductClick = {
-                    onProductClick(product)
+                shopItem = item,
+                onLightClick = {
+                    onLightClick(item)
                 },
                 productIndex = i,
                 listSize = productList.size,
+                onCheckedChange = {
+                    onCheckedChange(i, it)
+                }
             )
         }
 

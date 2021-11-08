@@ -1,8 +1,9 @@
 package com.conlage.smartshopping.model.data.repository
 
 import com.conlage.smartshopping.model.data.local.ProductDetails
-import com.conlage.smartshopping.model.data.local.db.entity.Product
-import com.conlage.smartshopping.model.data.local.db.entity.ProductList
+import com.conlage.smartshopping.model.data.local.Product
+import com.conlage.smartshopping.model.data.local.ProductList
+import com.conlage.smartshopping.model.data.local.db.entity.ShopItem
 import com.conlage.smartshopping.model.data.repository.resultwrapper.RepositoryResponse
 
 interface ShoppingRepository {
@@ -14,15 +15,15 @@ interface ShoppingRepository {
 
     suspend fun getProductByBarcode(barcode: String): RepositoryResponse<ProductDetails>
 
-    suspend fun saveProductInDb(product: Product)
+    suspend fun saveProductInDb(shopItem: ShopItem)
 
-    suspend fun deleteProductFromDb(product: Product)
+    suspend fun deleteProductFromDb(shopItem: ShopItem)
 
-    suspend fun deleteProductFromDbById(productId: Int, productImage: String)
+    suspend fun deleteProductFromDbById(shopItemId: Int)
 
-    suspend fun updateProductInDb(product: Product)
+    suspend fun updateProductInDb(shopItem: ShopItem)
 
-    suspend fun getProductListFromDb(callback: (List<Product>) -> Unit)
+    suspend fun getProductListFromDb(callback: (List<ShopItem>) -> Unit)
 
 
 

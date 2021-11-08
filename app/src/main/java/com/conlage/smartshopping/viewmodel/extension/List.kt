@@ -1,10 +1,9 @@
 package com.conlage.smartshopping.viewmodel.extension
 
-import android.util.Log
-import com.conlage.smartshopping.model.data.local.db.entity.Product
+import com.conlage.smartshopping.model.data.local.Product
 import java.util.*
 
-fun List<Product>.getProductById(productId: Int): Product{
+fun List<Product>.getProductById(productId: Int): Product {
     return this.filter { it.id == productId }[0]
 }
 

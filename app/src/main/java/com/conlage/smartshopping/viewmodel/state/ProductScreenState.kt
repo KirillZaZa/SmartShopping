@@ -1,7 +1,7 @@
 package com.conlage.smartshopping.viewmodel.state
 
 import com.conlage.smartshopping.model.data.local.ProductDetails
-import com.conlage.smartshopping.model.data.local.db.entity.Product
+import com.conlage.smartshopping.model.data.local.Product
 
 data class ProductScreenState(
     var productDetails: ProductDetails? = null,

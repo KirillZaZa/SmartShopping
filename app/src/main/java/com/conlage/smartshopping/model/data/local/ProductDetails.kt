@@ -18,6 +18,4 @@ data class ProductDetails(
     val title: String,
     var barcodeImg: Bitmap? = null,
     var bitmap: Bitmap? = null
-){
-
-}
+)

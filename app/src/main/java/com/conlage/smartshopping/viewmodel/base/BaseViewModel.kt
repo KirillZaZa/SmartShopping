@@ -1,17 +1,13 @@
 package com.conlage.smartshopping.viewmodel.base
 
 import android.util.Log
-import androidx.annotation.MainThread
 import androidx.annotation.UiThread
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
-import com.conlage.smartshopping.model.data.local.db.entity.Product
 import com.conlage.smartshopping.viewmodel.events.BaseEvent
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers

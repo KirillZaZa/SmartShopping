@@ -9,6 +9,7 @@ import androidx.compose.material.*
 import androidx.compose.material.Button
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
@@ -23,6 +24,7 @@ import com.conlage.smartshopping.R
 import com.conlage.smartshopping.ui.theme.*
 
 
+@ExperimentalComposeUiApi
 @Composable
 fun RateDialog(
     rateDetails: Map<String, Double>?,
@@ -32,7 +34,8 @@ fun RateDialog(
         onDismissRequest = onCloseRateDialog,
         properties = DialogProperties(
             dismissOnBackPress = true,
-            dismissOnClickOutside = true
+            dismissOnClickOutside = true,
+            usePlatformDefaultWidth = false
         )
     ) {
 
@@ -46,9 +49,11 @@ fun RateDialog(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .sizeIn(minHeight = 256.dp, maxHeight = 400.dp)
+                    .sizeIn(minHeight = 256.dp, maxHeight = 324.dp)
+                    .fillMaxSize()
                     .padding(top = 64.dp)
-                    .padding(bottom = 32.dp),
+                    .padding(bottom = 32.dp)
+                    .padding(horizontal = 20.dp),
                 backgroundColor = Color.White,
             ) {
 

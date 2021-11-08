@@ -1,24 +1,20 @@
 package com.conlage.smartshopping.model.data.repository.impl
 
-import android.util.Log
 import com.conlage.smartshopping.model.data.local.ProductDetails
 import com.conlage.smartshopping.model.data.local.db.ShoppingDatabase
-import com.conlage.smartshopping.model.data.local.db.dao.ProductDao
-import com.conlage.smartshopping.model.data.local.db.entity.Product
-import com.conlage.smartshopping.model.data.local.db.entity.ProductList
+import com.conlage.smartshopping.model.data.local.Product
+import com.conlage.smartshopping.model.data.local.ProductList
+import com.conlage.smartshopping.model.data.local.db.entity.ShopItem
 import com.conlage.smartshopping.model.data.mapper.mapToProductList
 import com.conlage.smartshopping.model.data.mapper.toProductDetails
 import com.conlage.smartshopping.utils.media.ImageDownloaderImpl
 import com.conlage.smartshopping.utils.media.resultwrapper.LoadResult
-import com.conlage.smartshopping.model.data.network.dto.ResponseError
 import com.conlage.smartshopping.model.data.repository.resultwrapper.RepositoryResponse
 import com.conlage.smartshopping.model.data.network.service.SmartShoppingService
 import com.conlage.smartshopping.model.data.repository.ShoppingRepository
 import com.conlage.smartshopping.model.data.usecase.exception.FailureException
 import com.conlage.smartshopping.utils.barcode.BarcodeGenerator
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.lang.IllegalArgumentException
 import javax.inject.Inject
@@ -113,12 +109,9 @@ class ShoppingRepositoryImpl @Inject constructor(
      * 2) по колбеку от базы - сохраняем фотку
      * 3) колбек об успешной/провальной транзакции
      */
-    override suspend fun saveProductInDb(product: Product) {
+    override suspend fun saveProductInDb(shopItem: ShopItem) {
         try {
-            if (product.bitmap != null ){
-                imageDownloader.saveImageToInternalStorage(product.bitmap!!, "${product.id}")
-            }
-            db.getProductDao().insert(product)
+            db.getShopItemDao().insert(shopItem)
         } catch (e: Throwable) {
             e.printStackTrace()
         }
@@ -129,49 +122,35 @@ class ShoppingRepositoryImpl @Inject constructor(
      *  2)по колбеку от базы удаляем фотку
      *  3)далее колбек об успешной/провальной транзакции
      */
-    override suspend fun deleteProductFromDb(product: Product) {
+    override suspend fun deleteProductFromDb(shopItem: ShopItem) {
         try {
-            imageDownloader.deleteImageFromInternalStorage("${product.id}")
-            db.getProductDao().delete(product)
+            db.getShopItemDao().delete(shopItem)
         } catch (e: Throwable) {
             e.printStackTrace()
         }
     }
 
-    override suspend fun deleteProductFromDbById(productId: Int, productImage: String) {
+    override suspend fun deleteProductFromDbById(shopItemId: Int) {
         try {
-            imageDownloader.deleteImageFromInternalStorage(productImage)
-            db.getProductDao().deleteProductById(productId)
+            db.getShopItemDao().deleteProductById(shopItemId)
         } catch (e: Throwable) {
             e.printStackTrace()
         }
     }
 
-    override suspend fun updateProductInDb(product: Product) {
+    override suspend fun updateProductInDb(shopItem: ShopItem) {
         try {
-            db.getProductDao().update(product)
+            db.getShopItemDao().update(shopItem)
         } catch (e: Throwable) {
             e.printStackTrace()
         }
     }
 
-    override suspend fun getProductListFromDb(callback: (List<Product>) -> Unit) {
-        val list = db.getProductDao().getProductList()
-            .map { product ->
-                product.bitmap = when (val loadResult =
-                    imageDownloader.loadImageFromInternalStorage("${product.id}")) {
-                    is LoadResult.Success -> loadResult.response
-                    is LoadResult.Failure -> loadResult.throwable
-                    else -> throw IllegalArgumentException()
-                }
-                product
-            }
-        Log.e("List", "$list")
+    override suspend fun getProductListFromDb(callback: (List<ShopItem>) -> Unit) {
+        val list = db.getShopItemDao().getProductList()
 
         callback(list)
-
     }
-
 
 
 }

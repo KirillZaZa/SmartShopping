@@ -1,12 +1,11 @@
 package com.conlage.smartshopping.model.data.usecase
 
-import com.conlage.smartshopping.model.data.local.db.entity.Product
-import com.conlage.smartshopping.model.data.usecase.wrapper.UseCaseResult
+import com.conlage.smartshopping.model.data.local.db.entity.ShopItem
 
 interface ProductDeleteUseCase {
 
-    suspend fun deleteProductFromDb(product: Product)
+    suspend fun deleteProductFromDb(shopItem: ShopItem)
 
-    suspend fun deleteProductFromDbById(productId: Int, productImage: String)
+    suspend fun deleteProductFromDbById(shopItemId: Int)
 
 }

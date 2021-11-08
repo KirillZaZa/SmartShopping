@@ -1,12 +1,8 @@
 package com.conlage.smartshopping.model.data.usecase.impl
 
-import android.util.Log
-import com.conlage.smartshopping.model.data.local.db.entity.Product
+import com.conlage.smartshopping.model.data.local.db.entity.ShopItem
 import com.conlage.smartshopping.model.data.repository.impl.ShoppingRepositoryImpl
-import com.conlage.smartshopping.model.data.repository.resultwrapper.RepositoryResponse
 import com.conlage.smartshopping.model.data.usecase.ProductDeleteUseCase
-import com.conlage.smartshopping.model.data.usecase.exception.FailureException
-import com.conlage.smartshopping.model.data.usecase.wrapper.UseCaseResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -16,10 +12,10 @@ class ProductDeleteUseCaseImpl @Inject constructor(
 ) : ProductDeleteUseCase {
 
 
-    override suspend fun deleteProductFromDb(product: Product) {
+    override suspend fun deleteProductFromDb(shopItem: ShopItem) {
         try {
             withContext(Dispatchers.IO) {
-                repositoryImpl.deleteProductFromDb(product)
+                repositoryImpl.deleteProductFromDb(shopItem)
             }
 
         } catch (e: Throwable) {
@@ -27,10 +23,10 @@ class ProductDeleteUseCaseImpl @Inject constructor(
         }
     }
 
-    override suspend fun deleteProductFromDbById(productId: Int, productImage: String) {
+    override suspend fun deleteProductFromDbById(shopItemId: Int) {
         try {
             withContext(Dispatchers.IO) {
-                repositoryImpl.deleteProductFromDbById(productId, productImage)
+                repositoryImpl.deleteProductFromDbById(shopItemId)
             }
 
         } catch (e: Throwable) {
