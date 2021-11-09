@@ -22,6 +22,7 @@ import androidx.compose.ui.zIndex
 import com.conlage.smartshopping.ui.theme.Blue
 import com.conlage.smartshopping.ui.theme.DividerColor
 import com.conlage.smartshopping.ui.theme.Standin
+import com.conlage.smartshopping.view.components.extension.clearFocusOnKeyboardDismiss
 
 
 @Composable
@@ -57,7 +58,8 @@ fun AddItemCard(
             maxLines = 1,
             modifier = Modifier
                 .background(color = Color.Transparent)
-                .focusRequester(focusRequester),
+                .focusRequester(focusRequester)
+                .clearFocusOnKeyboardDismiss(),
             singleLine = true,
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 backgroundColor = Color.Transparent,

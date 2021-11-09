@@ -44,7 +44,11 @@ fun BulbDialog(
         )
     ) {
 
-        if (foundProducts.isNullOrEmpty() && !isLoadingBulb) {
+        if (isLoadingBulb) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = Blue)
+            }
+        } else if (foundProducts.isNullOrEmpty() && !isLoadingBulb) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -52,7 +56,7 @@ fun BulbDialog(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Таких товаров нет",
+                    text = "Ничего не найдено",
                     color = Standin,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
@@ -72,18 +76,12 @@ fun BulbDialog(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                if(isLoadingBulb){
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
-                        CircularProgressIndicator(color = Blue)
-                    }
-                }else{
-                    BulbContent(
-                        title = title,
-                        onDismissRequest = onDismissRequest,
-                        foundProducts = foundProducts,
-                        onProductClick = onProductClick
-                    )
-                }
+                BulbContent(
+                    title = title,
+                    onDismissRequest = onDismissRequest,
+                    foundProducts = foundProducts,
+                    onProductClick = onProductClick
+                )
 
             }
         }

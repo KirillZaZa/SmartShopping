@@ -39,32 +39,47 @@ class MainViewModelImpl @Inject constructor(
 
 
     override fun handleDialogState(shopItemTitle: String, state: Boolean) {
-        if (state){
+        if (state) {
             viewModelScope.launch(dispatcherMain + errHandler) {
-                updateState { it.copy(
-                    isBulbOpen = true,
-                    bulbTitle = shopItemTitle,
-                    isLoadingBulb = true
-                ) }
+                updateState {
+                    it.copy(
+                        isBulbOpen = true,
+                        bulbTitle = shopItemTitle,
+                        isLoadingBulb = true
+                    )
+                }
 
                 val bulbList = getProductListFromNetwork(shopItemTitle)
 
-                updateState { it.copy(
-                    bulbList = bulbList as MutableList<Product>,
-                    isLoadingBulb = false
-                ) }
+                updateState {
+                    it.copy(
+                        bulbList = bulbList as MutableList<Product>,
+                        isLoadingBulb = false
+                    )
+                }
 
 
             }
-        }else{
-            updateState { it.copy(
-                isBulbOpen = false,
-                bulbTitle = "",
-                isLoadingBulb = false
-            ) }
+        } else {
+            updateState {
+                it.copy(
+                    isBulbOpen = false,
+                    bulbTitle = "",
+                    isLoadingBulb = false
+                )
+            }
         }
 
     }
+
+    override fun handleScannerButton() {
+        updateState {
+            it.copy(
+                isScannerOpen = !it.isScannerOpen
+            )
+        }
+    }
+
 
     override fun handleShopItemQuery(title: String) {
 
@@ -72,8 +87,38 @@ class MainViewModelImpl @Inject constructor(
 
     }
 
+
+    override fun handlePermissionCount() {
+        if (currentValue.permissionLaunchCounter > 1) {
+            handleSnackbarPermission()
+            Log.e("MainViewModel", "count ${currentValue.permissionLaunchCounter}", )
+        } else updateState { it.copy(permissionLaunchCounter = it.permissionLaunchCounter + 1) }
+        Log.e("MainViewModel", "count ${currentValue.permissionLaunchCounter}", )
+
+    }
+
+    override fun handleSnackbarPermission() {
+        viewModelScope.launch(dispatcherMain + errHandler) {
+
+            updateState {
+                it.copy(
+                    isShouldShowRationale = true
+                )
+            }
+
+            delay(3000)
+
+            updateState {
+                it.copy(
+                    isShouldShowRationale = false
+                )
+            }
+
+        }
+    }
+
     override fun handleNewShopItem() {
-        if(currentValue.addItemTitle.isBlank()) return
+        if (currentValue.addItemTitle.isBlank()) return
         viewModelScope.launch(dispatcherMain + errHandler) {
             val shopItem = ShopItem(
                 title = currentValue.addItemTitle
@@ -244,8 +289,6 @@ class MainViewModelImpl @Inject constructor(
     }
 
 
-
-
     override fun handleSearchQuery(query: String) {
         Log.e("Search Query", "handleSearchQuery: $query")
         searchJobs.forEach {
@@ -275,6 +318,7 @@ class MainViewModelImpl @Inject constructor(
 
                 val list = getProductListFromNetwork(query)
                 if (list.isNullOrEmpty()) updateState {
+                    delay(200)
                     it.copy(
                         isLoadingSearchProducts = false,
                         isSearchError = true
@@ -316,15 +360,11 @@ class MainViewModelImpl @Inject constructor(
             it.copy(
                 isSearchOpen = isOpen,
                 searchQuery = "",
+                isLoadingSearchProducts = false,
                 isSearchError = false
             )
         }
         currentValue.searchList.clear()
-    }
-
-
-    override fun handleCameraPermission(isGranted: Boolean) {
-        updateState { it.copy(isCameraGranted = isGranted) }
     }
 
 
@@ -341,7 +381,6 @@ class MainViewModelImpl @Inject constructor(
 
         }
     }
-
 
 
     class MainViewModelFactory @AssistedInject constructor(

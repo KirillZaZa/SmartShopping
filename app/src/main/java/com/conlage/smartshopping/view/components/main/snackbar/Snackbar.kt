@@ -21,9 +21,10 @@ import com.conlage.smartshopping.ui.theme.Blue
 import com.conlage.smartshopping.ui.theme.DarkGray
 import com.conlage.smartshopping.ui.theme.Gray
 
-@Preview(showBackground = true)
 @Composable
-fun SnackbarPermission() {
+fun SnackbarPermission(
+    onSettingsClick: () -> Unit
+) {
 
     Row(
         modifier = Modifier
@@ -35,7 +36,7 @@ fun SnackbarPermission() {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = "Для сохранения товаров необходим доступ к хранилищу",
+            text = "Необходим доступ к камере",
             fontSize = 14.sp,
             color = Gray,
             fontWeight = FontWeight.Normal,
@@ -46,7 +47,7 @@ fun SnackbarPermission() {
                 .width(200.dp),
             textAlign = TextAlign.Start
         )
-        TextButton(onClick = {},
+        TextButton(onClick = onSettingsClick,
             modifier = Modifier
                 .wrapContentSize()
                 .padding(end = 8.dp)) {

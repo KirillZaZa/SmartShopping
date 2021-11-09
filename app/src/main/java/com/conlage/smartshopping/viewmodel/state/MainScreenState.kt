@@ -10,18 +10,19 @@ data class MainScreenState(
 
     var searchQuery: String = "",
 
+    var isScannerOpen: Boolean = false,
 
     var isSearchOpen: Boolean = false,
 
     var isSearchError: Boolean = false,
 
+    var isShouldShowRationale: Boolean = false,
+
     var isLoadingProducts: Boolean = false,
 
     var isLoadingSearchProducts: Boolean = false,
 
-    var isCameraGranted: Boolean = true,
-
-    var isStorageGranted: Boolean = true,
+    var permissionLaunchCounter: Int = 0,
 
     var currentPage: Int = 1,
 

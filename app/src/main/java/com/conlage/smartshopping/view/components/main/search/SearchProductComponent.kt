@@ -1,29 +1,35 @@
 package com.conlage.smartshopping.view.components.main.search
 
+import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.*
+import androidx.compose.ui.*
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.focus.FocusManager
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.*
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.KeyEvent
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.ImeOptions
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import com.conlage.smartshopping.R
 import com.conlage.smartshopping.model.data.local.Product
 import com.conlage.smartshopping.ui.theme.Blue
+import com.conlage.smartshopping.view.components.extension.clearFocusOnKeyboardDismiss
 import com.conlage.smartshopping.view.components.main.search.list.SearchList
 import com.conlage.smartshopping.view.components.main.warning.EmptySearchWarning
+import com.google.accompanist.insets.LocalWindowInsets
 
 /**
  *
@@ -31,6 +37,7 @@ import com.conlage.smartshopping.view.components.main.warning.EmptySearchWarning
  *
  *
  */
+@ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 @Composable
 fun SearchProductComp(
@@ -42,9 +49,9 @@ fun SearchProductComp(
     onCloseClick: () -> Unit,
     onProductClick: (Int) -> Unit,
     focusRequester: FocusRequester,
-    focusManager: FocusManager
+    focusManager: FocusManager,
+    onFocusChanged: () -> Unit
 ) {
-
 
     Column(
         modifier = Modifier
@@ -64,7 +71,13 @@ fun SearchProductComp(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            SearchField(searchQuery, focusRequester, onQueryChange)
+            SearchField(
+                searchQuery,
+                focusRequester,
+                focusManager,
+                onQueryChange,
+                onFocusChanged = onFocusChanged
+            )
             Spacer(modifier = Modifier.weight(1f))
 
             if (searchQuery.isNotBlank()) {
@@ -85,9 +98,9 @@ fun SearchProductComp(
 
         } else if (isSearchError) {
 
-            Spacer(modifier = Modifier.height(36.dp))
+            Spacer(modifier = Modifier.height(24.dp))
             EmptySearchWarning()
-            Spacer(modifier = Modifier.height(36.dp))
+            Spacer(modifier = Modifier.height(40.dp))
 
         } else if (!searchList.isNullOrEmpty()) {
 
@@ -141,21 +154,32 @@ fun SearchIcon(
     )
 }
 
+@ExperimentalComposeUiApi
 @Composable
 fun SearchField(
     searchQuery: String?,
     focusRequester: FocusRequester,
+    focusManager: FocusManager,
     onQueryChange: (String) -> Unit,
+    onFocusChanged: () -> Unit
 ) {
+
 
     OutlinedTextField(
         value = searchQuery ?: "",
         onValueChange = onQueryChange,
         maxLines = 1,
         modifier = Modifier
+            .sizeIn(maxWidth = 304.dp)
             .background(color = Color.Transparent)
             .padding(start = 20.dp)
-            .focusRequester(focusRequester),
+            .focusRequester(focusRequester)
+            .onFocusChanged {
+                if (!it.isFocused) {
+                    onFocusChanged()
+                }
+            }
+            .clearFocusOnKeyboardDismiss(),
         singleLine = true,
         colors = TextFieldDefaults.outlinedTextFieldColors(
             backgroundColor = Color.Transparent,
@@ -172,10 +196,8 @@ fun SearchField(
             Text(text = "Название товара", color = Color.LightGray)
         },
         keyboardOptions = KeyboardOptions(
-            imeAction = ImeAction.None
+            imeAction = ImeAction.Search
+        ),
+
         )
-
-
-
-    )
 }

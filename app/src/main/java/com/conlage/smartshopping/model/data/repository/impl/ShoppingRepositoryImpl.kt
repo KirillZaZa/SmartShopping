@@ -95,6 +95,14 @@ class ShoppingRepositoryImpl @Inject constructor(
             val networkProduct = api.getProductDetailsByBarcode(barcode)
             val productDetails = networkProduct.toProductDetails()
             with(productDetails) {
+                this.bitmap = withContext(Dispatchers.IO) {
+                    when (val result =
+                        imageDownloader.downloadImageForPage(this@with.image)) {
+                        is LoadResult.Success -> result.response
+                        is LoadResult.Failure -> result.throwable
+                        else -> throw IllegalArgumentException()
+                    }
+                }
                 this.barcodeImg = barcodeGenerator.generateBarcodeBitmap(this.barcode)
             }
             RepositoryResponse.Success(productDetails)

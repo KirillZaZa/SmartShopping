@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.unit.ExperimentalUnitApi
+import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
@@ -24,8 +25,12 @@ import com.conlage.smartshopping.view.screen.ProductScreen
 import com.conlage.smartshopping.view.screen.ScannerScreen
 import com.conlage.smartshopping.viewmodel.impl.MainViewModelImpl
 import com.conlage.smartshopping.viewmodel.impl.ProductViewModelImpl
+import com.google.accompanist.insets.ProvideWindowInsets
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import javax.inject.Inject
 
+
+@ExperimentalPermissionsApi
 @ExperimentalUnitApi
 class MainActivity : ComponentActivity() {
 
@@ -46,45 +51,34 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         appShoppingComponent.inject(this)
-
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
-
-
-            //Permissions
             val navController = rememberNavController()
 
-            SmartShoppingTheme {
-                NavHost(
-                    navController = navController,
-                    startDestination = Screen.MainScreen.route
-                ) {
+            ProvideWindowInsets{
+                SmartShoppingTheme {
+                    NavHost(
+                        navController = navController,
+                        startDestination = Screen.MainScreen.route
+                    ) {
 
 
-                    Main(navController)
+                        Main(navController)
 
-                    Scanner(navController)
+                        Scanner(navController)
 
-                    Product(navController)
+                        Product(navController)
 
 
+                    }
                 }
+
             }
+
 
         }
     }
-
-//
-//    fun NavGraphBuilder.AppSettingsScreen(navController: NavController) {
-//
-//        composable(route = Screen.AppSettingsScreen.route) {
-//            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-//            val uri = Uri.fromParts("package", packageName, null)
-//            intent.data = uri
-//            startActivity(intent)
-//            navController.navigate(Screen.MainScreen.route)
-//        }
-//    }
 
     @Composable
     private fun RequireCameraPermission() {
@@ -156,7 +150,7 @@ class MainActivity : ComponentActivity() {
             route = Screen.MainScreen.route
         ) { entry ->
             // pass args
-            MainScreen(hostVm, navController)
+            MainScreen(hostVm, navController, this@MainActivity)
         }
     }
 

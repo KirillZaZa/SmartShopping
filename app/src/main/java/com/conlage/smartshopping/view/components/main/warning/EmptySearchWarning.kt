@@ -24,7 +24,7 @@ fun EmptySearchWarning() {
         Text(
             text = "Товар не найден",
             color = Gray,
-            fontSize = 16.sp,
+            fontSize = 18.sp,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Light,
         )

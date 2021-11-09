@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "com.conlage.smartshopping"
-        minSdk 23
+        minSdk 24
         targetSdk 30
         versionCode 1
         versionName "1.0"
@@ -55,7 +55,14 @@ dependencies {
 
     def room_version = "2.3.0"
 
-    implementation "com.google.accompanist:accompanist-permissions:0.20.0"
+    implementation "com.google.accompanist:accompanist-insets:0.21.2-beta"
+    // If using insets-ui
+    implementation "com.google.accompanist:accompanist-insets-ui:0.21.2-beta"
+
+    implementation('com.journeyapps:zxing-android-embedded:4.1.0') { transitive = false }
+    implementation 'com.google.zxing:core:3.4.0'
+
+    implementation "com.google.accompanist:accompanist-permissions:0.21.1-beta"
 
     implementation "io.coil-kt:coil:1.4.0"
 

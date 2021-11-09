@@ -6,7 +6,11 @@ import com.conlage.smartshopping.model.data.local.db.entity.ShopItem
 interface MainViewModel {
 
 
+    fun handleScannerButton()
+
     fun handleShopItemQuery(title: String)
+
+    fun handleSnackbarPermission()
 
     fun handleNewShopItem()
 
@@ -20,7 +24,7 @@ interface MainViewModel {
 
     fun handleSearchOpen(isOpen: Boolean)
 
-    fun handleCameraPermission(isGranted: Boolean)
+    fun handlePermissionCount()
 
     fun handleNewPage()
 

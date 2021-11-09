@@ -46,7 +46,7 @@ fun AddedProduct(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 12.dp),
+                .padding(vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Checkbox(
@@ -68,7 +68,7 @@ fun AddedProduct(
                 fontWeight = FontWeight.Normal,
                 color = DarkGray,
                 modifier = Modifier
-                    .sizeIn(maxWidth = 220.dp)
+                    .sizeIn(maxWidth = 216.dp)
                     .padding(start = 24.dp),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -78,8 +78,9 @@ fun AddedProduct(
             IconButton(
                 onClick = onLightClick,
                 modifier = Modifier
-                    .size(width = 48.dp, height = 32.dp)
+                    .size(width = 64.dp, height = 32.dp)
                     .background(color = Orange, shape = RoundedCornerShape(30))
+                    .padding(vertical = 2.dp)
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_bulb_icon),
