@@ -2,7 +2,6 @@ package com.conlage.smartshopping.view.navigation
 
 sealed class Screen(val route: String){
 
-    object SplashScreen : Screen("splash_screen")
     object MainScreen : Screen("main_screen")
     object ScannerScreen : Screen("scanner_screen")
     object ProductScreen : Screen("product_screen")

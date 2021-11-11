@@ -47,6 +47,7 @@ import com.conlage.smartshopping.view.navigation.Screen
 import com.conlage.smartshopping.viewmodel.impl.MainViewModelImpl
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 
 
@@ -74,6 +75,9 @@ fun MainScreen(
     activity: Activity,
 ) {
     val permissionState = rememberPermissionState(permission = Manifest.permission.CAMERA)
+
+
+    val systemUiController = rememberSystemUiController()
 
 
     val focusRequester = remember { FocusRequester() }
@@ -159,7 +163,7 @@ fun MainScreen(
                 },
                 searchListState = searchLazyListState,
 
-            )
+                )
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -277,6 +281,7 @@ fun MainScreen(
                 }
 
             },
+            isNavBarVisible = systemUiController.isNavigationBarVisible
         )
 
         if (state.isScannerOpen) {

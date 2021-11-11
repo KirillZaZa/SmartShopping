@@ -13,9 +13,12 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
@@ -34,6 +37,7 @@ import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.delay
 import javax.inject.Inject
 
@@ -63,10 +67,13 @@ class MainActivity : ComponentActivity() {
         appShoppingComponent.inject(this)
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
+
         setContent {
             val navController = rememberAnimatedNavController()
 
-            ProvideWindowInsets(consumeWindowInsets = true) {
+
+
+            ProvideWindowInsets(consumeWindowInsets = false) {
                 SmartShoppingTheme {
 
                     AnimatedNavHost(

@@ -23,6 +23,7 @@ import com.google.accompanist.insets.LocalWindowInsets
 @Composable
 fun ButtonScanner(
     onClick: () -> Unit,
+    isNavBarVisible: Boolean
 ) {
 
 
@@ -33,7 +34,7 @@ fun ButtonScanner(
         horizontalAlignment = Alignment.End,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 16.dp)
+            .padding(bottom = if (isNavBarVisible) 48.dp else 16.dp)
     ) {
 
         FloatingActionButton(
