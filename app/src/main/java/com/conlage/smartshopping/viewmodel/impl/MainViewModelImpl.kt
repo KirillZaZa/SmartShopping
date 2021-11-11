@@ -1,6 +1,5 @@
 package com.conlage.smartshopping.viewmodel.impl
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -18,64 +17,98 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.*
 import java.lang.IllegalArgumentException
 import javax.inject.Inject
+import kotlin.collections.HashMap
 
 
 class MainViewModelImpl @Inject constructor(
     private val deleteUseCase: ProductDeleteUseCaseImpl,
     private val saveUseCase: ProductSaveUseCaseImpl,
     private val productListUseCase: ProductListUseCaseImpl,
-    private val productUpdateUseCase: ProductUpdateUseCaseImpl,
 ) : BaseViewModel<MainScreenState>(MainScreenState()), MainViewModel {
 
-    val productListState: MutableList<ShopItem> = mutableStateListOf()
+    var productListState: MutableList<ShopItem> = mutableStateListOf()
 
     private val searchJobs: HashMap<Int, Job> = HashMap()
-    private val deleteJobs: HashMap<Int, Job> = HashMap()
+    private val deleteJobs: HashMap<String, Job> = HashMap()
 
     //subscribe to data sources and observe the data
     init {
         getProductList()
     }
 
+    fun handleBulbVisibility(isVisible: Boolean) {
 
-    override fun handleDialogState(shopItemTitle: String, state: Boolean) {
-        if (state) {
+        if (isVisible) {
+
             viewModelScope.launch(dispatcherMain + errHandler) {
+
+                delay(350)
                 updateState {
                     it.copy(
-                        isBulbOpen = true,
-                        bulbTitle = shopItemTitle,
-                        isLoadingBulb = true
+                        isBulbOpen = isVisible
                     )
                 }
 
-                val bulbList = getProductListFromNetwork(shopItemTitle)
+            }
 
-                updateState {
+        } else {
+
+            updateState {
+                it.copy(isBulbOpen = false, searchList = it.searchList)
+            }
+        }
+    }
+
+
+    override fun handleDialogState(shopItemTitle: String, state: Boolean) {
+        if (state) {
+
+            viewModelScope.launch(dispatcherMain + errHandler) {
+                if (shopItemTitle.length > 2) {
+                    updateState {
+                        it.copy(
+                            isBulbOpen = true,
+                            bulbTitle = shopItemTitle,
+                            isLoadingBulb = true
+                        )
+                    }
+                    val bulbList = getProductListFromNetwork(shopItemTitle)
+
+                    updateState {
+                        it.copy(
+                            bulbList = bulbList as MutableList<Product>,
+                            isLoadingBulb = false
+                        )
+                    }
+                } else updateState {
                     it.copy(
-                        bulbList = bulbList as MutableList<Product>,
-                        isLoadingBulb = false
+                        isBulbOpen = true,
+                        isLoadingBulb = false,
+                        bulbList = mutableListOf()
                     )
                 }
 
 
             }
         } else {
+
             updateState {
                 it.copy(
                     isBulbOpen = false,
-                    bulbTitle = "",
-                    isLoadingBulb = false
+                    isLoadingBulb = false,
+                    bulbList = mutableListOf()
                 )
             }
+
         }
 
     }
 
+
     override fun handleScannerButton() {
         updateState {
             it.copy(
-                isScannerOpen = !it.isScannerOpen
+                isScannerOpen = !it.isScannerOpen,
             )
         }
     }
@@ -88,12 +121,10 @@ class MainViewModelImpl @Inject constructor(
     }
 
 
-    override fun handlePermissionCount() {
-        if (currentValue.permissionLaunchCounter > 1) {
+    override fun handlePermission(denied: Boolean) {
+        if (denied) {
             handleSnackbarPermission()
-            Log.e("MainViewModel", "count ${currentValue.permissionLaunchCounter}", )
-        } else updateState { it.copy(permissionLaunchCounter = it.permissionLaunchCounter + 1) }
-        Log.e("MainViewModel", "count ${currentValue.permissionLaunchCounter}", )
+        }
 
     }
 
@@ -117,155 +148,6 @@ class MainViewModelImpl @Inject constructor(
         }
     }
 
-    override fun handleNewShopItem() {
-        if (currentValue.addItemTitle.isBlank()) return
-        viewModelScope.launch(dispatcherMain + errHandler) {
-            val shopItem = ShopItem(
-                title = currentValue.addItemTitle
-            )
-            updateState {
-                it.copy(
-                    addItemTitle = ""
-                )
-            }
-
-            saveUseCase.saveProductInDb(shopItem)
-            productListState.add(0, shopItem)
-        }
-    }
-
-
-    override fun getProductList() {
-
-        viewModelScope.launch(dispatcherMain + errHandler) {
-            currentValue.isLoadingProducts = true
-
-            Log.e("GetProductList", "getting..")
-
-            val list = when (val result = productListUseCase.getProductListFromDb()) {
-                is UseCaseResult.Response<List<ShopItem>> -> result.value
-                else -> mutableListOf()
-            }
-
-
-            Log.e("GetProductList", "$list")
-
-
-            productListState.addAll(list)
-
-
-            currentValue.isLoadingProducts = false
-
-
-        }
-
-    }
-
-    override suspend fun getProductListFromNetwork(query: String): List<Product> =
-        when (val result = productListUseCase.getProductList(query, currentValue.currentPage)) {
-            is UseCaseResult.Response<ProductList> -> result.value.list
-            else -> mutableListOf()
-        }
-
-    /**
-     *  Not used methods, use it if you need
-     */
-//    override fun handleIncAddedProduct(product: Product) {
-//        viewModelScope.launch(dispatcherMain + errHandler) {
-//            if (productListState.containsId(product.id) && productListState.isNotEmpty()) {
-//                val oldProduct = productListState.getProductById(product.id)
-//                val index = productListState.indexOf(oldProduct)
-//
-//                val newProduct = oldProduct.copy(quantity = oldProduct.quantity + 1)
-//                newProduct.bitmap = product.bitmap
-//                productListState[index] = newProduct
-//
-//                productUpdateUseCase.updateProductInDb(newProduct)
-//            } else {
-//                productListState.add(0, product)
-//                saveUseCase.saveProductInDb(product)
-//            }
-//        }
-//
-//    }
-
-//    override fun handleDecAddedProduct(product: Product) {
-//        viewModelScope.launch(dispatcherMain + errHandler) {
-//            if (productListState.containsId(product.id) && productListState.isNotEmpty()) {
-//                val oldProduct = productListState.getProductById(product.id)
-//                val index = productListState.indexOf(oldProduct)
-//
-//                if (oldProduct.quantity > 1) {
-//                    val newProduct = oldProduct.copy(quantity = oldProduct.quantity - 1)
-//                    newProduct.bitmap = product.bitmap
-//                    productListState[index] = newProduct
-//                } else {
-//                    productListState.removeAt(index)
-//                    deleteUseCase.deleteProductFromDb(product)
-//                }
-//            }
-//        }
-//
-//    }
-
-
-//    override fun handleIncSearchItem(productIndex: Int, callback: (product: Product) -> Unit) {
-//        viewModelScope.launch(dispatcherMain + errHandler) {
-//            val currentList = currentValue.searchList
-//
-//            val replacedList = currentList.mapIndexed { i, product ->
-//                if (productIndex == i) {
-//
-//                    val newQuantity = product.quantity + 1
-//                    val newProduct = product.copy(quantity = newQuantity)
-//
-//                    newProduct.bitmap = product.bitmap
-//
-//                    callback(newProduct)
-//
-//                    newProduct
-//                } else {
-//                    product
-//                }
-//            }
-//
-//            updateState {
-//                it.copy(
-//                    searchList = replacedList as MutableList<Product>,
-//                )
-//            }
-//
-//
-//        }
-//    }
-
-//    override fun handleDecSearchItem(productIndex: Int, callback: (product: Product) -> Unit) {
-//
-//        viewModelScope.launch(dispatcherMain + errHandler) {
-//
-//            if (currentValue.searchList[productIndex].quantity > 0) {
-//                val currentList = currentValue.searchList
-//
-//                val replacedList = currentList.mapIndexed { i, product ->
-//                    if (productIndex == i) {
-//
-//                        val newQuantity = product.quantity - 1
-//                        val newProduct = product.copy(quantity = newQuantity)
-//
-//                        newProduct.bitmap = product.bitmap
-//
-//                        callback(newProduct)
-//
-//                        newProduct
-//                    } else product
-//                }
-//                updateState { it.copy(searchList = replacedList as MutableList<Product>) }
-//            }
-//
-//
-//        }
-//    }
-
 
     override fun handleProductCheckBox(shopItemIndex: Int, wantBeDeleted: Boolean) {
         val product = productListState[shopItemIndex]
@@ -277,20 +159,84 @@ class MainViewModelImpl @Inject constructor(
 
         if (product.wantBeDeleted) {
             val job = viewModelScope.launch(dispatcherMain + errHandler) {
-                delay(5000)
-                deleteUseCase.deleteProductFromDb(product)
+                delay(2000)
+
+                product.isItemDisappear = true
+                productListState.add(shopItemIndex, product)
                 productListState.remove(product)
+
+                deleteUseCase.deleteProductFromDb(product)
             }
-            deleteJobs[shopItemIndex] = job
+            deleteJobs[product.id] = job
         } else {
-            val job = deleteJobs[shopItemIndex] ?: return
+            val job = deleteJobs[product.id] ?: return
             if (job.isActive) job.cancel()
         }
     }
 
+    override fun handleNewShopItem() {
+        if (currentValue.addItemTitle.isBlank()) return
+
+        val shopItem = ShopItem(
+            title = currentValue.addItemTitle,
+        )
+
+        updateState {
+            it.copy(
+                addItemTitle = ""
+            )
+        }
+
+        viewModelScope.launch(dispatcherMain + errHandler) {
+            val list = productListState.toMutableList()
+
+            productListState.clear()
+            delay(50)
+            productListState.add(0, shopItem)
+            delay(50)
+            productListState.addAll(list)
+        }
+
+        viewModelScope.launch(dispatcherMain + errHandler) {
+            saveUseCase.saveProductInDb(shopItem)
+        }
+    }
+
+
+    override fun getProductList() {
+        viewModelScope.launch(dispatcherMain + errHandler) {
+            currentValue.isLoadingProducts = true
+
+
+            val list = when (val result = productListUseCase.getProductListFromDb()) {
+                is UseCaseResult.Response<List<ShopItem>> -> result.value
+                else -> mutableListOf()
+            }
+            updateState {
+                it.copy(
+                    isLoadingProducts = false
+                )
+            }
+
+            productListState.addAll(list)
+
+
+        }
+
+    }
+
+    override suspend fun getProductListFromNetwork(query: String): List<Product> =
+        when (val result = productListUseCase.getProductList(query, currentValue.currentPage)) {
+
+            is UseCaseResult.Response<ProductList> -> {
+
+                result.value.list
+            }
+            else -> mutableListOf()
+        }
+
 
     override fun handleSearchQuery(query: String) {
-        Log.e("Search Query", "handleSearchQuery: $query")
         searchJobs.forEach {
             it.value.cancel()
         }
@@ -299,7 +245,7 @@ class MainViewModelImpl @Inject constructor(
             it.copy(
                 searchQuery = query,
                 isSearchOpen = true,
-                isLoadingSearchProducts = true
+                isLoadingSearchProducts = true,
             )
         }
 
@@ -309,10 +255,9 @@ class MainViewModelImpl @Inject constructor(
 
 
             val job = viewModelScope.launch(dispatcherMain + errHandler) {
-                delay(100)
+                delay(200)
 
                 currentValue.searchList.clear()
-                Log.d("Scope", "handleSearchQuery: $currentValue ")
 
                 updateState { it.copy(isLoadingSearchProducts = true) }
 
@@ -354,17 +299,31 @@ class MainViewModelImpl @Inject constructor(
         if (!isOpen) {
             searchJobs.forEach { job ->
                 job.value.cancel()
+
+            }
+
+            updateState {
+                it.copy(
+                    isSearchOpen = true,
+                    searchQuery = "",
+                    isLoadingSearchProducts = false,
+                    isSearchError = false,
+                    searchList = mutableListOf(),
+                    searchListState = 0 to 0
+                )
+            }
+        } else {
+            updateState {
+                it.copy(
+                    isSearchOpen = false,
+                    searchQuery = it.searchQuery,
+                    isLoadingSearchProducts = false,
+                    isSearchError = false
+                )
             }
         }
-        updateState {
-            it.copy(
-                isSearchOpen = isOpen,
-                searchQuery = "",
-                isLoadingSearchProducts = false,
-                isSearchError = false
-            )
-        }
-        currentValue.searchList.clear()
+
+
     }
 
 
@@ -382,12 +341,30 @@ class MainViewModelImpl @Inject constructor(
         }
     }
 
+    override fun handleBulbCheckbox(isChecked: Boolean) {
+        if (!isChecked) return
+        else {
+            handleProductCheckBox(currentValue.currentBulbIndex, isChecked)
+
+        }
+    }
+
+    override fun handleListStates(vararg state: Pair<Int, Int>?) {
+
+        updateState {
+            it.copy(
+                addedProductListState = state.component1() ?: 0 to 0,
+                searchListState = state.component2() ?: 0 to 0,
+                bulbListState = state.component3() ?: 0 to 0
+            )
+        }
+    }
+
 
     class MainViewModelFactory @AssistedInject constructor(
         private val deleteUseCase: ProductDeleteUseCaseImpl,
         private val saveUseCase: ProductSaveUseCaseImpl,
         private val productListUseCase: ProductListUseCaseImpl,
-        private val productUpdateUseCase: ProductUpdateUseCaseImpl,
     ) : ViewModelProvider.Factory {
 
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
@@ -396,7 +373,6 @@ class MainViewModelImpl @Inject constructor(
                     deleteUseCase,
                     saveUseCase,
                     productListUseCase,
-                    productUpdateUseCase,
                 ) as T
             throw IllegalArgumentException("Unknown ViewModel class")
         }

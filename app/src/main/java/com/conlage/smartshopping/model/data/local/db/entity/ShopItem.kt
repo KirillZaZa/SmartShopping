@@ -24,4 +24,10 @@ data class ShopItem(
     @Ignore
     var wantBeDeleted = false
 
+
+
+
+    @Ignore
+    var isItemDisappear = false
+
 }

@@ -5,16 +5,21 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.runtime.Composable
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.navigation.animation.composable
 import androidx.navigation.navArgument
 import com.conlage.smartshopping.application.appShoppingComponent
 import com.conlage.smartshopping.ui.theme.SmartShoppingTheme
@@ -26,7 +31,10 @@ import com.conlage.smartshopping.view.screen.ScannerScreen
 import com.conlage.smartshopping.viewmodel.impl.MainViewModelImpl
 import com.conlage.smartshopping.viewmodel.impl.ProductViewModelImpl
 import com.google.accompanist.insets.ProvideWindowInsets
+import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 
@@ -46,6 +54,8 @@ class MainActivity : ComponentActivity() {
     lateinit var host_vm_factory: MainViewModelImpl.MainViewModelFactory.Factory
 
 
+    @ExperimentalFoundationApi
+    @ExperimentalAnimationApi
     @ExperimentalComposeUiApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,13 +64,14 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
-            val navController = rememberNavController()
+            val navController = rememberAnimatedNavController()
 
-            ProvideWindowInsets{
+            ProvideWindowInsets(consumeWindowInsets = true) {
                 SmartShoppingTheme {
-                    NavHost(
+
+                    AnimatedNavHost(
                         navController = navController,
-                        startDestination = Screen.MainScreen.route
+                        startDestination = Screen.MainScreen.route,
                     ) {
 
 
@@ -80,29 +91,22 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    @Composable
-    private fun RequireCameraPermission() {
-
-    }
-
-    @Composable
-    private fun RequireStoragePermission() {
-
-    }
-
+    @ExperimentalAnimationApi
     private fun NavGraphBuilder.Scanner(navController: NavController) {
         composable(route = Screen.ScannerScreen.route) {
             ScannerScreen(navController)
         }
     }
 
+    @ExperimentalAnimationApi
     @ExperimentalComposeUiApi
     @ExperimentalUnitApi
     private fun NavGraphBuilder.Product(navController: NavController) {
         composable(
             route = Screen.ProductScreen.route +
                     "/{${ArgumentKeys.ARG_ID}}" +
-                    "/{${ArgumentKeys.ARG_BARCODE}}",
+                    "/{${ArgumentKeys.ARG_BARCODE}}" +
+                    "/{${ArgumentKeys.ARG_IS_DIALOG_OPEN}}",
             arguments = listOf(
                 navArgument(ArgumentKeys.ARG_ID) {
                     type = NavType.IntType
@@ -113,8 +117,19 @@ class MainActivity : ComponentActivity() {
                     type = NavType.StringType
                     defaultValue = null
                     nullable = true
+                },
+                navArgument(ArgumentKeys.ARG_IS_DIALOG_OPEN) {
+                    type = NavType.BoolType
+                    defaultValue = false
+                    nullable = false
                 }
-            )
+            ),
+            enterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { 1000 },
+                    animationSpec = tween(150, delayMillis = 25, easing = FastOutSlowInEasing)
+                )
+            }
         ) { entry ->
 
 
@@ -122,7 +137,8 @@ class MainActivity : ComponentActivity() {
                 product_vm_factory.create()
             }
 
-            Log.e("MainActivity", "entry: ${entry.arguments}")
+            val isVisible = entry.arguments!!.getBoolean(ArgumentKeys.ARG_IS_DIALOG_OPEN)
+
             if (!entry.arguments!!.isEmpty) {
                 productVm.start(
                     productId = entry.arguments!!.getInt(ArgumentKeys.ARG_ID),
@@ -136,20 +152,34 @@ class MainActivity : ComponentActivity() {
                 navController,
                 productVm,
                 close = {
+
+                    hostVm.handleBulbVisibility(isVisible = it)
+
                     entry.arguments!!.clear()
-                }
+
+                },
+                isVisible = isVisible
             )
 
 
         }
     }
 
+    @ExperimentalAnimationApi
     @ExperimentalComposeUiApi
     private fun NavGraphBuilder.Main(navController: NavController) {
         composable(
-            route = Screen.MainScreen.route
-        ) { entry ->
-            // pass args
+            route = Screen.MainScreen.route,
+            enterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { -1000 },
+                    animationSpec = tween(150, easing = FastOutSlowInEasing)
+                )
+            },
+
+            ) {
+
+
             MainScreen(hostVm, navController, this@MainActivity)
         }
     }

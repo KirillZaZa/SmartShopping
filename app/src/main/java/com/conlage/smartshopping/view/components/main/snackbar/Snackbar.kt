@@ -1,12 +1,15 @@
 package com.conlage.smartshopping.view.components.main.snackbar
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -26,11 +29,11 @@ fun SnackbarPermission(
     onSettingsClick: () -> Unit
 ) {
 
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 20.dp)
-            .shadow(elevation = 10.dp, shape = RoundedCornerShape(20), clip = true)
             .background(Color.White, shape = RoundedCornerShape(20)),
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically,
@@ -47,18 +50,21 @@ fun SnackbarPermission(
                 .width(200.dp),
             textAlign = TextAlign.Start
         )
-        TextButton(onClick = onSettingsClick,
+        TextButton(
+            onClick = onSettingsClick,
             modifier = Modifier
                 .wrapContentSize()
-                .padding(end = 8.dp)) {
+                .padding(end = 8.dp)
+        ) {
             Text(
                 text = "Настройки",
                 fontSize = 15.sp,
                 color = Blue,
                 fontWeight = FontWeight.Medium,
 
-            )
+                )
         }
     }
+
 
 }

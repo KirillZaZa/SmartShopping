@@ -43,7 +43,6 @@ class ProductViewModelImpl @Inject constructor(
                     isReadMore = false,
                 )
             }
-            Log.e("ProductViewModel", "cleared", )
         }
     }
 
@@ -53,18 +52,15 @@ class ProductViewModelImpl @Inject constructor(
 
             val value = when{
                 productId == null -> {
-                    Log.e("ProductViewModel", "productid is null", )
                     return@launch
                 }
 
                 barcode == "null" ->{
-                    Log.e("ProductViewModel", "barcoded is null, getting by id", )
                     getProductDetailsById(productId)
                 }
 
                 else -> getProductDetailsByBarcode(barcode)
             }
-            Log.e("ProductViewModel", "$value", )
 
             updateState {
                 it.copy(

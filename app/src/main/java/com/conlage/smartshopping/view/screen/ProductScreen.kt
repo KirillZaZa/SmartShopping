@@ -2,6 +2,7 @@ package com.conlage.smartshopping.view.screen
 
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -85,14 +86,13 @@ fun TextProductHeader(title: String, onClick: () -> Unit) {
 
 private fun navigateBack(
     navController: NavController,
-    close: () -> Unit
 ) {
 
     navController.navigate(Screen.MainScreen.route) {
         popUpTo(Screen.MainScreen.route) {
             inclusive = true
         }
-        close()
+        this.launchSingleTop = true
     }
 }
 
@@ -103,7 +103,8 @@ private fun navigateBack(
 fun ProductScreen(
     navController: NavController,
     vm: ProductViewModelImpl,
-    close: () -> Unit
+    close: (Boolean) -> Unit,
+    isVisible: Boolean
 ) {
     val stateRemember = vm.state
     val state = stateRemember.value
@@ -113,8 +114,12 @@ fun ProductScreen(
 
     val context = LocalContext.current
 
+    Log.e("ProductScreen", "$isVisible", )
 
-    BackHandler { navigateBack(navController = navController, close = close) }
+    BackHandler {
+        navigateBack(navController = navController)
+        close(isVisible)
+    }
 
 
 
@@ -128,7 +133,6 @@ fun ProductScreen(
         }
 
     } else if (state.productDetails == null && !state.isLoading) {
-
 
 
         Box(
@@ -153,7 +157,7 @@ fun ProductScreen(
                 .verticalScroll(state = scrollState)
                 .fillMaxSize()
                 .background(BackgroundColor)
-                .padding(top = 36.dp)
+                .padding(top = 72.dp)
                 .padding(horizontal = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
@@ -162,7 +166,8 @@ fun ProductScreen(
 
             TextProductHeader(title = state.productDetails!!.title) {
                 //add args
-                navigateBack(navController = navController, close = close)
+                navigateBack(navController = navController)
+                close(isVisible)
             }
 
             Spacer(modifier = Modifier.height(32.dp))

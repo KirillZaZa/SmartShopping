@@ -2,9 +2,13 @@ package com.conlage.smartshopping.view.components.main.search
 
 import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -48,10 +52,9 @@ fun SearchProductComp(
     onQueryChange: (String) -> Unit,
     onCloseClick: () -> Unit,
     onProductClick: (Int) -> Unit,
-    focusRequester: FocusRequester,
-    focusManager: FocusManager,
-    onFocusChanged: () -> Unit
+    searchListState: LazyListState,
 ) {
+
 
     Column(
         modifier = Modifier
@@ -61,7 +64,8 @@ fun SearchProductComp(
             .padding(top = 48.dp)
             .shadow(elevation = 4.dp, shape = RoundedCornerShape(20.dp), clip = true)
             .zIndex(10f)
-            .background(Color.White, shape = RoundedCornerShape(20.dp)),
+            .background(Color.White, shape = RoundedCornerShape(20.dp))
+            .animateContentSize(animationSpec = tween(400, easing = FastOutSlowInEasing)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         //search edit
@@ -73,15 +77,12 @@ fun SearchProductComp(
 
             SearchField(
                 searchQuery,
-                focusRequester,
-                focusManager,
                 onQueryChange,
-                onFocusChanged = onFocusChanged
             )
             Spacer(modifier = Modifier.weight(1f))
 
             if (searchQuery.isNotBlank()) {
-                CloseSearchButton(focusManager, onCloseClick)
+                CloseSearchButton(onCloseClick)
             } else SearchIcon()
         }
 
@@ -89,24 +90,25 @@ fun SearchProductComp(
 
 
         if (isLoading) {
-            Spacer(modifier = Modifier.height(24.dp))
 
-            CircularProgressIndicator(color = Blue)
-
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(20.dp))
+            CircularProgressIndicator(color = Blue, modifier = Modifier.size(32.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
 
         } else if (isSearchError) {
+            Spacer(modifier = Modifier.height(20.dp))
 
-            Spacer(modifier = Modifier.height(24.dp))
             EmptySearchWarning()
-            Spacer(modifier = Modifier.height(40.dp))
+
+            Spacer(modifier = Modifier.height(20.dp))
 
         } else if (!searchList.isNullOrEmpty()) {
 
             SearchList(
                 searchList = searchList,
                 onProductClick = onProductClick,
+                searchListState = searchListState,
             )
 
 
@@ -119,15 +121,11 @@ fun SearchProductComp(
 
 @Composable
 fun CloseSearchButton(
-    focusManager: FocusManager,
     onCloseClick: () -> Unit,
 ) {
 
     IconButton(
-        onClick = {
-            onCloseClick()
-            focusManager.clearFocus()
-        },
+        onClick = onCloseClick,
         modifier = Modifier
             .padding(end = 20.dp)
             .size(28.dp)
@@ -158,10 +156,7 @@ fun SearchIcon(
 @Composable
 fun SearchField(
     searchQuery: String?,
-    focusRequester: FocusRequester,
-    focusManager: FocusManager,
     onQueryChange: (String) -> Unit,
-    onFocusChanged: () -> Unit
 ) {
 
 
@@ -173,13 +168,8 @@ fun SearchField(
             .sizeIn(maxWidth = 304.dp)
             .background(color = Color.Transparent)
             .padding(start = 20.dp)
-            .focusRequester(focusRequester)
-            .onFocusChanged {
-                if (!it.isFocused) {
-                    onFocusChanged()
-                }
-            }
-            .clearFocusOnKeyboardDismiss(),
+            .clearFocusOnKeyboardDismiss()
+            ,
         singleLine = true,
         colors = TextFieldDefaults.outlinedTextFieldColors(
             backgroundColor = Color.Transparent,

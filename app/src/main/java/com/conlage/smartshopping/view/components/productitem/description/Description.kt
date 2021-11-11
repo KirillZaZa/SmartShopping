@@ -1,5 +1,8 @@
 package com.conlage.smartshopping.view.components.productitem.description
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Divider
@@ -37,7 +40,7 @@ fun DescriptionProduct(
             fontWeight = FontWeight.Medium,
             color = DarkGray
         )
-        
+
         Spacer(modifier = Modifier.height(12.dp))
 
         //description:  if false -> change maxLines to max, else -> maxLines = 5
@@ -45,22 +48,28 @@ fun DescriptionProduct(
             text = description,
             overflow = TextOverflow.Ellipsis,
             color = Standin,
-            maxLines = if(!isReadMore) 5 else Int.MAX_VALUE,
-            fontSize = 14.sp
+            maxLines = if (!isReadMore) 5 else Int.MAX_VALUE,
+            fontSize = 14.sp,
+            modifier = Modifier.animateContentSize(
+                animationSpec = tween(
+                    300,
+                    easing = FastOutSlowInEasing
+                )
+            )
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
 
         //button read more:  if false -> Читать далее, else -> скрыть
-            Text(
-                text = if(!isReadMore) "Читать далее" else "Скрыть",
-                color = Blue,
-                fontWeight = FontWeight.Medium,
-                fontSize = 14.sp,
-                modifier = Modifier.clickable(onClick = onClickReadMore)
+        Text(
+            text = if (!isReadMore) "Читать далее" else "Скрыть",
+            color = Blue,
+            fontWeight = FontWeight.Medium,
+            fontSize = 14.sp,
+            modifier = Modifier.clickable(onClick = onClickReadMore)
 
-            )
+        )
 
         Spacer(modifier = Modifier.height(4.dp))
 

@@ -35,21 +35,17 @@ class ProductListUseCaseImpl @Inject constructor(
 
     override suspend fun getProductListFromDb(): UseCaseResult<List<ShopItem>> {
         return try {
-            Log.e("ProductUseCase", "getting..", )
             val productList = withContext(Dispatchers.IO) {
                 var list: List<ShopItem>? = null
                 repositoryImpl.getProductListFromDb {
                     list = it
                 }
-                Log.e("ProductUseCase", "getting..", )
                 list
             }
 
-            Log.e("ProductUseCase", "$productList", )
             UseCaseResult.Response(productList!!)
         } catch (e: Throwable) {
             e.printStackTrace()
-            Log.e("ProductUseCase", "catch", )
 
             UseCaseResult.Error(e)
         }

@@ -1,5 +1,6 @@
 package com.conlage.smartshopping.view.components.main.added_list.list
 
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -11,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.conlage.smartshopping.model.data.local.db.entity.ShopItem
 
+@ExperimentalAnimationApi
 @ExperimentalMaterialApi
 @Composable
 fun AddedListProduct(
@@ -19,6 +21,7 @@ fun AddedListProduct(
     onCheckedChange: (Int, Boolean) -> Unit,
     addedListState:LazyListState
 ) {
+
 
 
     LazyColumn(
@@ -37,7 +40,7 @@ fun AddedListProduct(
                 listSize = productList.size,
                 onCheckedChange = {
                     onCheckedChange(i, it)
-                }
+                },
             )
         }
 

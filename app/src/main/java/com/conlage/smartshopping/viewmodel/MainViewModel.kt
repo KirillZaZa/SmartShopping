@@ -1,9 +1,11 @@
 package com.conlage.smartshopping.viewmodel
 
+import androidx.compose.foundation.lazy.LazyListState
 import com.conlage.smartshopping.model.data.local.Product
 import com.conlage.smartshopping.model.data.local.db.entity.ShopItem
 
 interface MainViewModel {
+
 
 
     fun handleScannerButton()
@@ -24,9 +26,13 @@ interface MainViewModel {
 
     fun handleSearchOpen(isOpen: Boolean)
 
-    fun handlePermissionCount()
+    fun handlePermission(denied: Boolean)
 
     fun handleNewPage()
+
+    fun handleBulbCheckbox(isChecked: Boolean)
+
+    fun handleListStates(vararg state: Pair<Int,Int>?)
 
 
     suspend fun getProductListFromNetwork(query: String): List<Product>
