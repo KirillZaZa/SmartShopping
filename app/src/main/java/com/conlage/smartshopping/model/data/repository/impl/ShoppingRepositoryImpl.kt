@@ -1,5 +1,6 @@
 package com.conlage.smartshopping.model.data.repository.impl
 
+import android.util.Log
 import com.conlage.smartshopping.model.data.local.ProductDetails
 import com.conlage.smartshopping.model.data.local.db.ShoppingDatabase
 import com.conlage.smartshopping.model.data.local.Product
@@ -69,9 +70,14 @@ class ShoppingRepositoryImpl @Inject constructor(
      */
     override suspend fun getProductById(id: Int): RepositoryResponse<ProductDetails> {
         val networkProduct = api.getProductDetailsById(id)
+        Log.e("ShoppingRepository", "$networkProduct")
+
         val productDetails = networkProduct.toProductDetails()
         with(productDetails) {
-            this.barcodeImg = barcodeGenerator.generateBarcodeBitmap(this.barcode)
+
+            this.barcodeImg =
+                if (this.barcode == null) null
+                else barcodeGenerator.generateBarcodeBitmap(this.barcode)
             this.bitmap = withContext(Dispatchers.IO) {
                 when (val result =
                     imageDownloader.downloadImageForPage(this@with.image)) {
@@ -103,7 +109,9 @@ class ShoppingRepositoryImpl @Inject constructor(
                         else -> throw IllegalArgumentException()
                     }
                 }
-                this.barcodeImg = barcodeGenerator.generateBarcodeBitmap(this.barcode)
+                this.barcodeImg =
+                    if (this.barcode == null) null
+                    else barcodeGenerator.generateBarcodeBitmap(this.barcode)
             }
             RepositoryResponse.Success(productDetails)
         } catch (e: Throwable) {

@@ -7,7 +7,7 @@ data class NetworkProduct(
 ) {
     data class Response(
         val advantages: List<String>,
-        val barcode: String,
+        val barcode: String?,
         val description: String,
         val details: Map<String, String>,
         val disadvantages: List<String>,

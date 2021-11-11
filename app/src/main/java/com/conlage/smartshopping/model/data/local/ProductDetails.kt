@@ -5,7 +5,7 @@ import com.conlage.smartshopping.model.data.network.dto.NetworkProduct
 
 data class ProductDetails(
     val advantages: List<String>?,
-    val barcode: String,
+    val barcode: String?,
     val description: String,
     val details: Map<String, String>?,
     val disadvantages: List<String>?,

@@ -62,6 +62,8 @@ class ProductViewModelImpl @Inject constructor(
                 else -> getProductDetailsByBarcode(barcode)
             }
 
+            Log.e("ProductViewmodel", "$value", )
+
             updateState {
                 it.copy(
                     isLoading = false,
