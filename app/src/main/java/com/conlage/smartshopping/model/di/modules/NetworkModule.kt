@@ -5,6 +5,7 @@ import com.conlage.smartshopping.R
 import com.conlage.smartshopping.model.data.network.service.SmartShoppingService
 import dagger.Module
 import dagger.Provides
+import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -17,11 +18,18 @@ class NetworkModule {
 
 
     @Provides
-    fun provideSmartShoppingService(context: Context): SmartShoppingService{
+    fun provideSmartShoppingService(context: Context): SmartShoppingService {
+
+        val cache = Cache(
+            directory = context.cacheDir,
+            maxSize = 10L * 1024 * 1024
+        )
+
         val okHttpClient = OkHttpClient.Builder()
-            .readTimeout(5, TimeUnit.SECONDS)
-            .callTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(2, TimeUnit.SECONDS)
+            .callTimeout(3, TimeUnit.SECONDS)
             .addInterceptor(HttpLoggingInterceptor())
+            .cache(cache)
             .build()
 
         val retrofit = Retrofit.Builder()

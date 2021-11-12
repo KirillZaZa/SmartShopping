@@ -34,7 +34,7 @@ class ProductViewModelImpl @Inject constructor(
 
     fun clear() {
         viewModelScope.launch(dispatcherMain + errHandler) {
-            delay(100)
+            delay(50)
             updateState {
                 it.copy(
                     productDetails = null,
@@ -48,7 +48,7 @@ class ProductViewModelImpl @Inject constructor(
 
     override fun getProductDetails(productId: Int?, isAdded: Boolean, barcode: String?) {
         viewModelScope.launch(dispatcherMain + errHandler) {
-            updateState { it.copy(isLoading = true, isAdded = isAdded) }
+            updateState { it.copy(isLoading = true, isAdded = isAdded, productDetails = null) }
 
             val value = when{
                 productId == null -> {
@@ -63,7 +63,7 @@ class ProductViewModelImpl @Inject constructor(
             }
 
             Log.e("ProductViewmodel", "$value", )
-
+            delay(200)
             updateState {
                 it.copy(
                     isLoading = false,

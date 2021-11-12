@@ -16,6 +16,7 @@ import com.conlage.smartshopping.model.data.repository.ShoppingRepository
 import com.conlage.smartshopping.model.data.usecase.exception.FailureException
 import com.conlage.smartshopping.utils.barcode.BarcodeGenerator
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.lang.IllegalArgumentException
 import javax.inject.Inject
@@ -28,9 +29,9 @@ class ShoppingRepositoryImpl @Inject constructor(
 ) : ShoppingRepository {
 
 
-
     override suspend fun getProductList(query: String, page: Int): RepositoryResponse<ProductList> {
         val networkProductList = api.getProductListByName(query, page)
+        Log.e("ShoppingRepository", "$networkProductList ")
         return if (!networkProductList.response.isNullOrEmpty()) {
 
             val mappedList = networkProductList.response.mapToProductList()
@@ -39,19 +40,16 @@ class ShoppingRepositoryImpl @Inject constructor(
 
                 mappedList.list.forEach { product ->
 
-                    product.bitmap = withContext(Dispatchers.IO) {
-                        when (val result =
-                            imageDownloader.downloadImageFromNetwork(product.image)) {
-                            is LoadResult.Success -> result.response
-                            is LoadResult.Failure -> result.throwable
-                            else -> throw FailureException()
-                        }
-                    }
+                    product.bitmap =
+                        imageDownloader.downloadImageFromNetwork(product.image).response ?: null
 
                 }
+                Log.e("ShoppingRepository", "$mappedList ")
 
                 mappedList
             }
+
+
             RepositoryResponse.Success(result)
 
         } else RepositoryResponse.Failure(Throwable())

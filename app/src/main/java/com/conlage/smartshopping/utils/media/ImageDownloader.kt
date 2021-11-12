@@ -6,7 +6,9 @@ import com.conlage.smartshopping.utils.media.resultwrapper.LoadResult
 
 interface ImageDownloader {
 
-    suspend fun downloadImageFromNetwork(url: String): LoadResult<Bitmap>
+    suspend fun downloadImageFromNetwork(
+        url: String,
+    ): LoadResult.Success<Bitmap>
 
     fun saveImageToInternalStorage(bitmap: Bitmap, image: String)
 

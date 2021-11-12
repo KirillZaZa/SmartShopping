@@ -149,7 +149,7 @@ fun ProductScreen(
         }
 
 
-    } else {
+    } else if(state.productDetails != null) {
 
 
         Column(
