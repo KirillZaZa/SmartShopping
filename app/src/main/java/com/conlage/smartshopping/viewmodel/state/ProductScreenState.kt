@@ -10,4 +10,5 @@ data class ProductScreenState(
     val isReadMore: Boolean = false,
     val isAdded: Boolean = false,
     val isEvaluation: Boolean = false,
+    val isClosing: Boolean = false,
 )

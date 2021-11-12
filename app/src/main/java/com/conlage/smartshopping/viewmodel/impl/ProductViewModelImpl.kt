@@ -12,6 +12,7 @@ import com.conlage.smartshopping.viewmodel.base.BaseViewModel
 import com.conlage.smartshopping.viewmodel.state.ProductScreenState
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
@@ -23,6 +24,7 @@ class ProductViewModelImpl @Inject constructor(
     private val productBarCodeUseCase: ProductBarCodeUseCaseImpl,
 ) : BaseViewModel<ProductScreenState>(ProductScreenState()), ProductViewModel {
 
+    private val clearJobs = HashMap<Int, Job>()
 
     fun start(
         productId: Int,
@@ -33,37 +35,36 @@ class ProductViewModelImpl @Inject constructor(
     }
 
     fun clear() {
-        viewModelScope.launch(dispatcherMain + errHandler) {
-            delay(50)
-            updateState {
-                it.copy(
-                    productDetails = null,
-                    isAdded = false,
-                    isEvaluation = false,
-                    isReadMore = false,
-                )
-            }
+        clearJobs.forEach {
+            it.value.cancel()
+        }
+        updateState {
+            it.copy(
+                productDetails = null,
+                isAdded = false,
+                isEvaluation = false,
+                isReadMore = false,
+                isLoading = false,
+                isClosing = true
+            )
         }
     }
 
     override fun getProductDetails(productId: Int?, isAdded: Boolean, barcode: String?) {
-        viewModelScope.launch(dispatcherMain + errHandler) {
-            updateState { it.copy(isLoading = true, isAdded = isAdded, productDetails = null) }
-
-            val value = when{
+        val job = viewModelScope.launch(dispatcherMain + errHandler) {
+            updateState { it.copy(isLoading = true, isClosing = false) }
+            val value = when {
                 productId == null -> {
                     return@launch
                 }
 
-                barcode == "null" ->{
+                barcode == "null" -> {
                     getProductDetailsById(productId)
                 }
 
                 else -> getProductDetailsByBarcode(barcode)
             }
 
-            Log.e("ProductViewmodel", "$value", )
-            delay(200)
             updateState {
                 it.copy(
                     isLoading = false,
@@ -73,9 +74,10 @@ class ProductViewModelImpl @Inject constructor(
             }
 
 
-
-
         }
+       clearJobs[job.hashCode()] = job
+
+
     }
 
 

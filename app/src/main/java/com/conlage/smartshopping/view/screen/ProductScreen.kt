@@ -114,7 +114,7 @@ fun ProductScreen(
 
     val context = LocalContext.current
 
-    Log.e("ProductScreen", "$isVisible", )
+    Log.e("ProductScreen", "$isVisible")
 
     BackHandler {
         navigateBack(navController = navController)
@@ -132,7 +132,7 @@ fun ProductScreen(
             CircularProgressIndicator(color = Blue, modifier = Modifier.size(72.dp))
         }
 
-    } else if (state.productDetails == null && !state.isLoading) {
+    } else if (state.productDetails == null && !state.isLoading && !state.isClosing) {
 
 
         Box(
@@ -149,7 +149,9 @@ fun ProductScreen(
         }
 
 
-    } else if(state.productDetails != null) {
+    } else if (state.isClosing) {
+        Box(modifier = Modifier.fillMaxSize().background(BackgroundColor))
+    } else if (state.productDetails != null) {
 
 
         Column(

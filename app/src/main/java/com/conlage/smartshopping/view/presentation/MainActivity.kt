@@ -134,7 +134,7 @@ class MainActivity : ComponentActivity() {
             enterTransition = {
                 slideInHorizontally(
                     initialOffsetX = { 1000 },
-                    animationSpec = tween(150, delayMillis = 25, easing = FastOutSlowInEasing)
+                    animationSpec = tween(250, easing = FastOutSlowInEasing)
                 )
             }
         ) { entry ->
@@ -180,7 +180,7 @@ class MainActivity : ComponentActivity() {
             enterTransition = {
                 slideInHorizontally(
                     initialOffsetX = { -1000 },
-                    animationSpec = tween(150, easing = FastOutSlowInEasing)
+                    animationSpec = tween(250, easing = FastOutSlowInEasing)
                 )
             },
 
