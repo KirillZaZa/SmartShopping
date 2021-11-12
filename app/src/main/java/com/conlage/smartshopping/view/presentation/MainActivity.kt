@@ -164,6 +164,7 @@ class MainActivity : ComponentActivity() {
 
                     entry.arguments!!.clear()
 
+                    productVm.clear()
                 },
                 isVisible = isVisible
             )

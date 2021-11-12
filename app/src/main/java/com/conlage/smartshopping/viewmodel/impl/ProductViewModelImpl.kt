@@ -13,6 +13,7 @@ import com.conlage.smartshopping.viewmodel.state.ProductScreenState
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
@@ -35,9 +36,11 @@ class ProductViewModelImpl @Inject constructor(
     }
 
     fun clear() {
-        clearJobs.forEach {
-            it.value.cancel()
+
+        clearJobs.values.forEach { job->
+            job.cancel()
         }
+
         updateState {
             it.copy(
                 productDetails = null,
@@ -48,11 +51,17 @@ class ProductViewModelImpl @Inject constructor(
                 isClosing = true
             )
         }
+
+
     }
 
     override fun getProductDetails(productId: Int?, isAdded: Boolean, barcode: String?) {
         val job = viewModelScope.launch(dispatcherMain + errHandler) {
-            updateState { it.copy(isLoading = true, isClosing = false) }
+            updateState {
+                it.copy(
+                    isLoading = true, isClosing = false
+                )
+            }
             val value = when {
                 productId == null -> {
                     return@launch
@@ -65,6 +74,7 @@ class ProductViewModelImpl @Inject constructor(
                 else -> getProductDetailsByBarcode(barcode)
             }
 
+            delay(200)
             updateState {
                 it.copy(
                     isLoading = false,
@@ -75,7 +85,8 @@ class ProductViewModelImpl @Inject constructor(
 
 
         }
-       clearJobs[job.hashCode()] = job
+
+        clearJobs[job.hashCode()] = job
 
 
     }
