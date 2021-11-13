@@ -56,9 +56,9 @@ fun BarcodeScanner(
 
             this.resume()
 
-            this.decodeContinuous { result ->
+            this.decodeSingle { result ->
                 if (scanFlag.value) {
-                    return@decodeContinuous
+                    return@decodeSingle
                 }
 
                 scanFlag.value = true
