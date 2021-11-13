@@ -37,7 +37,8 @@ import com.journeyapps.barcodescanner.CompoundBarcodeView
 @Composable
 fun BarcodeScanner(
     activity: Activity,
-    onBarcodeResult: (String) -> Unit
+    onBarcodeResult: (String) -> Unit,
+    barcodeView: (CompoundBarcodeView) -> Unit
 ) {
     val context = LocalContext.current
     val scanFlag = remember { mutableStateOf(false) }
@@ -66,14 +67,16 @@ fun BarcodeScanner(
 
                     onBarcodeResult(barCodeQr)
 
-                    this.pause()
-
                     scanFlag.value = true
+
                 }
+
             }
 
         }
     }
+
+    barcodeView(compoundBarcodeView)
 
 
     AndroidView(
@@ -93,8 +96,16 @@ fun DialogScanner(
     onBarcodeResult: (String) -> Unit,
     activity: Activity
 ) {
+
+    var compoundBarcodeView = remember {
+        CompoundBarcodeView(activity.applicationContext)
+    }
+
     Dialog(
-        onDismissRequest = onDismissRequest,
+        onDismissRequest = {
+            onDismissRequest()
+            compoundBarcodeView.pause()
+        },
         properties = DialogProperties(
             dismissOnBackPress = true,
             usePlatformDefaultWidth = false,
@@ -109,7 +120,8 @@ fun DialogScanner(
 
             BarcodeScanner(
                 activity = activity,
-                onBarcodeResult = onBarcodeResult
+                onBarcodeResult = onBarcodeResult,
+                barcodeView = { compoundBarcodeView = it }
             )
 
             Spacer(modifier = Modifier.height(24.dp))
