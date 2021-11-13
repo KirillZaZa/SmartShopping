@@ -246,6 +246,7 @@ class MainViewModelImpl @Inject constructor(
                 searchQuery = query,
                 isSearchOpen = true,
                 isLoadingSearchProducts = true,
+                searchListState = 0 to 0
             )
         }
 

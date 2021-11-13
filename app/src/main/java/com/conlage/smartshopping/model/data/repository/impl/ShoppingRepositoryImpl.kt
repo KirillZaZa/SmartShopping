@@ -16,6 +16,7 @@ import com.conlage.smartshopping.model.data.repository.ShoppingRepository
 import com.conlage.smartshopping.model.data.usecase.exception.FailureException
 import com.conlage.smartshopping.utils.barcode.BarcodeGenerator
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.lang.IllegalArgumentException
@@ -36,21 +37,8 @@ class ShoppingRepositoryImpl @Inject constructor(
 
             val mappedList = networkProductList.response.mapToProductList()
 
-            val result = withContext(Dispatchers.IO) {
 
-                mappedList.list.forEach { product ->
-
-                    product.bitmap =
-                        imageDownloader.downloadImageFromNetwork(product.image).response ?: null
-
-                }
-                Log.e("ShoppingRepository", "$mappedList ")
-
-                mappedList
-            }
-
-
-            RepositoryResponse.Success(result)
+            RepositoryResponse.Success(mappedList)
 
         } else RepositoryResponse.Failure(Throwable())
     }
@@ -70,7 +58,7 @@ class ShoppingRepositoryImpl @Inject constructor(
                 when (val result =
                     imageDownloader.downloadImageForPage(this@with.image)) {
                     is LoadResult.Success -> result.response
-                    is LoadResult.Failure -> result.throwable
+                    is LoadResult.Failure -> null
                     else -> throw IllegalArgumentException()
                 }
             }
@@ -89,7 +77,7 @@ class ShoppingRepositoryImpl @Inject constructor(
                     when (val result =
                         imageDownloader.downloadImageForPage(this@with.image)) {
                         is LoadResult.Success -> result.response
-                        is LoadResult.Failure -> result.throwable
+                        is LoadResult.Failure -> null
                         else -> throw IllegalArgumentException()
                     }
                 }

@@ -41,24 +41,31 @@ fun AboutProduct(
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
 
-        if(bitmap == null){
+        if (bitmap == null) {
+            Box(modifier = Modifier
+                .size(126.dp)
+                .background(Color.White, shape = RoundedCornerShape(20.dp)),
+                contentAlignment = Alignment.Center
+            ){
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_product_error_icon),
+                    contentDescription = "image_product",
+                    modifier = Modifier
+                        .size(56.dp),
+                    tint = Blue
+                )
+            }
+
+        } else {
             Image(
-                painter = painterResource(id = R.drawable.ic_product_standin_icon),
-                contentDescription = "image_product",
-                modifier = Modifier
-                    .size(126.dp)
-                    .clip(RoundedCornerShape(20.dp))
-            )
-        }else {
-            Image(
-                bitmap = bitmap!!.asImageBitmap(),
+                bitmap = bitmap.asImageBitmap(),
                 contentDescription = "image_product",
                 modifier = Modifier
                     .size(126.dp)
                     .clip(RoundedCornerShape(20.dp))
             )
         }
- 
+
 
         Column(
             modifier = Modifier.padding(start = 16.dp),

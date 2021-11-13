@@ -59,11 +59,12 @@ dependencies {
 
     implementation 'com.github.bumptech.glide:glide:4.9.0'
 
+    implementation "com.github.skydoves:landscapist-coil:1.4.2"
 
     implementation "com.google.accompanist:accompanist-navigation-animation:0.21.2-beta"
 
     implementation "com.google.accompanist:accompanist-insets:0.21.2-beta"
-    // If using insets-ui
+
     implementation "com.google.accompanist:accompanist-insets-ui:0.21.2-beta"
 
     implementation('com.journeyapps:zxing-android-embedded:4.1.0') { transitive = false }

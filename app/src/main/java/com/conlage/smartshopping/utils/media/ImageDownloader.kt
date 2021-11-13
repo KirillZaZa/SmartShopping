@@ -6,9 +6,11 @@ import com.conlage.smartshopping.utils.media.resultwrapper.LoadResult
 
 interface ImageDownloader {
 
+    @Deprecated("Migrated to CoilImage")
     suspend fun downloadImageFromNetwork(
         url: String,
-    ): LoadResult.Success<Bitmap>
+
+    ):LoadResult.Success<Bitmap>
 
     fun saveImageToInternalStorage(bitmap: Bitmap, image: String)
 

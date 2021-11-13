@@ -134,7 +134,12 @@ fun MainScreen(
                 isLoading = state.isLoadingSearchProducts,
                 isSearchError = state.isSearchError,
                 searchList = screenState.value.searchList,
-                onQueryChange = { vm.handleSearchQuery(it) },
+                onQueryChange = {
+                    vm.handleSearchQuery(it)
+                    scope.launch {
+                        searchLazyListState.scrollToItem(0, 0)
+                    }
+                },
                 onCloseClick = { vm.handleSearchOpen(isOpen = false) },
                 onProductClick = {
                     val productId = state.searchList[it].id

@@ -4,17 +4,9 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
-import androidx.core.graphics.drawable.toBitmap
-import coil.ImageLoader
-import coil.request.CachePolicy
-import coil.request.ImageRequest
-import coil.request.SuccessResult
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.RequestOptions
-import com.conlage.smartshopping.R
 import com.conlage.smartshopping.utils.media.resultwrapper.LoadResult
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.*
@@ -25,7 +17,7 @@ class ImageDownloaderImpl @Inject constructor(
     private val context: Context,
 ) : ImageDownloader {
 
-
+    @Deprecated("Migrated to CoilImage")
     override suspend fun downloadImageFromNetwork(
         url: String,
     ):LoadResult.Success<Bitmap> {
@@ -36,8 +28,7 @@ class ImageDownloaderImpl @Inject constructor(
                 .asBitmap()
                 .load(url)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .apply(RequestOptions.overrideOf(124, 124))
-                .submit()
+                .submit(124, 124)
                 .get()
             LoadResult.Success(response)
 
@@ -53,26 +44,17 @@ class ImageDownloaderImpl @Inject constructor(
 
     override suspend fun downloadImageForPage(url: String): LoadResult<Bitmap> {
         return try {
-            val loader = ImageLoader(context.applicationContext)
+            val response = Glide
+                .with(context)
+                .asBitmap()
+                .load(url)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .submit()
+                .get()
+            LoadResult.Success(response)
 
-            val request = ImageRequest.Builder(context.applicationContext)
-                .data(url)
-                .allowHardware(true)
-                .error(R.drawable.ic_product_standin_icon)
-                .diskCachePolicy(CachePolicy.ENABLED)
-                .build()
-
-            val imgResult = when (val result = loader.execute(request)) {
-                is SuccessResult -> result.drawable
-                else -> null
-            }
-            val bitmap = imgResult?.toBitmap()
-
-
-
-            LoadResult.Success(bitmap)
-        } catch (e: CancellationException) {
-            logError(e)
+        } catch (e: Exception) {
+            e.printStackTrace()
             LoadResult.Failure()
         }
     }
@@ -132,7 +114,7 @@ class ImageDownloaderImpl @Inject constructor(
 
 }
 
-fun ImageDownloaderImpl.logError(e: Throwable) {
+fun logError(e: Throwable) {
     Log.e(ImageDownloaderImpl::class.java.simpleName, "logError: ${e.localizedMessage}")
 }
 
