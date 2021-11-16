@@ -15,6 +15,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -45,10 +47,12 @@ fun ProductDescription(product: Product) {
             Text(
                 text = product.title,
                 maxLines = 2,
-                modifier = Modifier.width(124.dp),
+                modifier = Modifier.width(224.dp),
                 color = DarkGray,
                 fontWeight = FontWeight.Medium,
-                fontSize = 12.sp
+                fontSize = 12.sp,
+                textAlign = TextAlign.Start,
+                overflow = TextOverflow.Ellipsis
             )
 
 
@@ -107,7 +111,6 @@ fun ProductDescription(product: Product) {
 @Composable
 fun ProductImage(url: String) {
 
-    val context = LocalContext.current
 
     val requestOptions = RequestOptions
         .overrideOf(200, 200)

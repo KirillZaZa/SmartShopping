@@ -1,5 +1,6 @@
 package com.conlage.smartshopping.model.data.mapper
 
+import android.util.Log
 import com.conlage.smartshopping.model.data.local.ProductDetails
 import com.conlage.smartshopping.model.data.local.Product
 import com.conlage.smartshopping.model.data.local.ProductList
@@ -7,10 +8,14 @@ import com.conlage.smartshopping.model.data.network.dto.NetworkProduct
 import com.conlage.smartshopping.model.data.network.dto.NetworkProductList
 
 
+fun Double.formatRate(): Double{
+    return Math.round(this * 100) / 100.0
+}
+
 fun NetworkProductList.ProductItem.toProduct() =
     Product(
         id = this.id,
-        rate = this.rate ?: 0.0,
+        rate = if (this.rate == null) 0.0 else this.rate.formatRate() ,
         title = this.title ?: "Неизвестный товар",
         image = this.image ?: "" ,
         price = this.price ?: "нет цены"
