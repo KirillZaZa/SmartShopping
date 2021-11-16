@@ -61,7 +61,7 @@ fun SearchProductComp(
             .wrapContentHeight()
             .sizeIn(maxHeight = 500.dp)
             .fillMaxWidth()
-            .padding(top = 48.dp)
+            .padding(top = 20.dp)
             .shadow(elevation = 4.dp, shape = RoundedCornerShape(20.dp), clip = true)
             .zIndex(10f)
             .background(Color.White, shape = RoundedCornerShape(20.dp))
@@ -183,7 +183,7 @@ fun SearchField(
             fontWeight = FontWeight.Normal
         ),
         placeholder = {
-            Text(text = "Название товара", color = Color.LightGray)
+            Text(text = "Поиск товара", color = Color.LightGray)
         },
         keyboardOptions = KeyboardOptions(
             imeAction = ImeAction.Search
