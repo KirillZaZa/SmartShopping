@@ -1,6 +1,5 @@
 package com.conlage.smartshopping.model.data.mapper
 
-import android.util.Log
 import com.conlage.smartshopping.model.data.local.ProductDetails
 import com.conlage.smartshopping.model.data.local.Product
 import com.conlage.smartshopping.model.data.local.ProductList
