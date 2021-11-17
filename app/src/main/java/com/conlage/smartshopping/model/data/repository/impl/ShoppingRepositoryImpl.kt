@@ -32,7 +32,6 @@ class ShoppingRepositoryImpl @Inject constructor(
 
     override suspend fun getProductList(query: String, page: Int): RepositoryResponse<ProductList> {
         val networkProductList = api.getProductListByName(query, page)
-        Log.e("ShoppingRepository", "$networkProductList ")
         return if (!networkProductList.response.isNullOrEmpty()) {
 
             val mappedList = networkProductList.response.mapToProductList()
@@ -46,8 +45,8 @@ class ShoppingRepositoryImpl @Inject constructor(
 
     override suspend fun getProductById(id: Int): RepositoryResponse<ProductDetails> {
         val networkProduct = api.getProductDetailsById(id)
-        Log.e("ShoppingRepository", "$networkProduct")
 
+        Log.e("TAG", "getProductById: ", )
         val productDetails = networkProduct.toProductDetails()
         with(productDetails) {
 

@@ -1,5 +1,6 @@
 package com.conlage.smartshopping.view.components.productitem.info
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -55,7 +56,7 @@ fun InformationProduct(details: Map<String, String>?) {
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            if (details.isNullOrEmpty()) {
+            if (details.isNullOrEmpty() || details.values.isNullOrEmpty()) {
                 Text(
                     text = "Нет информации",
                     fontSize = 16.sp,
@@ -63,7 +64,7 @@ fun InformationProduct(details: Map<String, String>?) {
                     fontWeight = FontWeight.Medium
                 )
             } else {
-
+                Log.e("Information", "$details", )
                 details.forEach { detail ->
                     InfoElement(placeHolder = detail.key, item = detail.value)
                 }
@@ -78,7 +79,7 @@ fun InformationProduct(details: Map<String, String>?) {
 }
 
 @Composable
-private fun InfoElement(placeHolder: String, item: String) {
+private fun InfoElement(placeHolder: String, item: String?) {
     Spacer(modifier = Modifier.height(4.dp))
     Text(
         text = "$placeHolder: ",
@@ -90,7 +91,7 @@ private fun InfoElement(placeHolder: String, item: String) {
     )
 
     Text(
-        text = item,
+        text = item ?: "Нет информации",
         fontSize = 14.sp,
         fontWeight = FontWeight.Medium,
         color = DarkGray,
