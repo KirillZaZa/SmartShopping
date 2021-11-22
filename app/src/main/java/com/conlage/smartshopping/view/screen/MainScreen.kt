@@ -119,7 +119,7 @@ fun MainScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(BackgroundColor)
-            .padding(horizontal = 20.dp)
+            .padding(horizontal = 12.dp)
             .padding(top = 56.dp),
         contentAlignment = Alignment.BottomEnd
     ) {

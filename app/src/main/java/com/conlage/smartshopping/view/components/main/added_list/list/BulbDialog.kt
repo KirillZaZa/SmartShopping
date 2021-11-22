@@ -92,10 +92,10 @@ fun BulbDialog(
 
             Column(
                 modifier = Modifier
-                    .height(350.dp)
-                    .width(350.dp)
+                    .padding(horizontal = 16.dp)
+                    .height(400.dp)
+                    .width(400.dp)
                     .background(color = Color.White, shape = RoundedCornerShape(20.dp))
-                    .padding(horizontal = 8.dp)
                     .padding(bottom = 4.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
 
@@ -139,9 +139,6 @@ private fun BulbContent(
             enabled = true,
             checked = isChecked,
             onCheckedChange = onCheckedChange,
-            modifier = Modifier
-                .padding(start = 6.dp)
-                .offset(x = (-4).dp),
             colors = CheckboxDefaults.colors(
                 uncheckedColor = Standin,
                 checkmarkColor = Color.White,
@@ -170,10 +167,11 @@ private fun BulbContent(
             Icon(
                 painter = painterResource(id = R.drawable.ic_close_icon),
                 contentDescription = null,
-                tint = Color.LightGray
+                tint = Color.LightGray,
             )
         }
-
+        
+        Spacer(modifier = Modifier.width(8.dp))
 
     }
     Spacer(modifier = Modifier.height(4.dp))
