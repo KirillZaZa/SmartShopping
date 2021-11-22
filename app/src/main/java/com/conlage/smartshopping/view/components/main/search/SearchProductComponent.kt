@@ -127,8 +127,8 @@ fun CloseSearchButton(
     IconButton(
         onClick = onCloseClick,
         modifier = Modifier
-            .padding(end = 20.dp)
-            .size(28.dp)
+            .padding(end = 12.dp)
+            .size(32.dp)
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_close_icon),
