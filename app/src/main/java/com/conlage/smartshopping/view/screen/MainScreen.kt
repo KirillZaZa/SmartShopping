@@ -55,7 +55,7 @@ import kotlinx.coroutines.launch
 fun TextMainHeader() {
     Text(
         modifier = Modifier.fillMaxWidth(),
-        text = "Список покупок",
+        text = "Список продуктов",
         color = Color.DarkGray,
         fontSize = 26.sp,
         fontWeight = FontWeight.Medium,
