@@ -27,22 +27,30 @@ fun ButtonScanner(
 ) {
 
 
-    
+    val context = LocalContext.current
+    val paddingBottom = if (isNavBarVisible) {
+        val res = context.resources
+        val resId = res.getIdentifier(
+            "navigation_bar_height",
+            "dimen",
+            "android"
+        )
+        res.getDimensionPixelSize(resId) / 2
+    } else 16
 
 
     Column(
         horizontalAlignment = Alignment.End,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = if (isNavBarVisible) 48.dp else 16.dp)
+            .padding(bottom = paddingBottom.dp)
     ) {
 
         FloatingActionButton(
             onClick = onClick,
             modifier = Modifier
                 .width(64.dp)
-                .height(64.dp)
-                ,
+                .height(64.dp),
             backgroundColor = Blue,
             shape = RoundedCornerShape(25)
         ) {

@@ -289,6 +289,7 @@ fun MainScreen(
             isNavBarVisible = systemUiController.isNavigationBarVisible
         )
 
+
         if (state.isScannerOpen) {
             DialogScanner(
                 activity = activity,
