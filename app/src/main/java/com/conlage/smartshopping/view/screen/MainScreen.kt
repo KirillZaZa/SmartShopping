@@ -322,7 +322,9 @@ fun MainScreen(
             )
 
         ) {
-            SnackbarPermission(onSettingsClick = {
+            SnackbarPermission(
+                isNavBarVisible = systemUiController.isNavigationBarVisible,
+                onSettingsClick = {
                 context.startActivity(
                     Intent(
                         Settings.ACTION_APPLICATION_DETAILS_SETTINGS,

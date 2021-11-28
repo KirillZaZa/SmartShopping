@@ -26,14 +26,25 @@ import com.conlage.smartshopping.ui.theme.Gray
 
 @Composable
 fun SnackbarPermission(
+    isNavBarVisible: Boolean,
     onSettingsClick: () -> Unit
 ) {
 
+    val context = LocalContext.current
+    val paddingBottom = if (isNavBarVisible) {
+        val res = context.resources
+        val resId = res.getIdentifier(
+            "navigation_bar_height",
+            "dimen",
+            "android"
+        )
+        res.getDimensionPixelSize(resId) / 2
+    } else 20
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 20.dp)
+            .padding(bottom = paddingBottom.dp)
             .background(Color.White, shape = RoundedCornerShape(20)),
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically,

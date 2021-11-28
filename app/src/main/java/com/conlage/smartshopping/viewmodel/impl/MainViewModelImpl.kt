@@ -137,7 +137,7 @@ class MainViewModelImpl @Inject constructor(
                 )
             }
 
-            delay(3000)
+            delay(2000)
 
             updateState {
                 it.copy(
