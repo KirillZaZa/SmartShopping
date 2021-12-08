@@ -38,8 +38,6 @@
 &#8291;
 > **Поиск товара**
 
-	
-&#8291;
 
 ![alt text](https://play-lh.googleusercontent.com/utidlJEkD_yEBr5BFT3BylRwR-ySgcY_JGPFHti7Aqqt5f5vgmMBxm0MdcK5Je9g3LY=w1495-h715-rw)
 
