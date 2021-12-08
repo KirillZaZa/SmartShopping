@@ -45,8 +45,6 @@
 &#8291;
 > **Фрагмент с подсказкой**
 
-	
-&#8291;
 
 ![alt text](https://play-lh.googleusercontent.com/yMG6g-LiAfGh9R9KMRzkfsXRSgC-vnUrBk0hgLMO3nayvsfTCifDjnieAcMagg55gQ=w1495-h715-rw)
 
