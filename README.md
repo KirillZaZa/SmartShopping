@@ -61,7 +61,7 @@
 - [Dagger2] - библиотека для внедрения зависимостей. (В скором будущем будет миграция на Hilt)
 
 Разработка клиентской части велась **Захарчёнком Кириллом**.
-Ссылка на github: [dancoderpack](https://github.com/KirillZaZa)
+Ссылка на github: [KirillZaZa](https://github.com/KirillZaZa)
 
 Разработка серверной части велась **Даниилом Харенковым**.
 Ссылка на github: [dancoderpack](https://github.com/dancoderpack)
