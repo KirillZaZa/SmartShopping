@@ -16,7 +16,6 @@ abstract class BaseViewModel<T>(
     initState: T,
 ) : ViewModel() {
 
-
     val dispatcherMain = Dispatchers.Main
 
     val errHandler by lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
@@ -25,27 +24,22 @@ abstract class BaseViewModel<T>(
                 "Coroutine Scope:",
                 "error - ${throwable.localizedMessage}"
             )
-
         }
         errorHandler
     }
 
     val event = MutableLiveData<Event<BaseEvent>>()
 
-    fun handleEvent(content: BaseEvent){
+    fun handleEvent(content: BaseEvent) {
         event.postValue(Event(content))
     }
 
-
-
-
-   val state: MutableState<T> = mutableStateOf(
-       value = initState
+    val state: MutableState<T> = mutableStateOf(
+        value = initState
     )
 
     val currentValue
         get() = state.value
-
 
     @UiThread
     protected inline fun updateState(
@@ -55,7 +49,6 @@ abstract class BaseViewModel<T>(
         state.value = updatedState
     }
 
-
     protected fun <S> subscribeOnDataSource(
         source: S,
         onChanged: (newValue: S, currentState: T) -> T?
@@ -63,14 +56,10 @@ abstract class BaseViewModel<T>(
         state.value = onChanged(source, currentValue) ?: return
     }
 
-    fun observeEvents(owner: LifecycleOwner, onEvent: (event: BaseEvent) -> Unit){
-        event.observe(owner, EventObserver{onEvent(it)})
+    fun observeEvents(owner: LifecycleOwner, onEvent: (event: BaseEvent) -> Unit) {
+        event.observe(owner, EventObserver { onEvent(it) })
     }
-
-
-
 }
-
 
 class Event<out E>(private val content: E) {
     var hasBeenHandled = false
@@ -85,7 +74,6 @@ class Event<out E>(private val content: E) {
         }
     }
 }
-
 
 class EventObserver<E>(private val onEventUnhandledContent: (E) -> Unit) : Observer<Event<E>> {
     override fun onChanged(e: Event<E>?) {
