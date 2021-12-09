@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.ExperimentalUnitApi
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -44,17 +45,18 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun TextProductHeader(title: String, onClick: () -> Unit) {
-    val newTitle = if (title.length > 24) {
-        title.substring(0, 20) + "..."
-    } else title
+//    val newTitle = if (title.length > 24) {
+//        title.substring(0, 20) + "..."
+//    } else title
+    val newTitle = title
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(color = BackgroundColor)
             .padding(top = 36.dp)
-            .padding(horizontal = 20.dp)
+            .padding(horizontal = 30.dp)
             .zIndex(11f),
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
@@ -62,23 +64,22 @@ fun TextProductHeader(title: String, onClick: () -> Unit) {
             contentDescription = "back_button",
             tint = DarkGray,
             modifier = Modifier
-                .size(48.dp)
+                .size(32.dp)
                 .clickable(onClick = onClick)
                 .offset(x = (-16).dp)
         )
-        Spacer(modifier = Modifier.weight(1f))
+
         Text(
             text = newTitle,
             maxLines = 1,
-            fontSize = 17.sp,
+            overflow = TextOverflow.Ellipsis,
+            fontSize = 16.sp,
             color = DarkGray,
             fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.offset(x = (-16).dp),
+            textAlign = TextAlign.Start,
+            modifier = Modifier.offset(x = (-16).dp).padding(horizontal = 8.dp)
+
         )
-        Spacer(modifier = Modifier.weight(1f))
-
-
     }
 }
 
